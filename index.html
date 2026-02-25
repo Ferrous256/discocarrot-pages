@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disco Carrot — Partner With Us</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne:wght@400;700;800&family=DM+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black: #060C18;
+    --deep: #0A1628;
+    --slate: #1A2640;
+    --orange: #FF5C00;
+    --gold: #FFD166;
+    --ice: #E8F4FF;
+    --muted: #6B7E9F;
+    --disco: #C86BFA;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+
+  body {
+    background: var(--black);
+    color: var(--ice);
+    font-family: 'Syne', sans-serif;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  .cursor {
+    width: 12px; height: 12px;
+    background: var(--orange);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    mix-blend-mode: screen;
+  }
+  .cursor-trail {
+    width: 36px; height: 36px;
+    border: 1px solid var(--orange);
+    border-radius: 50%;
+    position: fixed;
+    pointer-events: none;
+    z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all 0.13s ease;
+    opacity: 0.35;
+    mix-blend-mode: screen;
+  }
+
+  /* Grain */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 900; opacity: 0.35;
+  }
+
+  /* Ambient glow */
+  .bg-glow {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 50% at 20% 60%, rgba(255,92,0,0.07) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 60% at 80% 30%, rgba(200,107,250,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 40% at 60% 80%, rgba(255,209,102,0.04) 0%, transparent 60%);
+  }
+
+  /* Mountain silhouette */
+  .mountain-bg {
+    position: fixed;
+    bottom: 0; left: 0; right: 0;
+    height: 40%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.07;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 300' preserveAspectRatio='none'%3E%3Cpolygon points='0,300 100,160 200,220 340,60 480,180 620,30 760,160 900,80 1040,200 1180,110 1320,190 1440,140 1440,300' fill='%234A6FA5'/%3E%3C/svg%3E") center/cover;
+  }
+
+  /* Shimmer dots */
+  .shimmer {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none;
+  }
+  .shimmer::before {
+    content: '';
+    position: absolute;
+    width: 2px; height: 2px;
+    background: var(--gold);
+    border-radius: 50%;
+    box-shadow:
+      80px 60px 0 rgba(255,209,102,0.5),
+      240px 110px 0 rgba(255,92,0,0.4),
+      420px 55px 0 rgba(255,209,102,0.6),
+      600px 140px 0 rgba(200,107,250,0.4),
+      820px 80px 0 rgba(255,209,102,0.5),
+      1050px 40px 0 rgba(255,92,0,0.3),
+      1260px 100px 0 rgba(255,209,102,0.4),
+      160px 280px 0 rgba(255,209,102,0.2),
+      500px 320px 0 rgba(255,92,0,0.2),
+      900px 260px 0 rgba(200,107,250,0.3),
+      1150px 300px 0 rgba(255,209,102,0.2);
+    animation: twinkle 5s ease-in-out infinite alternate;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.3; }
+    to { opacity: 0.9; }
+  }
+
+  /* ── LAYOUT ── */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    position: relative;
+    z-index: 10;
+    text-align: center;
+  }
+
+  /* Logo / wordmark */
+  .wordmark {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+    letter-spacing: 0.12em;
+    color: var(--ice);
+    text-decoration: none;
+    margin-bottom: 48px;
+    display: inline-block;
+    animation: fadeDown 0.7s ease 0.1s both;
+  }
+  .wordmark span { color: var(--orange); }
+
+  /* Carrot emoji hero */
+  .hero-icon {
+    font-size: clamp(3rem, 8vw, 5rem);
+    line-height: 1;
+    margin-bottom: 28px;
+    animation: fadeDown 0.7s ease 0.2s both;
+    display: block;
+    filter: drop-shadow(0 0 24px rgba(255,92,0,0.4));
+  }
+
+  .hero-headline {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 9vw, 7rem);
+    letter-spacing: 0.03em;
+    line-height: 0.92;
+    color: var(--ice);
+    margin-bottom: 20px;
+    animation: fadeDown 0.7s ease 0.3s both;
+  }
+  .hero-headline em {
+    font-style: normal;
+    color: var(--orange);
+  }
+
+  .hero-sub {
+    font-size: clamp(0.9rem, 2vw, 1.05rem);
+    color: var(--muted);
+    line-height: 1.65;
+    max-width: 480px;
+    margin: 0 auto 56px;
+    animation: fadeDown 0.7s ease 0.45s both;
+  }
+
+  /* Cards */
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    width: 100%;
+    max-width: 840px;
+    animation: fadeDown 0.7s ease 0.6s both;
+  }
+
+  .card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+    text-decoration: none;
+    background: var(--deep);
+    border: 1px solid var(--slate);
+    padding: 44px 40px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, transform 0.3s, background 0.3s;
+  }
+  .card:hover {
+    border-color: var(--orange);
+    transform: translateY(-6px);
+    background: var(--slate);
+  }
+
+  /* Animated corner accent */
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 3px;
+    background: linear-gradient(to right, var(--orange), var(--gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .card:hover::before { transform: scaleX(1); }
+
+  /* Background number */
+  .card::after {
+    content: attr(data-num);
+    position: absolute;
+    bottom: -20px; right: -8px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 8rem;
+    color: rgba(255,255,255,0.025);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    pointer-events: none;
+    transition: color 0.3s;
+  }
+  .card:hover::after { color: rgba(255,92,0,0.06); }
+
+  .card-icon {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 0 10px rgba(255,92,0,0.3));
+  }
+
+  .card-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--orange);
+    margin-bottom: 10px;
+  }
+
+  .card-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(1.6rem, 3vw, 2.2rem);
+    letter-spacing: 0.04em;
+    color: var(--ice);
+    line-height: 1;
+    margin-bottom: 14px;
+  }
+
+  .card-desc {
+    font-size: 0.88rem;
+    color: var(--muted);
+    line-height: 1.65;
+    flex: 1;
+    margin-bottom: 28px;
+  }
+
+  .card-cta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--orange);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: gap 0.2s;
+  }
+  .card:hover .card-cta { gap: 14px; }
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    max-width: 840px;
+    margin: 56px auto 0;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--slate), transparent);
+    animation: fadeDown 0.7s ease 0.75s both;
+  }
+
+  /* Back to site link */
+  .back-link {
+    margin-top: 32px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.2s;
+    animation: fadeDown 0.7s ease 0.85s both;
+  }
+  .back-link:hover { color: var(--ice); }
+
+  /* Footer */
+  footer {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 24px;
+    border-top: 1px solid var(--slate);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    padding: 20px 40px;
+  }
+  footer .copy {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+  .footer-links {
+    display: flex;
+    gap: 24px;
+  }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--orange); }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+    .card { padding: 36px 28px; }
+    footer { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-trail" id="cursorTrail"></div>
+
+<div class="bg-glow"></div>
+<div class="mountain-bg"></div>
+<div class="shimmer"></div>
+
+<main>
+  <a href="https://www.discocarrot.com" class="wordmark">Disco<span>Carrot</span></a>
+
+  <span class="hero-icon">🥕🪩</span>
+
+  <h1 class="hero-headline">Let's Work<br><em>Together.</em></h1>
+  <p class="hero-sub">Whether you're a ski resort looking to elevate your guest experience, or a brand ready to activate in the wild — Disco Carrot has a home for you on the mountain.</p>
+
+  <div class="cards">
+    <a href="ski-resorts.html" class="card" data-num="01">
+      <span class="card-icon">⛷️</span>
+      <div class="card-eyebrow">For Ski Resorts & Event Hosts</div>
+      <div class="card-title">Book Disco Carrot</div>
+      <p class="card-desc">Turn your base area into an unforgettable cultural moment. Learn how Disco Carrot extends guest dwell time, drives F&B revenue, and gives your mountain a story worth sharing.</p>
+      <span class="card-cta">Explore Resort Programming →</span>
+    </a>
+
+    <a href="sponsorship.html" class="card" data-num="02">
+      <span class="card-icon">🪩</span>
+      <div class="card-eyebrow">For Brands & Sponsors</div>
+      <div class="card-title">Activate Your Brand</div>
+      <p class="card-desc">Put your brand inside a memory — not on a billboard. Reach skiers, snowboarders, and festival audiences with authentic, high-energy experiential marketing on the mountain.</p>
+      <span class="card-cta">Explore Sponsorship →</span>
+    </a>
+  </div>
+
+  <div class="divider"></div>
+
+  <a href="https://www.discocarrot.com" class="back-link">← Back to discocarrot.com</a>
+</main>
+
+<footer>
+  <span class="copy">© Disco Carrot · Missoula, Montana</span>
+  <div class="footer-links">
+    <a href="https://www.discocarrot.com/our-story">Our Story</a>
+    <a href="https://www.discocarrot.com/adventures">Adventures</a>
+    <a href="https://www.discocarrot.com/contact">Contact</a>
+    <a href="https://www.discocarrot.com/request-quote">Request Quote</a>
+  </div>
+</footer>
+
+<script>
+  const cursor = document.getElementById('cursor');
+  const trail = document.getElementById('cursorTrail');
+  let mx = 0, my = 0, tx = 0, ty = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx + 'px';
+    cursor.style.top = my + 'px';
+  });
+
+  (function animTrail() {
+    tx += (mx - tx) * 0.12;
+    ty += (my - ty) * 0.12;
+    trail.style.left = tx + 'px';
+    trail.style.top = ty + 'px';
+    requestAnimationFrame(animTrail);
+  })();
+</script>
+</body>
+</html>
