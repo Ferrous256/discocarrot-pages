@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Disco Carrot | Style Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;1,400&family=Outfit:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Figtree:wght@300;400;500;600;700&family=Urbanist:wght@300;400;500;600;700;800&family=Satoshi:wght@300;400;500;700&family=Albert+Sans:wght@300;400;500;600;700;800&family=General+Sans:wght@300;400;500;600;700&family=Lexend:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF5C00;
+    --carrot: #FF7A2B;
+    --gold: #FFD166;
+    --ice: #E8F4FF;
+    --midnight: #060C18;
+    --deep: #0A1628;
+    --slate: #1A2640;
+    --muted: #6B7E9F;
+    --white: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--midnight);
+    color: var(--ice);
+    font-family: 'Lexend', sans-serif;
+    padding: 0;
+  }
+
+  .guide-nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--deep);
+    border-bottom: 1px solid var(--slate);
+    padding: 16px 48px;
+    display: flex; align-items: center; gap: 32px;
+  }
+  .guide-nav-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: var(--white);
+    letter-spacing: 0.06em;
+  }
+  .guide-nav-title span { color: var(--orange); }
+  .guide-nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .guide-nav a:hover { color: var(--orange); }
+
+  .guide-section {
+    padding: 80px 48px;
+    border-bottom: 1px solid var(--slate);
+  }
+  .guide-section:last-child { border-bottom: none; }
+  .guide-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 12px;
+  }
+  .guide-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2rem, 4vw, 3.5rem);
+    color: var(--white); letter-spacing: 0.02em;
+    margin-bottom: 40px; line-height: 1;
+  }
+  .guide-desc {
+    color: var(--muted); font-size: 0.95rem; line-height: 1.7;
+    max-width: 600px; margin-bottom: 40px;
+  }
+
+  /* ── COLOR SWATCHES ── */
+  .color-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+  .color-card {
+    border: 1px solid var(--slate); border-radius: 2px; overflow: hidden;
+  }
+  .color-swatch { height: 100px; }
+  .color-info {
+    padding: 14px 16px; background: var(--deep);
+  }
+  .color-name {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600; font-size: 0.85rem; color: var(--white);
+    margin-bottom: 4px;
+  }
+  .color-hex {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; color: var(--muted); letter-spacing: 0.05em;
+  }
+  .color-var {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; color: rgba(107,126,159,0.5); letter-spacing: 0.03em;
+    margin-top: 2px;
+  }
+
+  /* ── TYPE SPECIMENS ── */
+  .type-row {
+    padding: 32px 0;
+    border-bottom: 1px solid var(--slate);
+    display: grid; grid-template-columns: 200px 1fr;
+    gap: 40px; align-items: baseline;
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-meta {
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .type-font-name {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; color: var(--orange); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .type-usage {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem; color: var(--muted); letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+
+  /* ── BUTTONS ── */
+  .button-grid {
+    display: flex; gap: 24px; flex-wrap: wrap; align-items: center;
+    margin-bottom: 40px;
+  }
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--midnight); background: var(--orange);
+    padding: 16px 36px; border-radius: 2px; text-decoration: none;
+    display: inline-flex; align-items: center; gap: 10px; border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { background: var(--gold); transform: translateY(-3px); }
+  .btn-ghost {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--ice); border: 1px solid rgba(255,255,255,0.2);
+    padding: 16px 36px; border-radius: 2px; text-decoration: none;
+    background: none; cursor: pointer;
+    transition: border-color 0.2s, color 0.2s, transform 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-3px); }
+  .btn-dark {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--white); background: var(--midnight);
+    padding: 18px 44px; border-radius: 2px; text-decoration: none;
+    display: inline-block; border: none; cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .btn-dark:hover { transform: translateY(-3px); background: var(--deep); }
+  .btn-nav {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--midnight); background: var(--orange);
+    padding: 10px 24px; border-radius: 2px; text-decoration: none;
+    border: none; cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .btn-nav:hover { background: var(--gold); transform: translateY(-2px); }
+
+  .btn-spec {
+    display: flex; gap: 16px; align-items: center;
+    margin-top: 8px;
+  }
+  .btn-spec-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem; color: var(--muted); letter-spacing: 0.05em;
+  }
+
+  /* ── COMPONENTS ── */
+  .component-demo {
+    background: var(--deep); border: 1px solid var(--slate);
+    padding: 48px; margin-bottom: 24px; border-radius: 2px;
+  }
+  .component-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 16px;
+  }
+
+  /* ── SPACING TABLE ── */
+  .spacing-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .spacing-item {
+    background: var(--deep); border: 1px solid var(--slate);
+    padding: 20px; text-align: center; border-radius: 2px;
+  }
+  .spacing-bar {
+    background: var(--orange); border-radius: 1px;
+    height: 6px; margin: 0 auto 12px;
+    opacity: 0.6;
+  }
+  .spacing-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; color: var(--white); margin-bottom: 4px;
+  }
+  .spacing-use {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58rem; color: var(--muted); letter-spacing: 0.05em;
+  }
+
+  /* Card demo */
+  .demo-card {
+    background: var(--deep); padding: 44px 36px;
+    border: 1px solid var(--slate); max-width: 400px;
+    position: relative; overflow: hidden; transition: background 0.3s;
+  }
+  .demo-card:hover { background: var(--slate); }
+  .demo-card::after {
+    content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+    height: 3px; background: var(--orange);
+    transform: scaleX(0); transform-origin: left; transition: transform 0.4s ease;
+  }
+  .demo-card:hover::after { transform: scaleX(1); }
+  .demo-card-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 3rem; color: rgba(255,92,0,0.15); line-height: 1; margin-bottom: 16px;
+  }
+  .demo-card h4 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 12px;
+  }
+  .demo-card p {
+    font-size: 0.9rem; color: var(--muted); line-height: 1.65;
+  }
+
+  /* List item demo */
+  .demo-list-item {
+    padding: 20px 0; border-bottom: 1px solid var(--slate);
+    display: grid; grid-template-columns: auto 1fr;
+    gap: 16px; align-items: center; transition: padding-left 0.3s;
+  }
+  .demo-list-item:hover { padding-left: 8px; }
+  .demo-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--orange); flex-shrink: 0;
+  }
+  .demo-list-item span {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600; font-size: 0.95rem; color: var(--white);
+  }
+
+  /* Tag demo */
+  .demo-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--white); display: inline-flex; align-items: center; gap: 8px;
+  }
+  .demo-tag::before {
+    content: ''; display: inline-block;
+    width: 6px; height: 6px; background: var(--orange);
+    border-radius: 50%;
+  }
+
+  /* Badge demo */
+  .demo-badge {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--orange); border: 1px solid rgba(255,92,0,0.35);
+    padding: 6px 14px; border-radius: 2px; display: inline-block;
+  }
+
+  /* Tier perks demo */
+  .demo-perk {
+    font-size: 0.85rem; color: var(--ice); padding-left: 20px;
+    position: relative; line-height: 1.4; margin-bottom: 10px;
+  }
+  .demo-perk::before {
+    content: '✦'; position: absolute; left: 0;
+    color: var(--orange); font-size: 0.55rem; top: 3px;
+  }
+  .demo-perk.dim { color: var(--muted); }
+  .demo-perk.dim::before { color: var(--slate); }
+
+  /* Arrow list demo */
+  .demo-arrow-item {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem; color: rgba(107,126,159,0.7);
+    padding-left: 16px; position: relative; letter-spacing: 0.04em;
+    margin-bottom: 6px;
+  }
+  .demo-arrow-item::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--orange); font-size: 0.85rem;
+  }
+
+  /* Font switcher buttons */
+  .font-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); background: var(--deep);
+    border: 1px solid var(--slate); padding: 10px 20px;
+    border-radius: 2px; cursor: pointer;
+    transition: all 0.2s;
+  }
+  .font-btn:hover { border-color: var(--orange); color: var(--ice); }
+  .font-btn.active {
+    background: var(--orange); color: var(--midnight);
+    border-color: var(--orange);
+  }
+
+  @media (max-width: 900px) {
+    .guide-section { padding: 60px 24px; }
+    .guide-nav { padding: 12px 24px; flex-wrap: wrap; gap: 12px; }
+    .type-row { grid-template-columns: 1fr; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="guide-nav">
+  <div class="guide-nav-title">Disco<span>Carrot</span> Style Guide</div>
+  <a href="#colors">Colors</a>
+  <a href="#typography">Typography</a>
+  <a href="#font-compare">Font Compare</a>
+  <a href="#buttons">Buttons</a>
+  <a href="#components">Components</a>
+  <a href="#spacing">Spacing</a>
+  <a href="#patterns">Patterns</a>
+</nav>
+
+<!-- ═══════════════════════════════════ COLORS ═══════════════════════════════════ -->
+<section class="guide-section" id="colors">
+  <div class="guide-label">01 / Color Palette</div>
+  <div class="guide-title">Colors</div>
+  <p class="guide-desc">Dark, cinematic palette with orange as the primary accent. The midnight-to-slate range provides depth. Orange is used for CTAs, highlights, eyebrows, and interactive states. Gold is the hover accent.</p>
+
+  <div class="guide-label" style="margin-bottom: 20px;">Primary Accent</div>
+  <div class="color-grid" style="margin-bottom: 40px;">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FF5C00;"></div>
+      <div class="color-info">
+        <div class="color-name">Orange</div>
+        <div class="color-hex">#FF5C00</div>
+        <div class="color-var">--orange</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FF7A2B;"></div>
+      <div class="color-info">
+        <div class="color-name">Carrot</div>
+        <div class="color-hex">#FF7A2B</div>
+        <div class="color-var">--carrot</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FFD166;"></div>
+      <div class="color-info">
+        <div class="color-name">Gold</div>
+        <div class="color-hex">#FFD166</div>
+        <div class="color-var">--gold (hover state)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 20px;">Backgrounds</div>
+  <div class="color-grid" style="margin-bottom: 40px;">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #060C18;"></div>
+      <div class="color-info">
+        <div class="color-name">Midnight</div>
+        <div class="color-hex">#060C18</div>
+        <div class="color-var">--midnight (body bg)</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #0A1628;"></div>
+      <div class="color-info">
+        <div class="color-name">Deep</div>
+        <div class="color-hex">#0A1628</div>
+        <div class="color-var">--deep (card bg, sections)</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #1A2640;"></div>
+      <div class="color-info">
+        <div class="color-name">Slate</div>
+        <div class="color-hex">#1A2640</div>
+        <div class="color-var">--slate (borders, hover bg)</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 20px;">Text</div>
+  <div class="color-grid">
+    <div class="color-card">
+      <div class="color-swatch" style="background: #FFFFFF;"></div>
+      <div class="color-info">
+        <div class="color-name">White</div>
+        <div class="color-hex">#FFFFFF</div>
+        <div class="color-var">--white (headings)</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #E8F4FF;"></div>
+      <div class="color-info">
+        <div class="color-name">Ice</div>
+        <div class="color-hex">#E8F4FF</div>
+        <div class="color-var">--ice (body text)</div>
+      </div>
+    </div>
+    <div class="color-card">
+      <div class="color-swatch" style="background: #6B7E9F;"></div>
+      <div class="color-info">
+        <div class="color-name">Muted</div>
+        <div class="color-hex">#6B7E9F</div>
+        <div class="color-var">--muted (secondary text)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ TYPOGRAPHY ═══════════════════════════════════ -->
+<section class="guide-section" id="typography">
+  <div class="guide-label">02 / Typography</div>
+  <div class="guide-title">Fonts</div>
+  <p class="guide-desc">Three fonts, each with a distinct role. Bebas Neue for impact, Manrope for readability, DM Mono for technical/label elements. Never mix their roles.</p>
+
+  <div class="type-row">
+    <div class="type-meta">
+      <div class="type-font-name">Bebas Neue</div>
+      <div class="type-usage">Display / Headings<br>Page titles, section titles,<br>card headings, tier names,<br>CTA section headings</div>
+    </div>
+    <div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(3rem, 8vw, 6rem); color: var(--white); line-height: 0.92; letter-spacing: 0.02em;">
+        Your Brand, On the <span style="color: var(--orange);">Mountain.</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">
+      <div class="type-font-name">Manrope</div>
+      <div class="type-usage">Body / UI<br>Paragraphs, descriptions,<br>list item labels, general<br>interface text</div>
+    </div>
+    <div>
+      <div style="font-family: 'Manrope', sans-serif; font-size: 1.05rem; color: var(--muted); line-height: 1.65; max-width: 500px;">
+        Disco Carrot puts your brand in the middle of the most authentic, high-energy outdoor experience, deep in the culture where your audience actually lives.
+      </div>
+    </div>
+  </div>
+
+  <div class="type-row">
+    <div class="type-meta">
+      <div class="type-font-name">DM Mono</div>
+      <div class="type-usage">Labels / Buttons<br>Section eyebrows, nav links,<br>button text, tags, badges,<br>pricing details, footnotes</div>
+    </div>
+    <div>
+      <div style="display: flex; flex-direction: column; gap: 16px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange);">Section Eyebrow Label</span>
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ice);">BUTTON TEXT STYLE</span>
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted);">Footer Link · Nav Link</span>
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted);">Contact us for pricing details →</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="margin-top: 48px;">
+    <div class="guide-label" style="margin-bottom: 20px;">Heading Hierarchy</div>
+    <p class="guide-desc" style="margin-bottom: 24px;">Section headings use a swapped hierarchy: the main title is large Bebas Neue (white), and the category label sits below in small DM Mono (orange, uppercase).</p>
+    <div class="component-demo">
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.2rem, 4vw, 3.5rem); color: var(--white); line-height: 0.95; letter-spacing: 0.02em; margin-bottom: 8px;">
+        Curated Moments
+      </div>
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange);">
+        Mountain Programming Menu
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ FONT COMPARISON ═══════════════════════════════════ -->
+<section class="guide-section" id="font-compare">
+  <div class="guide-label">02b / Font Comparison</div>
+  <div class="guide-title">Body Font Explorer</div>
+  <p class="guide-desc">Toggle between body fonts to see how each one pairs with Bebas Neue headings and DM Mono labels. All other design elements stay the same.</p>
+
+  <div id="fontSwitcher" style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 48px;">
+    <button class="font-btn" data-font="'Manrope', sans-serif" data-name="Manrope">Manrope</button>
+    <button class="font-btn" data-font="'Outfit', sans-serif" data-name="Outfit">Outfit</button>
+    <button class="font-btn" data-font="'Plus Jakarta Sans', sans-serif" data-name="Plus Jakarta Sans">Plus Jakarta Sans</button>
+    <button class="font-btn" data-font="'Figtree', sans-serif" data-name="Figtree">Figtree</button>
+    <button class="font-btn" data-font="'Urbanist', sans-serif" data-name="Urbanist">Urbanist</button>
+    <button class="font-btn" data-font="'Albert Sans', sans-serif" data-name="Albert Sans">Albert Sans</button>
+    <button class="font-btn active" data-font="'Lexend', sans-serif" data-name="Lexend">Lexend</button>
+  </div>
+
+  <div id="currentFontName" style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--orange); margin-bottom: 32px;">
+    Currently viewing: Lexend
+  </div>
+
+  <!-- Size scale -->
+  <div style="margin-bottom: 56px;">
+    <div class="guide-label" style="margin-bottom: 20px;">Size Scale</div>
+    <div id="sizeScale" style="display: flex; flex-direction: column; gap: 0;">
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">0.7rem</span>
+        <span class="body-font-target" style="font-size: 0.7rem; color: var(--ice);">Labels, footnotes, and disclaimer text at the smallest readable size.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">0.85rem</span>
+        <span class="body-font-target" style="font-size: 0.85rem; color: var(--ice);">Card body text, list descriptions, and supporting detail copy.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">0.95rem</span>
+        <span class="body-font-target" style="font-size: 0.95rem; color: var(--white); font-weight: 600;">List item label text at semibold weight.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">1.0rem</span>
+        <span class="body-font-target" style="font-size: 1.0rem; color: var(--muted); line-height: 1.7; max-width: 560px;">Standard body copy. This is the size used for section descriptions and general paragraph text throughout the site.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">1.05rem</span>
+        <span class="body-font-target" style="font-size: 1.05rem; color: var(--muted); line-height: 1.65; max-width: 520px;">Hero subtitle text. Slightly larger for the opening paragraph beneath the main headline.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Weight scale -->
+  <div style="margin-bottom: 56px;">
+    <div class="guide-label" style="margin-bottom: 20px;">Weight Scale</div>
+    <div style="display: flex; flex-direction: column; gap: 0;">
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">300</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 300; color: var(--ice);">Light weight for subtle, airy text passages.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">400</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 400; color: var(--ice);">Regular weight, used for body paragraphs and descriptions.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">500</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 500; color: var(--ice);">Medium weight, slightly more presence without being bold.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">600</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 600; color: var(--white);">Semibold, used for list item labels and card h4 elements.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">700</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 700; color: var(--white);">Bold, for emphasis when Bebas Neue isn't appropriate.</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: flex; align-items: baseline; gap: 24px;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.6rem; color: var(--muted); width: 80px; flex-shrink: 0;">800</span>
+        <span class="body-font-target" style="font-size: 1.05rem; font-weight: 800; color: var(--white);">Extra bold. Use sparingly for maximum impact.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live component preview -->
+  <div class="guide-label" style="margin-bottom: 20px;">Live Component Preview</div>
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+
+    <!-- Card preview -->
+    <div style="background: var(--deep); padding: 44px 36px; border: 1px solid var(--slate);">
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: rgba(255,92,0,0.15); line-height: 1; margin-bottom: 16px;">01</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 12px;">Brand Visibility & Physical Placement</div>
+      <p class="body-font-target" style="font-size: 0.9rem; color: var(--muted); line-height: 1.65; margin-bottom: 20px;">Your brand lives on the art car: sculpture panels, DJ booth, and snowcat body, all set against the mountain.</p>
+      <div style="display: flex; flex-direction: column; gap: 6px;">
+        <div style="font-family: 'DM Mono', monospace; font-size: 0.85rem; color: rgba(107,126,159,0.7); padding-left: 16px; position: relative;">
+          <span style="position: absolute; left: 0; color: var(--orange);">→</span>Logo on exterior sculpture panels
+        </div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 0.85rem; color: rgba(107,126,159,0.7); padding-left: 16px; position: relative;">
+          <span style="position: absolute; left: 0; color: var(--orange);">→</span>Branding on DJ booth & sound setup
+        </div>
+        <div style="font-family: 'DM Mono', monospace; font-size: 0.85rem; color: rgba(107,126,159,0.7); padding-left: 16px; position: relative;">
+          <span style="position: absolute; left: 0; color: var(--orange);">→</span>Sponsor logos on staff apparel
+        </div>
+      </div>
+    </div>
+
+    <!-- Why card preview -->
+    <div style="background: var(--deep); padding: 48px 40px; border: 1px solid var(--slate);">
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 4rem; color: rgba(255,92,0,0.12); line-height: 1; margin-bottom: 16px;">04</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: 1.5rem; letter-spacing: 0.05em; color: var(--white); margin-bottom: 12px;">Safety First, Always</div>
+      <p class="body-font-target" style="font-size: 0.9rem; color: var(--muted); line-height: 1.65;">OSHA 10 and SPRAT certified operators. Fully insured. Safe volume levels. Integrated crowd control. Property protection built into every deployment. We answer the safety concerns before you have to ask.</p>
+    </div>
+
+    <!-- Hero preview -->
+    <div style="background: var(--deep); padding: 48px 40px; border: 1px solid var(--slate); grid-column: span 2;">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 16px;">Brand Sponsorship & Activation</div>
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 0.92; letter-spacing: 0.02em; color: var(--white); margin-bottom: 20px;">Your Brand, On the <span style="color: var(--orange);">Mountain.</span> In the Moment.</div>
+      <p class="body-font-target" style="font-size: 1.05rem; line-height: 1.65; color: var(--muted); max-width: 520px; margin-bottom: 28px;">Disco Carrot puts your brand in the middle of the most authentic, high-energy outdoor experience, deep in the culture where your audience actually lives.</p>
+      <div style="display: flex; gap: 16px; align-items: center;">
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--midnight); background: var(--orange); padding: 14px 32px; border-radius: 2px;">Get in Touch</span>
+        <span style="font-family: 'DM Mono', monospace; font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ice); border: 1px solid rgba(255,255,255,0.2); padding: 14px 32px; border-radius: 2px;">See What's Included</span>
+      </div>
+    </div>
+
+    <!-- List items preview -->
+    <div style="background: var(--deep); padding: 40px; border: 1px solid var(--slate);">
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 20px;">Audience Profile</div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--orange);"></div>
+        <span class="body-font-target" style="font-weight: 600; font-size: 0.95rem; color: var(--white);">Outdoor Recreation</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--orange);"></div>
+        <span class="body-font-target" style="font-weight: 600; font-size: 0.95rem; color: var(--white);">Music & Festival Culture</span>
+      </div>
+      <div style="padding: 16px 0; border-bottom: 1px solid var(--slate); display: grid; grid-template-columns: auto 1fr; gap: 16px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--orange);"></div>
+        <span class="body-font-target" style="font-weight: 600; font-size: 0.95rem; color: var(--white);">High Disposable Income</span>
+      </div>
+    </div>
+
+    <!-- Section heading preview -->
+    <div style="background: var(--deep); padding: 40px; border: 1px solid var(--slate);">
+      <div style="font-family: 'Bebas Neue', sans-serif; font-size: clamp(2rem, 3.5vw, 3rem); line-height: 0.95; letter-spacing: 0.02em; color: var(--white); margin-bottom: 8px;">Everything You Need. Nothing You Don't.</div>
+      <div style="font-family: 'DM Mono', monospace; font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--orange); margin-bottom: 24px;">What We Bring</div>
+      <p class="body-font-target" style="font-size: 1rem; color: var(--muted); line-height: 1.7;">Modern ski guests choose resorts based on the full experience, not just conditions. Après ski, live music, and immersive atmosphere are now core drivers of satisfaction and repeat visits.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ BUTTONS ═══════════════════════════════════ -->
+<section class="guide-section" id="buttons">
+  <div class="guide-label">03 / Buttons</div>
+  <div class="guide-title">Interactive Elements</div>
+  <p class="guide-desc">All buttons use DM Mono, uppercase, 0.15em letter-spacing. Border-radius is always 2px (sharp, not rounded). Hover lifts -3px with transition.</p>
+
+  <div class="guide-label" style="margin-bottom: 16px;">On Dark Background</div>
+  <div class="button-grid">
+    <button class="btn-primary">Primary CTA ↗</button>
+    <button class="btn-ghost">Ghost / Secondary</button>
+  </div>
+  <div style="display: flex; gap: 48px; margin-bottom: 48px;">
+    <div>
+      <div class="btn-spec">
+        <span class="btn-spec-item">bg: --orange (#FF5C00)</span>
+        <span class="btn-spec-item">text: --midnight</span>
+        <span class="btn-spec-item">hover bg: --gold (#FFD166)</span>
+      </div>
+    </div>
+    <div>
+      <div class="btn-spec">
+        <span class="btn-spec-item">bg: transparent</span>
+        <span class="btn-spec-item">border: rgba(255,255,255,0.2)</span>
+        <span class="btn-spec-item">hover: --orange border + text</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">On Orange Background (CTA Sections)</div>
+  <div style="background: linear-gradient(135deg, var(--orange) 0%, #FF8C42 100%); padding: 40px; margin-bottom: 16px; border-radius: 2px;">
+    <button class="btn-dark">Dark Button →</button>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px;">
+    <span class="btn-spec-item">bg: --midnight (#060C18)</span>
+    <span class="btn-spec-item">text: --white</span>
+    <span class="btn-spec-item">hover bg: --deep (#0A1628)</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Nav CTA (Smaller)</div>
+  <div class="button-grid">
+    <button class="btn-nav">Nav Button →</button>
+  </div>
+  <div class="btn-spec">
+    <span class="btn-spec-item">padding: 10px 24px</span>
+    <span class="btn-spec-item">font-size: 0.75rem</span>
+    <span class="btn-spec-item">same colors as primary</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ COMPONENTS ═══════════════════════════════════ -->
+<section class="guide-section" id="components">
+  <div class="guide-label">04 / Components</div>
+  <div class="guide-title">Building Blocks</div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Content Card (Offering / Why Card)</div>
+  <div class="component-demo" style="padding: 0; background: transparent; border: none;">
+    <div class="demo-card">
+      <div class="demo-card-num">01</div>
+      <h4>Card Title in Bebas Neue</h4>
+      <p>Body text in Manrope at 0.9rem with --muted color. Cards have --deep background with --slate hover state and an orange bottom border that scales in on hover.</p>
+    </div>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px; margin-top: 8px;">
+    <span class="btn-spec-item">bg: --deep</span>
+    <span class="btn-spec-item">hover bg: --slate</span>
+    <span class="btn-spec-item">padding: 44px 36px (or 48px 40px for larger cards)</span>
+    <span class="btn-spec-item">bottom accent: 3px --orange</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Dot List Item (Audience Profile, What You Get)</div>
+  <div class="component-demo" style="max-width: 400px;">
+    <div class="demo-list-item">
+      <div class="demo-dot"></div>
+      <span>Outdoor Recreation</span>
+    </div>
+    <div class="demo-list-item">
+      <div class="demo-dot"></div>
+      <span>Music & Festival Culture</span>
+    </div>
+    <div class="demo-list-item">
+      <div class="demo-dot"></div>
+      <span>Ages 21–45</span>
+    </div>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px; margin-top: 8px;">
+    <span class="btn-spec-item">dot: 8px circle, --orange</span>
+    <span class="btn-spec-item">text: Manrope 600, 0.95rem, --white</span>
+    <span class="btn-spec-item">hover: 8px left indent</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Audience Tag (Strip)</div>
+  <div class="component-demo">
+    <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+      <span class="demo-tag">Skiers & Snowboarders</span>
+      <span class="demo-tag">21–45 Core Demo</span>
+      <span class="demo-tag">Festival Culture</span>
+    </div>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px; margin-top: 8px;">
+    <span class="btn-spec-item">font: DM Mono, 0.68rem, uppercase</span>
+    <span class="btn-spec-item">dot: 6px circle --orange</span>
+    <span class="btn-spec-item">color: --white</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Badge (Capability Tags)</div>
+  <div class="component-demo">
+    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+      <span class="demo-badge">Generator or Plug-In</span>
+      <span class="demo-badge">Fully Insured</span>
+      <span class="demo-badge">Family Friendly</span>
+      <span class="demo-badge">Safe Volume Levels</span>
+    </div>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px; margin-top: 8px;">
+    <span class="btn-spec-item">font: DM Mono, 0.65rem, uppercase</span>
+    <span class="btn-spec-item">border: 1px solid rgba(255,92,0,0.35)</span>
+    <span class="btn-spec-item">color: --orange</span>
+    <span class="btn-spec-item">padding: 6px 14px</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Tier Perk List</div>
+  <div class="component-demo" style="max-width: 400px;">
+    <div class="demo-perk">Active perk item with orange diamond</div>
+    <div class="demo-perk">Another included feature</div>
+    <div class="demo-perk dim">Unavailable at this tier (dimmed)</div>
+    <div class="demo-perk dim">Another unavailable feature</div>
+  </div>
+  <div class="btn-spec" style="margin-bottom: 48px; margin-top: 8px;">
+    <span class="btn-spec-item">active: --ice text, --orange ✦</span>
+    <span class="btn-spec-item">dim: --muted text, --slate ✦</span>
+  </div>
+
+  <div class="guide-label" style="margin-bottom: 16px;">Arrow List (Detail Items)</div>
+  <div class="component-demo" style="max-width: 400px;">
+    <div class="demo-arrow-item">Logo on exterior sculpture panels</div>
+    <div class="demo-arrow-item">Branding on DJ booth & sound setup</div>
+    <div class="demo-arrow-item">Full content reuse rights for your marketing</div>
+  </div>
+  <div class="btn-spec" style="margin-top: 8px;">
+    <span class="btn-spec-item">font: DM Mono, 0.7rem</span>
+    <span class="btn-spec-item">color: rgba(107,126,159,0.7)</span>
+    <span class="btn-spec-item">arrow: → in --orange</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ SPACING ═══════════════════════════════════ -->
+<section class="guide-section" id="spacing">
+  <div class="guide-label">05 / Spacing</div>
+  <div class="guide-title">Spacing & Layout</div>
+
+  <div class="spacing-grid">
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 16px;"></div>
+      <div class="spacing-val">16px</div>
+      <div class="spacing-use">Tight gaps, tag spacing</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 24px;"></div>
+      <div class="spacing-val">24px</div>
+      <div class="spacing-use">Between elements</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 32px;"></div>
+      <div class="spacing-val">32px</div>
+      <div class="spacing-use">Strip/footer padding</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 48px;"></div>
+      <div class="spacing-val">48px</div>
+      <div class="spacing-use">Section side padding</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 60px;"></div>
+      <div class="spacing-val">60px</div>
+      <div class="spacing-use">Grid margin-top</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 80px;"></div>
+      <div class="spacing-val">80px</div>
+      <div class="spacing-use">Two-column gaps</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 100px;"></div>
+      <div class="spacing-val">100px</div>
+      <div class="spacing-use">Section top/bottom</div>
+    </div>
+    <div class="spacing-item">
+      <div class="spacing-bar" style="width: 120px;"></div>
+      <div class="spacing-val">120px</div>
+      <div class="spacing-use">CTA section padding</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════ PATTERNS ═══════════════════════════════════ -->
+<section class="guide-section" id="patterns">
+  <div class="guide-label">06 / Patterns & Rules</div>
+  <div class="guide-title">Design Rules</div>
+
+  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+    <div>
+      <div class="guide-label" style="margin-bottom: 12px;">Do</div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Use border-radius: 2px on all interactive elements</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Use 1px solid var(--slate) for all borders</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Use orange only for accents, never as backgrounds (except CTA)</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Animate hover states: translateY(-3px) for buttons, scaleX for underlines</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Keep body text at --muted, headings at --white</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot"></div>
+          <span style="font-size: 0.85rem;">Use the swapped heading hierarchy (big title, small label beneath)</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="guide-label" style="margin-bottom: 12px;">Don't</div>
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Use rounded corners (border-radius > 4px)</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Use em dashes. Use colons, periods, or commas instead</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Use emojis in professional-facing content</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Use fabricated statistics or percentages</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Self-attribute quotes ("Disco Carrot Philosophy")</span>
+        </div>
+        <div class="demo-list-item" style="border: none; padding: 8px 0;">
+          <div class="demo-dot" style="background: var(--muted);"></div>
+          <span style="font-size: 0.85rem; color: var(--muted);">Mix font roles (Bebas for body, Manrope for labels)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const fontBtns = document.querySelectorAll('.font-btn');
+  const targets = document.querySelectorAll('.body-font-target');
+  const fontLabel = document.getElementById('currentFontName');
+
+  fontBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const fontFamily = btn.dataset.font;
+      const fontName = btn.dataset.name;
+
+      fontBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      targets.forEach(el => {
+        el.style.fontFamily = fontFamily;
+      });
+
+      fontLabel.textContent = 'Currently viewing: ' + fontName;
+    });
+  });
+</script>
+
+</body>
+</html>
