@@ -1,0 +1,42 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_library:
+  name: cloudinary
+  config:
+    cloud_name: dctaixj2i
+    api_key: 153997762186651
+
+collections:
+  - name: "adventures"
+    label: "Adventures"
+    folder: "src/blog/adventures"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Layout", name: "layout", widget: "hidden", default: "post.njk" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Author", name: "author", widget: "string", default: "Brenden Hierro" }
+      - { label: "Collection Label", name: "collection", widget: "hidden", default: "Adventures" }
+      - { label: "Collection Name", name: "collectionName", widget: "hidden", default: "adventures" }
+      - { label: "Thumbnail", name: "thumbnail", widget: "image" }
+      - { label: "Excerpt", name: "excerpt", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
+
+  - name: "our-story"
+    label: "Our Story"
+    folder: "src/blog/our-story"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Layout", name: "layout", widget: "hidden", default: "post.njk" }
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Date", name: "date", widget: "datetime", format: "YYYY-MM-DD" }
+      - { label: "Author", name: "author", widget: "string", default: "Brenden Hierro" }
+      - { label: "Collection Label", name: "collection", widget: "hidden", default: "Our Story" }
+      - { label: "Collection Name", name: "collectionName", widget: "hidden", default: "ourStory" }
+      - { label: "Thumbnail", name: "thumbnail", widget: "image" }
+      - { label: "Excerpt", name: "excerpt", widget: "string" }
+      - { label: "Body", name: "body", widget: "markdown" }
