@@ -1,7 +1,7 @@
 ---
 layout: base.njk
 title: Request a Quote
-description: Get a custom quote for Disco Carrot at your ski resort or venue. Book a call with our team.
+description: Get a custom quote for Disco Carrot at your ski resort or venue.
 permalink: /request-quote/
 ---
 <style>
@@ -24,43 +24,67 @@ permalink: /request-quote/
     font-size: 1.05rem; line-height: 1.65;
     color: var(--muted); max-width: 560px; margin: 0 auto;
   }
-  .cal-inline-wrapper {
-    max-width: 900px;
+  .quote-body {
+    max-width: 800px;
     margin: 0 auto;
     padding: 40px 48px 100px;
-    min-height: 600px;
   }
-  .cal-inline-wrapper iframe {
-    border: none;
-    width: 100%;
-    min-height: 600px;
+  .or-divider {
+    text-align: center;
+    margin: 48px 0;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted);
+    display: flex; align-items: center; gap: 20px;
   }
+  .or-divider::before,
+  .or-divider::after {
+    content: '';
+    flex: 1; height: 1px;
+    background: linear-gradient(to right, transparent, var(--slate), transparent);
+  }
+  .quote-body .cta-text {
+    font-size: 1.05rem; line-height: 1.65;
+    color: var(--ice); text-align: center;
+    margin-bottom: 24px;
+  }
+  .cal-link-wrapper { text-align: center; }
+  .cal-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--midnight); background: var(--orange);
+    padding: 16px 36px; border-radius: 2px;
+    text-decoration: none; display: inline-flex; align-items: center;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .cal-link:hover { background: var(--gold); transform: translateY(-3px); }
 
   @media (max-width: 900px) {
     .quote-hero { padding: 120px 24px 40px; }
-    .cal-inline-wrapper { padding: 20px 24px 80px; }
+    .quote-body { padding: 20px 24px 80px; }
   }
 </style>
 
 <div class="quote-hero">
   <p class="eyebrow">For Resorts & Venues</p>
   <h1>Request a Quote</h1>
-  <p>Tell us about your resort, your event, and your timeline. We'll build a custom package that fits your mountain and your budget.</p>
+  <p>Have a good idea of what you need for your event? Fill out the form below and we'll get back to you with a custom quote.</p>
 </div>
 
-<div class="cal-inline-wrapper">
-  <div id="cal-inline" style="width:100%;height:100%;overflow:auto;"></div>
+<div class="quote-body">
+  <script type="text/javascript" src="https://form.jotform.com/jsform/260286183364056"></script>
+
+  <div class="or-divider">Or</div>
+
+  <p class="cta-text">Prefer to start an immediate conversation? Schedule a time to chat on our calendar.</p>
+  <div class="cal-link-wrapper">
+    <a href="https://cal.com/disco-carrot/resort-and-venue" class="cal-link" data-cal-link="disco-carrot/resort-and-venue" data-cal-namespace="resort" data-cal-config='{"layout":"month_view","theme":"dark"}'>Schedule a Call →</a>
+  </div>
 </div>
 
 <script type="text/javascript">
-Cal("init", "resort-inline", { origin: "https://cal.com" });
-Cal.ns["resort-inline"]("inline", {
-  elementOrSelector: "#cal-inline",
-  calLink: "disco-carrot/resort-and-venue",
-  layout: "month_view",
-  config: { theme: "dark" }
-});
-Cal.ns["resort-inline"]("ui", {
+Cal("init", "resort", { origin: "https://cal.com" });
+Cal.ns["resort"]("ui", {
   theme: "dark",
   styles: { branding: { brandColor: "#FF5C00" } },
   hideEventTypeDetails: false,
