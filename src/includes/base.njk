@@ -5,9 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ title }} | Disco Carrot</title>
 {% if description %}<meta name="description" content="{{ description }}">{% endif %}
+
+<!-- Canonical URL -->
+<link rel="canonical" href="https://www.discocarrot.com{{ page.url }}">
+
+<!-- Open Graph -->
+<meta property="og:title" content="{{ title }} | Disco Carrot">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.discocarrot.com{{ page.url }}">
+{% if description %}<meta property="og:description" content="{{ description }}">{% endif %}
+{% if thumbnail %}<meta property="og:image" content="{{ thumbnail }}">
+{% else %}<meta property="og:image" content="https://res.cloudinary.com/dctaixj2i/image/upload/disco-carrot/og-default.jpg">{% endif %}
+<meta property="og:site_name" content="Disco Carrot">
+
+<!-- Twitter Card -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title }} | Disco Carrot">
+{% if description %}<meta name="twitter:description" content="{{ description }}">{% endif %}
+{% if thumbnail %}<meta name="twitter:image" content="{{ thumbnail }}">
+{% else %}<meta name="twitter:image" content="https://res.cloudinary.com/dctaixj2i/image/upload/disco-carrot/og-default.jpg">{% endif %}
+
+<!-- Favicon -->
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+<!-- Netlify Identity Widget -->
+<script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
 
 <!-- GA4 analytics -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9JNZK8R5H"></script>
@@ -163,6 +189,7 @@
     <a href="/adventures/">Adventures</a>
     <a href="/ski-resorts/">For Resorts</a>
     <a href="/sponsorship/">Sponsorship</a>
+    <a href="/contact/">Contact</a>
   </div>
 </footer>
 
@@ -213,6 +240,19 @@ Cal.ns["general"]("ui", {
   hideEventTypeDetails: false,
   layout: "month_view"
 });
+</script>
+
+<!-- Netlify Identity redirect -->
+<script>
+  if (window.netlifyIdentity) {
+    window.netlifyIdentity.on("init", user => {
+      if (!user) {
+        window.netlifyIdentity.on("login", () => {
+          document.location.href = "/admin/";
+        });
+      }
+    });
+  }
 </script>
 </body>
 </html>
