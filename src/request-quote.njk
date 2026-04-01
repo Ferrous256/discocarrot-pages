@@ -1,0 +1,69 @@
+---
+layout: base.njk
+title: Request a Quote
+description: Get a custom quote for Disco Carrot at your ski resort or venue. Book a call with our team.
+permalink: /request-quote/
+---
+<style>
+  .quote-hero {
+    padding: 160px 48px 40px;
+    text-align: center;
+  }
+  .quote-hero .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 4px;
+  }
+  .quote-hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95; letter-spacing: 0.02em;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .quote-hero p {
+    font-size: 1.05rem; line-height: 1.65;
+    color: var(--muted); max-width: 560px; margin: 0 auto;
+  }
+  .cal-inline-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 48px 100px;
+    min-height: 600px;
+  }
+  .cal-inline-wrapper iframe {
+    border: none;
+    width: 100%;
+    min-height: 600px;
+  }
+
+  @media (max-width: 900px) {
+    .quote-hero { padding: 120px 24px 40px; }
+    .cal-inline-wrapper { padding: 20px 24px 80px; }
+  }
+</style>
+
+<div class="quote-hero">
+  <p class="eyebrow">For Resorts & Venues</p>
+  <h1>Request a Quote</h1>
+  <p>Tell us about your resort, your event, and your timeline. We'll build a custom package that fits your mountain and your budget.</p>
+</div>
+
+<div class="cal-inline-wrapper">
+  <div id="cal-inline" style="width:100%;height:100%;overflow:auto;"></div>
+</div>
+
+<script type="text/javascript">
+Cal("init", "resort-inline", { origin: "https://cal.com" });
+Cal.ns["resort-inline"]("inline", {
+  elementOrSelector: "#cal-inline",
+  calLink: "disco-carrot/resort-and-venue",
+  layout: "month_view",
+  config: { theme: "dark" }
+});
+Cal.ns["resort-inline"]("ui", {
+  theme: "dark",
+  styles: { branding: { brandColor: "#FF5C00" } },
+  hideEventTypeDetails: false,
+  layout: "month_view"
+});
+</script>

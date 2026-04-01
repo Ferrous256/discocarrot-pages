@@ -1,0 +1,123 @@
+---
+layout: base.njk
+title: Contact
+description: Get in touch with Disco Carrot. Book a call, ask a question, or start a conversation about your next event.
+permalink: /contact/
+---
+<style>
+  .contact-hero {
+    padding: 160px 48px 60px;
+    text-align: center;
+  }
+  .contact-hero .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 4px;
+  }
+  .contact-hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(3rem, 7vw, 6rem);
+    line-height: 0.95; letter-spacing: 0.02em;
+    color: var(--white); margin-bottom: 20px;
+  }
+  .contact-hero p {
+    font-size: 1.05rem; line-height: 1.65;
+    color: var(--muted); max-width: 520px; margin: 0 auto;
+  }
+  .cal-embed-wrapper {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 48px 100px;
+    min-height: 500px;
+  }
+  .contact-options {
+    display: flex; gap: 24px; justify-content: center;
+    margin-top: 32px; flex-wrap: wrap;
+  }
+  .contact-option {
+    background: var(--deep);
+    border: 1px solid var(--slate);
+    padding: 32px;
+    border-radius: 2px;
+    text-align: center;
+    flex: 1; min-width: 200px; max-width: 280px;
+    transition: border-color 0.3s, transform 0.3s;
+    cursor: pointer; text-decoration: none; display: block;
+  }
+  .contact-option:hover {
+    border-color: var(--orange); transform: translateY(-4px);
+  }
+  .contact-option h3 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.4rem; color: var(--white);
+    margin-bottom: 8px;
+  }
+  .contact-option p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .social-links {
+    text-align: center; padding: 0 48px 80px;
+  }
+  .social-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--orange); text-decoration: none;
+    border-bottom: 1px solid rgba(255,92,0,0.3);
+    transition: border-color 0.2s;
+    margin: 0 16px;
+  }
+  .social-links a:hover { border-color: var(--orange); }
+
+  @media (max-width: 900px) {
+    .contact-hero { padding: 120px 24px 40px; }
+    .cal-embed-wrapper { padding: 40px 24px 80px; }
+    .contact-options { flex-direction: column; align-items: center; }
+    .social-links { padding: 0 24px 60px; }
+  }
+</style>
+
+<div class="contact-hero">
+  <p class="eyebrow">Let's Talk</p>
+  <h1>Contact Us</h1>
+  <p>Whether you're a resort, a brand, or planning a private event, we'd love to hear from you. Pick a time that works.</p>
+
+  <div class="contact-options">
+    <a href="https://cal.com/disco-carrot/general-inquiry" class="contact-option" data-cal-link="disco-carrot/general-inquiry" data-cal-namespace="general" data-cal-config='{"layout":"month_view","theme":"dark"}'>
+      <h3>General Inquiry</h3>
+      <p>Questions, ideas, or just say hello</p>
+    </a>
+    <a href="https://cal.com/disco-carrot/resort-and-venue" class="contact-option" data-cal-link="disco-carrot/resort-and-venue" data-cal-namespace="resort" data-cal-config='{"layout":"month_view","theme":"dark"}'>
+      <h3>Resort & Venue</h3>
+      <p>Book Disco Carrot for your mountain</p>
+    </a>
+    <a href="https://cal.com/disco-carrot/sponsorship" class="contact-option" data-cal-link="disco-carrot/sponsorship" data-cal-namespace="sponsorship" data-cal-config='{"layout":"month_view","theme":"dark"}'>
+      <h3>Sponsorship</h3>
+      <p>Partner your brand with us</p>
+    </a>
+  </div>
+</div>
+
+<div class="social-links">
+  <a href="https://www.instagram.com/discocarrotsnowcat/" target="_blank">Instagram →</a>
+  <a href="https://www.facebook.com/profile.php?id=61576695981616" target="_blank">Facebook →</a>
+</div>
+
+<!-- Additional Cal.com namespaces -->
+<script type="text/javascript">
+Cal("init", "resort", { origin: "https://cal.com" });
+Cal.ns["resort"]("ui", {
+  theme: "dark",
+  styles: { branding: { brandColor: "#FF5C00" } },
+  hideEventTypeDetails: false,
+  layout: "month_view"
+});
+Cal("init", "sponsorship", { origin: "https://cal.com" });
+Cal.ns["sponsorship"]("ui", {
+  theme: "dark",
+  styles: { branding: { brandColor: "#FF5C00" } },
+  hideEventTypeDetails: false,
+  layout: "month_view"
+});
+</script>
