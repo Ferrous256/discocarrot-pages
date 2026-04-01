@@ -1,0 +1,240 @@
+---
+layout: base.njk
+---
+<style>
+  .post-hero {
+    padding: 160px 48px 60px;
+    border-bottom: 1px solid var(--slate);
+  }
+  .post-hero .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 16px;
+  }
+  .post-hero h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 0.95; letter-spacing: 0.02em;
+    color: var(--white); max-width: 800px; margin-bottom: 20px;
+  }
+  .post-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted);
+    display: flex; gap: 20px; align-items: center;
+  }
+  .post-meta .divider {
+    width: 1px; height: 12px; background: var(--slate);
+  }
+  .post-body {
+    max-width: 65%;
+    margin: 0 auto;
+    padding: 80px 48px;
+    text-align: center;
+  }
+  .post-body p {Time to take the snowcat out for a test-drive. 
+    font-size: 1.05rem; line-height: 1.8;
+    color: var(--ice); margin-bottom: 28px;
+  }
+  .post-body h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 2rem; letter-spacing: 0.04em;
+    color: var(--white); margin: 4px 0 4px;
+  }
+  .post-body h3 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem; letter-spacing: 0.15em;
+    text-transform: uppercase; font-weight: 400; font-style: italic;
+    color: var(--orange); margin: 4px 0 40px;
+  }
+  .post-body img {
+    width: 100%; border-radius: 2px;
+    margin: 32px 0; display: block;
+    max-height: calc(100vh - 80px);
+    object-fit: contain;
+  }
+  .post-body ul, .post-body ol {
+    margin: 0 0 28px 24px;
+    color: var(--ice);
+  }
+  .post-body li {
+    font-size: 1.05rem; line-height: 1.8;
+    margin-bottom: 8px;
+  }
+  .post-body strong { color: var(--white); }
+  .post-body a {
+    color: var(--orange); text-decoration: none;
+    border-bottom: 1px solid rgba(255,92,0,0.3);
+    transition: border-color 0.2s;
+  }
+  .post-body a:hover { border-color: var(--orange); }
+
+  /* Image grid for photo-heavy posts */
+  .post-body .image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin: 32px 0;
+    align-items: center;
+    justify-items: center;
+  }
+  .post-body .image-grid img {
+    margin: 0; width: 100%; height: auto; object-fit: contain;
+  }
+  .post-body .image-grid p {
+    margin: 0; display: flex; align-items: center; justify-content: center;
+  }
+  .post-body .image-grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 32px 0;
+    align-items: center;
+    justify-items: center;
+  }
+  .post-body .image-grid-3 img {
+    margin: 0; width: 100%; height: auto; object-fit: contain;
+  }
+  .post-body .image-grid-3 p {
+    margin: 0; display: flex; align-items: center; justify-content: center;
+  }
+
+  /* Video embed */
+  .post-body .video-embed {
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0; overflow: hidden;
+    margin: 32px 0;
+    border-radius: 2px;
+  }
+  .post-body .video-embed iframe {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    border: none;
+  }
+
+  /* Self-hosted video */
+  .post-body video {
+    width: 100%;
+    border-radius: 2px;
+    margin: 32px 0;
+    display: block;
+  }
+
+  /* Figure with caption */
+  .post-body figure {
+    margin: 32px 0;
+  }
+  .post-body figure img {
+    margin: 0;
+  }
+  .post-body figcaption {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    letter-spacing: 0.04em;
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  /* Blockquote */
+  .post-body blockquote {
+    border-left: 3px solid var(--orange);
+    padding: 24px 32px;
+    margin: 32px 0;
+    background: var(--deep);
+    font-size: 1.2rem;
+    line-height: 1.6;
+    color: var(--white);
+    font-style: italic;
+  }
+
+  /* Code blocks (for the cheat sheet) */
+  .post-body code {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.85rem;
+    background: var(--deep);
+    padding: 2px 6px;
+    border-radius: 2px;
+    color: var(--orange);
+  }
+  .post-body pre {
+    background: var(--deep);
+    border: 1px solid var(--slate);
+    border-radius: 2px;
+    padding: 24px;
+    margin: 24px 0;
+    overflow-x: auto;
+  }
+  .post-body pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.8rem;
+    color: var(--ice);
+    line-height: 1.6;
+  }
+
+  /* Horizontal rule */
+  .post-body hr {
+    border: none;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--slate), transparent);
+    margin: 48px 0;
+  }
+
+  .post-nav {
+    border-top: 1px solid var(--slate);
+    padding: 40px 48px;
+    display: flex; justify-content: space-between;
+    max-width: 740px; margin: 0 auto;
+  }
+  .post-nav a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .post-nav a:hover { color: var(--orange); }
+
+  @media (max-width: 900px) {
+    .post-hero { padding: 120px 24px 40px; }
+    .post-body { padding: 60px 24px; }
+    .post-nav { padding: 32px 24px; }
+    .post-body .image-grid { grid-template-columns: 1fr; }
+    .post-body .image-grid-3 { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="post-hero">
+  <p class="eyebrow">{{ collection | default("Our Story") }}</p>
+  <h1>{{ title }}</h1>
+  <div class="post-meta">
+    <span>{{ date | dateFormat }}</span>
+    <span class="divider"></span>
+    <span>{{ author | default("Brenden Hierro") }}</span>
+  </div>
+</div>
+
+<div class="post-body">
+  {{ content | safe }}
+</div>
+
+{% if collections[collectionName] %}
+<div class="post-nav">
+  {% set posts = collections[collectionName] %}
+  {% set currentIndex = -1 %}
+  {% for post in posts %}
+    {% if post.url == page.url %}{% set currentIndex = loop.index0 %}{% endif %}
+  {% endfor %}
+  {% if currentIndex > 0 %}
+    <a href="{{ posts[currentIndex - 1].url }}">← {{ posts[currentIndex - 1].data.title }}</a>
+  {% else %}
+    <span></span>
+  {% endif %}
+  {% if currentIndex < posts.length - 1 %}
+    <a href="{{ posts[currentIndex + 1].url }}">{{ posts[currentIndex + 1].data.title }} →</a>
+  {% else %}
+    <span></span>
+  {% endif %}
+</div>
+{% endif %}

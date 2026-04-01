@@ -1,0 +1,28 @@
+---
+layout: listing.njk
+title: Our Story
+description: Follow the build journey of Disco Carrot, from vision to mountain-ready art installation.
+permalink: /our-story/
+---
+
+<div class="listing-hero">
+  <p class="eyebrow">The Build</p>
+  <h1>Our Story</h1>
+  <p>Follow along as we turn a 1972 Thiokol Spryte snowcat into a one-of-a-kind mobile DJ stage and art installation.</p>
+</div>
+
+<div class="listing-grid">
+  {%- for post in collections.ourStory -%}
+  <a href="{{ post.url }}" class="listing-card">
+    {% if post.data.thumbnail %}
+    <img src="{{ post.data.thumbnail }}" alt="{{ post.data.title }}">
+    {% endif %}
+    <div class="listing-card-body">
+      <div class="listing-card-date">{{ post.date | dateFormat }}</div>
+      <h3>{{ post.data.title }}</h3>
+      {% if post.data.excerpt %}<p>{{ post.data.excerpt }}</p>{% endif %}
+      <span class="read-more">Read More →</span>
+    </div>
+  </a>
+  {%- endfor -%}
+</div>

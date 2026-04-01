@@ -3,15 +3,31 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin");
 
-  // Pass through HTML files as-is
-  eleventyConfig.addPassthroughCopy("src/*.html");
+  // Date formatting filter
+  eleventyConfig.addFilter("dateFormat", function(date) {
+    const d = new Date(date);
+    const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+    return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+  });
+
+  // Collections
+  eleventyConfig.addCollection("adventures", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/blog/adventures/*.md").sort((a, b) => b.date - a.date);
+  });
+
+  eleventyConfig.addCollection("ourStory", function(collectionApi) {
+    return collectionApi.getFilteredByGlob("src/blog/our-story/*.md").sort((a, b) => b.date - a.date);
+  });
 
   return {
     dir: {
       input: "src",
       output: "_site",
-      includes: "includes"
+      includes: "includes",
+      data: "_data"
     },
-    passthroughFileCopy: true
+    markdownTemplateEngine: "njk",
+    htmlTemplateEngine: "njk",
+    templateFormats: ["md", "njk", "html"]
   };
 };

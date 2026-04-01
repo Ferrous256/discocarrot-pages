@@ -1,0 +1,28 @@
+---
+layout: listing.njk
+title: Adventures
+description: Recaps and photos from Disco Carrot events at ski resorts across the West.
+permalink: /adventures/
+---
+
+<div class="listing-hero">
+  <p class="eyebrow">On the Mountain</p>
+  <h1>Adventures</h1>
+  <p>Recaps and photos from our past events</p>
+</div>
+
+<div class="listing-grid">
+  {%- for post in collections.adventures -%}
+  <a href="{{ post.url }}" class="listing-card">
+    {% if post.data.thumbnail %}
+    <img src="{{ post.data.thumbnail }}" alt="{{ post.data.title }}">
+    {% endif %}
+    <div class="listing-card-body">
+      <div class="listing-card-date">{{ post.date | dateFormat }}</div>
+      <h3>{{ post.data.title }}</h3>
+      {% if post.data.excerpt %}<p>{{ post.data.excerpt }}</p>{% endif %}
+      <span class="read-more">Read More →</span>
+    </div>
+  </a>
+  {%- endfor -%}
+</div>

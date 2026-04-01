@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ title }} | Disco Carrot</title>
+{% if description %}<meta name="description" content="{{ description }}">{% endif %}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;600;700&family=Bebas+Neue&family=DM+Mono:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+
+<!-- GA4 analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-D9JNZK8R5H"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-D9JNZK8R5H');
+</script>
+
+<!-- MailerLite Universal -->
+<script>
+  (function(w,d,e,u,f,l,n){w[f]=w[f]||function(){(w[f].q=w[f].q||[])
+  .push(arguments);},l=d.createElement(e),l.async=1,l.src=u,
+  n=d.getElementsByTagName(e)[0],n.parentNode.insertBefore(l,n);})
+  (window,document,'script','https://assets.mailerlite.com/js/universal.js','ml');
+  ml('account', '2207091');
+</script>
+
+<style>
+  :root {
+    --orange: #FF5C00;
+    --carrot: #FF7A2B;
+    --gold: #FFD166;
+    --ice: #E8F4FF;
+    --midnight: #060C18;
+    --deep: #0A1628;
+    --slate: #1A2640;
+    --muted: #6B7E9F;
+    --white: #FFFFFF;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--midnight);
+    color: var(--ice);
+    font-family: 'Lexend', sans-serif;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.35;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 500;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, rgba(6,12,24,0.95), transparent);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.6rem; letter-spacing: 0.08em;
+    color: var(--white); text-decoration: none;
+  }
+  .nav-logo span { color: var(--orange); }
+  .nav-links {
+    display: flex; align-items: center; gap: 28px;
+  }
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--orange); }
+  .nav-links a.cta-btn {
+    color: var(--midnight); background: var(--orange);
+    padding: 10px 24px; border-radius: 2px;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .nav-links a.cta-btn:hover { background: var(--gold); color: var(--midnight); transform: translateY(-2px); }
+  .nav-toggle {
+    display: none; background: none; border: none; cursor: pointer;
+    width: 28px; height: 20px; position: relative; z-index: 600;
+  }
+  .nav-toggle span {
+    display: block; width: 100%; height: 2px; background: var(--white);
+    position: absolute; left: 0; transition: all 0.3s;
+  }
+  .nav-toggle span:nth-child(1) { top: 0; }
+  .nav-toggle span:nth-child(2) { top: 9px; }
+  .nav-toggle span:nth-child(3) { top: 18px; }
+  .nav-toggle.active span:nth-child(1) { top: 9px; transform: rotate(45deg); }
+  .nav-toggle.active span:nth-child(2) { opacity: 0; }
+  .nav-toggle.active span:nth-child(3) { top: 9px; transform: rotate(-45deg); }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--midnight); border-top: 1px solid var(--slate);
+    padding: 32px 48px; display: flex; justify-content: space-between; align-items: center;
+  }
+  footer .logo {
+    font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--white);
+  }
+  footer .logo span { color: var(--orange); }
+  .footer-links { display: flex; gap: 32px; }
+  .footer-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--muted); text-decoration: none; transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--orange); }
+
+  /* ── PAGE CONTENT ── */
+  {{ css | safe }}
+
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    .nav-toggle { display: block; }
+    .nav-links {
+      display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: var(--midnight); flex-direction: column;
+      justify-content: center; align-items: center; gap: 32px;
+    }
+    .nav-links.open { display: flex; }
+    .nav-links a { font-size: 1rem; color: var(--ice); }
+    .nav-links a.cta-btn { padding: 14px 32px; font-size: 0.85rem; }
+    footer { flex-direction: column; gap: 24px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-logo">Disco<span>Carrot</span></a>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+  <div class="nav-links" id="navLinks">
+    <a href="/">Home</a>
+    <a href="/our-story/">Our Story</a>
+    <a href="/adventures/">Adventures</a>
+    <a href="/sponsorship/">Sponsors</a>
+    <a href="/ski-resorts/">For Resorts</a>
+    <a href="https://cal.com/disco-carrot/general-inquiry" class="cta-btn" data-cal-link="disco-carrot/general-inquiry" data-cal-namespace="general" data-cal-config='{"layout":"month_view","theme":"dark"}'>Contact →</a>
+  </div>
+</nav>
+
+{{ content | safe }}
+
+<footer>
+  <div class="logo">Disco<span>Carrot</span></div>
+  <div class="footer-links">
+    <a href="/">Home</a>
+    <a href="/our-story/">Our Story</a>
+    <a href="/adventures/">Adventures</a>
+    <a href="/ski-resorts/">For Resorts</a>
+    <a href="/sponsorship/">Sponsorship</a>
+  </div>
+</footer>
+
+<script>
+  const navToggle = document.getElementById('navToggle');
+  const navLinks = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    navToggle.classList.toggle('active');
+    navLinks.classList.toggle('open');
+  });
+  navLinks.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      navToggle.classList.remove('active');
+      navLinks.classList.remove('open');
+    });
+  });
+</script>
+
+<!-- Cal.com Embed -->
+<script type="text/javascript">
+(function (C, A, L) {
+  let p = function (a, ar) { a.q.push(ar); };
+  let d = C.document;
+  C.Cal = C.Cal || function () {
+    let cal = C.Cal;
+    let ar = arguments;
+    if (!cal.loaded) {
+      cal.ns = {};
+      cal.q = cal.q || [];
+      d.head.appendChild(d.createElement("script")).src = A;
+      cal.loaded = true;
+    }
+    if (ar[0] === L) {
+      const api = function () { p(api, arguments); };
+      const namespace = ar[1];
+      api.q = api.q || [];
+      if (typeof namespace === "string") { cal.ns[namespace] = cal.ns[namespace] || api; p(cal.ns[namespace], ar); p(cal, ["initNamespace", namespace]); } else p(cal, ar);
+      return;
+    }
+    p(cal, ar);
+  };
+})(window, "https://app.cal.com/embed/embed.js", "init");
+
+Cal("init", "general", { origin: "https://cal.com" });
+Cal.ns["general"]("ui", {
+  theme: "dark",
+  styles: { branding: { brandColor: "#FF5C00" } },
+  hideEventTypeDetails: false,
+  layout: "month_view"
+});
+</script>
+</body>
+</html>
