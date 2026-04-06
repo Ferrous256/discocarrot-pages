@@ -32,7 +32,7 @@ layout: base.njk
     padding: 80px 48px;
     text-align: center;
   }
-  .post-body p {Time to take the snowcat out for a test-drive. 
+  .post-body p {
     font-size: 1.05rem; line-height: 1.8;
     color: var(--ice); margin-bottom: 28px;
   }
@@ -198,10 +198,10 @@ layout: base.njk
 
   @media (max-width: 900px) {
     .post-hero { padding: 120px 24px 40px; }
-    .post-body { padding: 60px 24px; }
+    .post-body { padding: 60px 16px; max-width: 100%; }
     .post-nav { padding: 32px 24px; }
-    .post-body .image-grid { grid-template-columns: 1fr; }
-    .post-body .image-grid-3 { grid-template-columns: 1fr; }
+    .post-body .image-grid { grid-template-columns: repeat(2, 1fr); }
+    .post-body .image-grid-3 { grid-template-columns: repeat(3, 1fr); }
   }
 </style>
 
