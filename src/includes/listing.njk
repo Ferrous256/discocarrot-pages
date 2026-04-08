@@ -63,6 +63,17 @@ layout: base.njk
     .listing-hero { padding: 120px 24px 40px; }
     .listing-grid { grid-template-columns: 1fr; padding: 40px 24px 80px; }
   }
+
+  .listing-hero .btn-ghost {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.78rem; letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--ice); border: 1px solid var(--ice);
+  padding: 16px 36px; border-radius: 2px; text-decoration: none;
+  display: inline-block; margin-top: 16px;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.listing-hero .btn-ghost:hover { border-color: var(--orange); color: var(--orange); transform: translateY(-3px); }
+
 </style>
 
 {{ content | safe }}
