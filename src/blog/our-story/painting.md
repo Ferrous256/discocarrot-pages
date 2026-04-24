@@ -1,16 +1,19 @@
 ---
 layout: post.njk
-title: "Paint"
-date: 2025-11-01
+title: Paint
+date: 2026-02-01
 author: Brenden Hierro
 collection: Our Story
 collectionName: ourStory
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1775026414/paint2_qfvzbj.png
-excerpt: "We went hard in the paint"
+excerpt: We went hard in the paint
 ---
-
 ## Paint
+
 ### Two-part epoxy
+
+Because of how we built it and the final look we wanted, we realistically get one shot at painting the metal exterior. We went with the most durable, longest-lasting paint we could find. It's the same stuff used on the Higgins Street bridge in Missoula. Respirators required!
+
 <div class="image-grid">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775014258/2025-12-26_15.12.52_gaekkn.webp">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775014251/2025-12-26_14.14.25_ftv65w.webp">
