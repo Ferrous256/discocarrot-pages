@@ -1,6 +1,36 @@
 ---
 layout: base.njk
 ---
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": {{ title | dump | safe }},
+  "datePublished": "{{ date.toISOString() }}",
+  "dateModified": "{{ date.toISOString() }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ author | default('Brenden Hierro') }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Disco Carrot",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ site.logo }}"
+    }
+  },
+  {% if thumbnail %}"image": "{{ thumbnail }}",{% endif %}
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ site.url }}{{ page.url }}"
+  },
+  "articleSection": "{{ collection | default('Our Story') }}",
+  "isPartOf": { "@id": "{{ site.url }}/#website" }
+}
+</script>
+
 <style>
   .post-hero {
     padding: 160px 48px 60px;

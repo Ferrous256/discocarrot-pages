@@ -522,6 +522,28 @@
     ml('account', '2207091');
 </script>
 <!-- End MailerLite Universal -->
+
+<meta name="theme-color" content="#FF5C00">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:alt" content="Disco Carrot — mobile snowcat DJ stage">
+
+<!-- Structured data: Organization -->
+{% include "_organization-schema.njk" %}
+
+<!-- Structured data: WebSite -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": "{{ site.url }}/#website",
+  "url": "{{ site.url }}",
+  "name": "Disco Carrot",
+  "description": "{{ site.shortDescription }}",
+  "publisher": { "@id": "{{ site.url }}/#organization" },
+  "inLanguage": "en-US"
+}
+</script>
 </head>
 <body>
 

@@ -4,29 +4,36 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{{ title }} | Disco Carrot</title>
-{% if description %}<meta name="description" content="{{ description }}">{% endif %}
+{% if description %}<meta name="description" content="{{ description }}">{% else %}<meta name="description" content="{{ site.shortDescription }}">{% endif %}
+<meta name="theme-color" content="#FF5C00">
+<meta name="robots" content="index,follow,max-image-preview:large">
 
 <!-- Canonical URL -->
-<link rel="canonical" href="https://www.discocarrot.com{{ page.url }}">
+<link rel="canonical" href="{{ site.url }}{{ page.url }}">
 
 <!-- Open Graph -->
 <meta property="og:title" content="{{ title }} | Disco Carrot">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.discocarrot.com{{ page.url }}">
-{% if description %}<meta property="og:description" content="{{ description }}">{% endif %}
-{% if thumbnail %}<meta property="og:image" content="{{ thumbnail }}">
-{% else %}<meta property="og:image" content="https://res.cloudinary.com/dctaixj2i/image/upload/disco-carrot/og-default.jpg">{% endif %}
+<meta property="og:type" content="{% if collection %}article{% else %}website{% endif %}">
+<meta property="og:url" content="{{ site.url }}{{ page.url }}">
+<meta property="og:locale" content="en_US">
 <meta property="og:site_name" content="Disco Carrot">
+{% if description %}<meta property="og:description" content="{{ description }}">{% else %}<meta property="og:description" content="{{ site.shortDescription }}">{% endif %}
+{% if thumbnail %}<meta property="og:image" content="{{ thumbnail }}">
+{% else %}<meta property="og:image" content="{{ site.ogImage }}">{% endif %}
+<meta property="og:image:alt" content="{{ title }} — Disco Carrot">
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ title }} | Disco Carrot">
-{% if description %}<meta name="twitter:description" content="{{ description }}">{% endif %}
+{% if description %}<meta name="twitter:description" content="{{ description }}">{% else %}<meta name="twitter:description" content="{{ site.shortDescription }}">{% endif %}
 {% if thumbnail %}<meta name="twitter:image" content="{{ thumbnail }}">
-{% else %}<meta name="twitter:image" content="https://res.cloudinary.com/dctaixj2i/image/upload/disco-carrot/og-default.jpg">{% endif %}
+{% else %}<meta name="twitter:image" content="{{ site.ogImage }}">{% endif %}
 
 <!-- Favicon -->
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+
+<!-- Structured data: Organization -->
+{% include "_organization-schema.njk" %}
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

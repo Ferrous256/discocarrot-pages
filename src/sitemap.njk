@@ -1,0 +1,27 @@
+---
+permalink: /sitemap.xml
+eleventyExcludeFromCollections: true
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{%- for entry in collections.all -%}
+{%- if entry.url and "/admin/" not in entry.url and "style-guide" not in entry.url -%}
+  <url>
+    <loc>{{ site.url }}{{ entry.url }}</loc>
+    {%- if entry.date %}
+    <lastmod>{{ entry.date.toISOString() }}</lastmod>
+    {%- endif %}
+    {%- if entry.url == "/" %}
+    <priority>1.0</priority>
+    <changefreq>weekly</changefreq>
+    {%- elif "/adventures/" in entry.url or "/our-story/" in entry.url %}
+    <priority>0.7</priority>
+    <changefreq>monthly</changefreq>
+    {%- else %}
+    <priority>0.8</priority>
+    <changefreq>monthly</changefreq>
+    {%- endif %}
+  </url>
+{%- endif -%}
+{%- endfor %}
+</urlset>

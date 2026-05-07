@@ -1,0 +1,69 @@
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": ["EntertainmentBusiness", "LocalBusiness", "Organization"],
+  "@id": "{{ site.url }}/#organization",
+  "name": "{{ site.name }}",
+  "legalName": "{{ site.legalName }}",
+  "alternateName": "Disco Carrot Snowcat",
+  "url": "{{ site.url }}",
+  "logo": "{{ site.logo }}",
+  "image": "{{ site.ogImage }}",
+  "description": "{{ site.description }}",
+  "slogan": "{{ site.slogan }}",
+  "email": "{{ site.email }}",
+  "priceRange": "$$$",
+  "founder": [
+    {% for f in site.founders -%}
+    {"@type": "Person", "name": "{{ f }}"}{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ],
+  "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "{{ site.city }}",
+    "addressRegion": "{{ site.state }}",
+    "addressCountry": "{{ site.country }}"
+  },
+  "geo": {
+    "@type": "GeoCoordinates",
+    "latitude": {{ site.geo.latitude }},
+    "longitude": {{ site.geo.longitude }}
+  },
+  "areaServed": [
+    {% for area in site.areaServed -%}
+    {"@type": "AdministrativeArea", "name": "{{ area }}"}{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ],
+  "sameAs": [
+    "{{ site.social.instagram }}",
+    "{{ site.social.facebook }}"
+  ],
+  "knowsAbout": [
+    "Mobile DJ stage",
+    "Ski resort entertainment",
+    "Outdoor music events",
+    "Snowcat art installation",
+    "Brand activation",
+    "Après-ski programming",
+    "Festival production"
+  ],
+  "makesOffer": [
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Mountain Programming",
+        "description": "Turnkey DJ, music, and visual production for ski resorts and outdoor venues."
+      }
+    },
+    {
+      "@type": "Offer",
+      "itemOffered": {
+        "@type": "Service",
+        "name": "Brand Sponsorship & Activation",
+        "description": "Experiential marketing, content creation, and on-site activation for outdoor and lifestyle brands."
+      }
+    }
+  ]
+}
+</script>

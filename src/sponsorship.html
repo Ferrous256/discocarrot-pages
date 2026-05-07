@@ -499,6 +499,46 @@
     ml('account', '2207091');
 </script>
 <!-- End MailerLite Universal -->
+
+<meta name="theme-color" content="#FF5C00">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:alt" content="Disco Carrot brand sponsorship and activation">
+
+<!-- Structured data: Organization -->
+{% include "_organization-schema.njk" %}
+
+<!-- Structured data: Service (Brand Sponsorship) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "{{ site.url }}/sponsorship/#service",
+  "name": "Brand Sponsorship & Experiential Activation",
+  "serviceType": "Brand Activation & Experiential Marketing",
+  "description": "Put your brand inside an authentic, high-energy outdoor experience with the Disco Carrot mobile snowcat stage. Includes physical placement, social media amplification, professional content, and live activation at ski resorts and festivals.",
+  "url": "{{ site.url }}/sponsorship/",
+  "provider": { "@id": "{{ site.url }}/#organization" },
+  "areaServed": [
+    {% for area in site.areaServed -%}
+    {"@type": "AdministrativeArea", "name": "{{ area }}"}{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ],
+  "audience": {
+    "@type": "BusinessAudience",
+    "audienceType": "Outdoor brands, beverage companies, ski and lifestyle brands seeking authentic activation"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Sponsorship Tiers",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Trail Blazer", "description": "Entry-tier supporting sponsorship: website logo, social tags, recap inclusion, brand visibility at 1–2 activations." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Summit Partner", "description": "Full-season core sponsorship: vehicle and DJ booth branding, on-site product sampling, sponsored DJ sets, professional content with reuse rights." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Title Sponsor", "description": "Premium custom partnership: vehicle wrap, category exclusivity, dedicated content campaign, co-branded merch, tour stop naming rights." } }
+    ]
+  }
+}
+</script>
 </head>
 <body>
 

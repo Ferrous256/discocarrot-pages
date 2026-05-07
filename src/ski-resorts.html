@@ -850,6 +850,48 @@
     ml('account', '2207091');
 </script>
 <!-- End MailerLite Universal -->
+
+<meta name="theme-color" content="#FF5C00">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta property="og:locale" content="en_US">
+<meta property="og:image:alt" content="Disco Carrot snowcat DJ stage at a ski resort">
+
+<!-- Structured data: Organization -->
+{% include "_organization-schema.njk" %}
+
+<!-- Structured data: Service (Mountain Programming) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "@id": "{{ site.url }}/ski-resorts/#service",
+  "name": "Mountain Programming for Ski Resorts",
+  "serviceType": "Event Production & Live Entertainment",
+  "description": "Turnkey mobile DJ stage and art installation for ski resorts and outdoor venues. Concert-quality sound, club-style lighting, and full-production entertainment that extends guest dwell time and drives food, beverage, and lodging revenue.",
+  "url": "{{ site.url }}/ski-resorts/",
+  "provider": { "@id": "{{ site.url }}/#organization" },
+  "areaServed": [
+    {% for area in site.areaServed -%}
+    {"@type": "AdministrativeArea", "name": "{{ area }}"}{% if not loop.last %},{% endif %}
+    {%- endfor %}
+  ],
+  "audience": {
+    "@type": "BusinessAudience",
+    "audienceType": "Ski resorts, mountain venues, and event hosts"
+  },
+  "hasOfferCatalog": {
+    "@type": "OfferCatalog",
+    "name": "Mountain Programming Menu",
+    "itemListElement": [
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Sunrise Series", "description": "First Chair Line DJ Set, Powder Day Wake-Up, Corporate Retreat Morning Boost." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Après Takeover", "description": "Base Area Après Party, Holiday Weekend Activation, Night Session Soundtrack." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Competition Mode", "description": "Race Day Hype, Finish Line Celebration, Podium and Awards Stage, Terrain Park Jam." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Marquee Events", "description": "Opening Day, Closing Day, Pond Skim, Charity Fundraisers." } },
+      { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Private & VIP", "description": "VIP Chalet Activation, Wedding After-Party, Private Corporate Buyout, Custom Production." } }
+    ]
+  }
+}
+</script>
 </head>
 <body>
 

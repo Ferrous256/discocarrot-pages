@@ -1,0 +1,33 @@
+{
+  "url": "https://www.discocarrot.com",
+  "name": "Disco Carrot",
+  "legalName": "Thiokol Entertainment LLC",
+  "description": "Mobile DJ stage and art installation built on a 1973 Thiokol Spryte snowcat. Concert-quality sound, club-style lighting, and full-production entertainment for ski resorts, festivals, and outdoor events across western North America.",
+  "shortDescription": "Mobile DJ stage and art installation built on a 1973 Thiokol Spryte snowcat. Based in Missoula, Montana.",
+  "slogan": "Make Tracks on the Mountain",
+  "email": "hello@discocarrot.com",
+  "city": "Missoula",
+  "state": "MT",
+  "country": "US",
+  "geo": {
+    "latitude": 46.8721,
+    "longitude": -113.994
+  },
+  "founders": ["Bryan Kass", "Brenden Hierro"],
+  "logo": "https://res.cloudinary.com/dctaixj2i/image/upload/v1775022711/og-default.jpg",
+  "ogImage": "https://res.cloudinary.com/dctaixj2i/image/upload/v1775022711/og-default.jpg",
+  "social": {
+    "instagram": "https://www.instagram.com/discocarrotsnowcat/",
+    "facebook": "https://www.facebook.com/profile.php?id=61576695981616",
+    "instagramHandle": "@discocarrotsnowcat"
+  },
+  "areaServed": [
+    "Montana",
+    "Idaho",
+    "Washington",
+    "Oregon",
+    "Wyoming",
+    "Utah",
+    "Canada"
+  ]
+}
