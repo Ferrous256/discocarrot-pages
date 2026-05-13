@@ -80,7 +80,7 @@ def _google_creds():
         client_secret=os.environ["GOOGLE_CLIENT_SECRET"],
         token_uri="https://oauth2.googleapis.com/token",
         scopes=[
-            "https://www.googleapis.com/auth/gmail.readonly",
+            "https://mail.google.com/",
             "https://www.googleapis.com/auth/drive",
         ],
     )
