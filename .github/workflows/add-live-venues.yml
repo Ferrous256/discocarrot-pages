@@ -1,0 +1,30 @@
+name: Add Live Venues to Tracker (one-time)
+
+on:
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Run update
+        env:
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GDRIVE_TRACKER_FILE_ID: ${{ secrets.GDRIVE_TRACKER_FILE_ID }}
+          GDRIVE_ARCHIVE_FOLDER_ID: ${{ secrets.GDRIVE_ARCHIVE_FOLDER_ID }}
+        run: python scripts/add_live_venues.py
