@@ -1,0 +1,36 @@
+name: Weekly TourTracker Sync
+
+on:
+  schedule:
+    # Every Sunday at 4:00 AM UTC
+    - cron: "0 4 * * 0"
+  workflow_dispatch: # allow manual runs from GitHub Actions UI
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Run tracker sync
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GDRIVE_TRACKER_FILE_ID: ${{ secrets.GDRIVE_TRACKER_FILE_ID }}
+          GDRIVE_ARCHIVE_FOLDER_ID: ${{ secrets.GDRIVE_ARCHIVE_FOLDER_ID }}
+        run: python scripts/tour_tracker_sync.py
