@@ -25,7 +25,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 
 
-# ── Constants ────────────────────────────────────────────
+# Constants
 
 SHEET_ID = os.environ["GDRIVE_TRACKER_FILE_ID"]
 TAB = "Outreach Tracker"
@@ -41,7 +41,7 @@ COL_INDEX = {
 SKIP_STATUSES = {"Booked", "Declined", "Not Contacted", "On Hold"}
 
 
-# ── Auth ──────────────────────────────────────────────────────
+# Auth
 
 def _google_creds():
     creds = Credentials(
@@ -59,7 +59,7 @@ def _google_creds():
     return creds
 
 
-# ── Tracker helpers ───────────────────────────────────────────────
+# Tracker helpers
 
 def cell(row: list, col_key: str) -> str:
     idx = COL_INDEX[col_key]
@@ -116,30 +116,30 @@ def find_due_followups(rows: list[list]) -> list[tuple[int, list]]:
 def update_tracker_note(sheets, rownum: int, current_row: list, draft_date: str):
     existing = cell(current_row, "notes")
     sep = "\n" if existing else ""
-    new_notes = f"{existing}{sep}[{draft_date}] Drafted follow-up email"
+    new_notes = existing + sep + "[" + draft_date + "] Drafted follow-up email"
 
     col = chr(ord("A") + COL_INDEX["notes"])
     sheets.spreadsheets().values().update(
         spreadsheetId=SHEET_ID,
-        range=f"{TAB}!{col}{rownum}",
+        range=TAB + "!" + col + str(rownum),
         valueInputOption="RAW",
         body={"values": [[new_notes]]},
     ).execute()
 
 
-# ── Gmail helpers ─────────────────────────────────────────────────
+# Gmail helpers
 
 def get_claude_label_id(gmail) -> str | None:
     labels = gmail.users().labels().list(userId="me").execute().get("labels", [])
     for label in labels:
         if label["name"].lower() == "claude":
             return label["id"]
-    print("Warning: 'Claude' label not found — drafts will be created without it.")
+    print("Warning: 'Claude' label not found -- drafts will be created without it.")
     return None
 
 
 def find_thread(gmail, contact_email: str) -> dict | None:
-    query = f"(from:{contact_email} OR to:{contact_email})"
+    query = "(from:" + contact_email + " OR to:" + contact_email + ")"
     result = gmail.users().threads().list(
         userId="me", q=query, maxResults=5
     ).execute()
@@ -157,18 +157,14 @@ def extract_thread_text(thread: dict) -> str:
         headers = {h["name"]: h["value"] for h in msg["payload"].get("headers", [])}
         body = _decode_body(msg["payload"])
         parts.append(
-            f"From: {headers.get('From','')}
-"
-            f"Date: {headers.get('Date','')}
-"
-            f"Subject: {headers.get('Subject','')}
-
-"
-            f"{body[:1500]}"
+            "From: {}\nDate: {}\nSubject: {}\n\n{}".format(
+                headers.get("From", ""),
+                headers.get("Date", ""),
+                headers.get("Subject", ""),
+                body[:1500],
+            )
         )
-    return "
----
-".join(parts)
+    return "\n---\n".join(parts)
 
 
 def _decode_body(payload: dict) -> str:
@@ -197,7 +193,7 @@ def create_reply_draft(
 
     subject = headers.get("Subject", "")
     if not subject.lower().startswith("re:"):
-        subject = f"Re: {subject}"
+        subject = "Re: " + subject
     message_id = headers.get("Message-ID", "")
 
     mime = MIMEText(body_text, "plain")
@@ -223,39 +219,44 @@ def create_reply_draft(
     return draft["id"]
 
 
-# ── Claude draft generation ───────────────────────────────────────────────
+# Claude draft generation
 
 def generate_followup(venue_row: list, thread_text: str) -> str:
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
 
-    prompt = f"""You are writing a follow-up email on behalf of Brenden Hierro at Disco Carrot.
+    venue = cell(venue_row, "resort")
+    contact_name = cell(venue_row, "contact_name")
+    contact_email = cell(venue_row, "contact_email")
+    status = cell(venue_row, "status")
+    tier = cell(venue_row, "tier")
+    notes = cell(venue_row, "notes")
+    region = cell(venue_row, "region")
 
-Disco Carrot is a mobile DJ stage and art installation built on a 1972 Thiokol Spryte snowcat, based in Missoula, MT. They are booking their 2026/27 winter ski resort tour across the western US.
-
-Venue: {cell(venue_row, 'resort')}
-Contact: {cell(venue_row, 'contact_name')} ({cell(venue_row, 'contact_email')})
-Current Status: {cell(venue_row, 'status')}
-Tier: {cell(venue_row, 'tier')}
-Notes: {cell(venue_row, 'notes')}
-Region: {cell(venue_row, 'region')}
-
-Previous email thread:
-{thread_text}
-
-Write a short, warm follow-up email body. Rules:
-- 3-5 sentences only
-- Reference specific details from the thread or venue context
-- Friendly and direct tone, not pushy
-- Do NOT include a subject line
-- Do NOT invent facts not present in the thread or notes
-- End with this exact signature:
-
-Brenden Hierro
-Owner / Operator
-406.552.2528
-brenden@discocarrot.com
-
-Return ONLY the email body. No preamble, no explanation."""
+    prompt = (
+        "You are writing a follow-up email on behalf of Brenden Hierro at Disco Carrot.\n\n"
+        "Disco Carrot is a mobile DJ stage and art installation built on a 1972 Thiokol Spryte "
+        "snowcat, based in Missoula, MT. They are booking their 2026/27 winter ski resort tour "
+        "across the western US.\n\n"
+        "Venue: " + venue + "\n"
+        "Contact: " + contact_name + " (" + contact_email + ")\n"
+        "Current Status: " + status + "\n"
+        "Tier: " + str(tier) + "\n"
+        "Notes: " + notes + "\n"
+        "Region: " + region + "\n\n"
+        "Previous email thread:\n" + thread_text + "\n\n"
+        "Write a short, warm follow-up email body. Rules:\n"
+        "- 3-5 sentences only\n"
+        "- Reference specific details from the thread or venue context\n"
+        "- Friendly and direct tone, not pushy\n"
+        "- Do NOT include a subject line\n"
+        "- Do NOT invent facts not present in the thread or notes\n"
+        "- End with this exact signature:\n\n"
+        "Brenden Hierro\n"
+        "Owner / Operator\n"
+        "406.552.2528\n"
+        "brenden@discocarrot.com\n\n"
+        "Return ONLY the email body. No preamble, no explanation."
+    )
 
     response = client.messages.create(
         model="claude-opus-4-7",
@@ -265,11 +266,11 @@ Return ONLY the email body. No preamble, no explanation."""
     return response.content[0].text.strip()
 
 
-# ── Main ──────────────────────────────────────────────────────────────
+# Main
 
 def main():
     today = date.today().isoformat()
-    print(f"=== Disco Carrot Follow-up Drafts — {today} ===")
+    print("=== Disco Carrot Follow-up Drafts -- " + today + " ===")
 
     creds = _google_creds()
     gmail = build("gmail", "v1", credentials=creds)
@@ -278,11 +279,11 @@ def main():
     claude_label_id = get_claude_label_id(gmail)
 
     rows = sheets.spreadsheets().values().get(
-        spreadsheetId=SHEET_ID, range=f"{TAB}!A:R"
+        spreadsheetId=SHEET_ID, range=TAB + "!A:R"
     ).execute().get("values", [])
 
     due = find_due_followups(rows)
-    print(f"Found {len(due)} venue(s) due for follow-up.")
+    print("Found " + str(len(due)) + " venue(s) due for follow-up.")
 
     if not due:
         print("Nothing to draft today.")
@@ -292,21 +293,21 @@ def main():
     for rownum, venue_row in due:
         resort = cell(venue_row, "resort")
         contact_email = cell(venue_row, "contact_email")
-        print(f"\n→ {resort} ({contact_email})")
+        print("\n-> " + resort + " (" + contact_email + ")")
 
         thread = find_thread(gmail, contact_email)
         if not thread:
-            print(f"  ⚠ No Gmail thread found, skipping")
+            print("  WARNING: No Gmail thread found, skipping")
             continue
 
         body = generate_followup(venue_row, extract_thread_text(thread))
         draft_id = create_reply_draft(gmail, thread, contact_email, body, claude_label_id)
         update_tracker_note(sheets, rownum, venue_row, today)
 
-        print(f"  ✓ Draft created (id={draft_id}), tracker updated")
+        print("  OK Draft created (id=" + draft_id + "), tracker updated")
         drafted += 1
 
-    print(f"\n=== Done — {drafted} draft(s) created ===")
+    print("\n=== Done -- " + str(drafted) + " draft(s) created ===")
 
 
 if __name__ == "__main__":
