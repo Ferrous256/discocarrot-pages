@@ -1,0 +1,36 @@
+name: Daily Follow-up Drafts
+
+on:
+  schedule:
+    # 8am Mountain Time — MDT (summer) = UTC-6, so 14:00 UTC
+    # Shifts to 15:00 UTC in winter (MST = UTC-7); adjust Nov–Mar if needed
+    - cron: "0 14 * * *"
+  workflow_dispatch:
+
+jobs:
+  drafts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r scripts/requirements.txt
+
+      - name: Run follow-up drafts
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
+          GOOGLE_REFRESH_TOKEN: ${{ secrets.GOOGLE_REFRESH_TOKEN }}
+          GDRIVE_TRACKER_FILE_ID: ${{ secrets.GDRIVE_TRACKER_FILE_ID }}
+        run: python scripts/daily_followup_drafts.py
