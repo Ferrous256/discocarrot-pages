@@ -16,7 +16,7 @@ Saturday April 4th we rolled up the mountain to throw a spring après party in c
 
 <div class="image-grid">
 
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_Apre_April_4_2026_003_atohpz.jpg">
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875400/Lookout_Ski_Resort_Apre_April_4_2026_005_shwee1.jpg">
 
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875400/Lookout_Ski_Resort_Apre_April_4_2026_001_qvskhl.jpg">
@@ -28,13 +28,13 @@ Saturday April 4th we rolled up the mountain to throw a spring après party in c
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875401/Lookout_Ski_Resort_April_4_2026_003_czqlmn.jpg">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875401/Lookout_Ski_Resort_April_4_2026_007_cdujuv.jpg">
-
+</div>
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_Apre_April_4_2026_004_ekbiw5.jpg">
 
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775672651/Mikah_fans_jy0ijm.jpg">
 
-</div>
+
 
 ### Thank you to our sponsor
 
