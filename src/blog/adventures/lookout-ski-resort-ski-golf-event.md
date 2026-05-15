@@ -8,7 +8,8 @@ collectionName: adventures
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1778876923/Ski_Golf_Event_flyer_uvoksi.jpg
 excerpt: Ski + Golf + Disco Carrot = super fun time
 ---
-#Lookout Ski Resort
+## Lookout Ski Resort
+
 Disco Carrot played tunes while skiiers played golf! Lookout's brainy ski golf winners were announced through Disco Carrot's sound system caught by Spokane's [local news](https://www.kxly.com/features/air-4-adventures/air-4-adventure-enjoying-a-round-of-ski-golf/article_d7012f3a-ffbb-459b-8d2d-3978e4068f79.html) team.
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875431/KYXL_news_video_ei1ik8.jpg">
