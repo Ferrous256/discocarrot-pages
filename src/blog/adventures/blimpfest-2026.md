@@ -8,7 +8,7 @@ collectionName: adventures
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1778879985/blimp-map-1_orig_p2jl36.jpg
 excerpt: Free ski and snowboard hike park powered by live music at the top of Lolo Pass
 ---
-## Blimpfest 2026
+### Blimpfest 2026
 
 Blimp fest is a fully immersive world of sound, art, and self expression. Complete with two curated musical journeys, a sculpture garden, immersive installations, vibrant vendor village, interactive craft spaces, yard games, costume culture, and camping under the stars.
 
@@ -32,14 +32,6 @@ Blimp fest is a fully immersive world of sound, art, and self expression. Comple
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778880964/Blimpfest_2026_08_eoynnp.jpg">
 
-<iframe width="315" height="560"
+https://youtube.com/shorts/o4GWy-gi2Xw?feature=share
 
-src="https://www.youtube.com/embed/o4GWy-gi2Xw"
-
-title="YouTube video player"
-
-frameborder="0"
-
-allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-
-allowfullscreen></iframe>
+<iframe width="100%" height="600" src="https://www.youtube-nocookie.com/embed/o4GWy-gi2Xw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
