@@ -10,7 +10,7 @@ excerpt: Ski + Golf + Disco Carrot = super fun time
 ---
 ![]()
 
-Saturday April 4th we rolled up the mountain to throw a spring après party in conjunction with Lookout's brainy ski golf event. Winners of the event were announced through Disco Carrot's sound system while Spokane's local news team KYXL rolled film.
+Disco Carrot played tunes while skiiers played golf! Lookout's brainy ski golf winners were announced through Disco Carrot's sound system caught by Spokane's [local news](https://www.kxly.com/features/air-4-adventures/air-4-adventure-enjoying-a-round-of-ski-golf/article_d7012f3a-ffbb-459b-8d2d-3978e4068f79.html) team.
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875431/KYXL_news_video_ei1ik8.jpg">
 
