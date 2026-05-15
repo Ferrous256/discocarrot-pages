@@ -42,4 +42,4 @@ Disco Carrot played tunes while skiiers played golf! Lookout's brainy ski golf w
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_009_fhwg7c.jpg">
 
-<iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/_KPcgWtmriQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="100%" height="600" src="https://www.youtube-nocookie.com/embed/_KPcgWtmriQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
