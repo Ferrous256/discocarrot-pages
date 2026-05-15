@@ -15,9 +15,12 @@ Saturday April 4th we rolled up the mountain to throw a spring après party in c
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875431/KYXL_news_video_ei1ik8.jpg">
 
 <div class="image-grid">
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_005_p1enpt.jpg">
+
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_Apre_April_4_2026_003_atohpz.jpg">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_Apre_April_4_2026_004_ekbiw5.jpg">
+
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_005_p1enpt.jpg">
+
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_004_jarzyd.jpg">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875401/Lookout_Ski_Resort_April_4_2026_003_czqlmn.jpg">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875401/Lookout_Ski_Resort_April_4_2026_006_bdmajn.jpg">
@@ -30,16 +33,14 @@ Saturday April 4th we rolled up the mountain to throw a spring après party in c
 
 </div>
 
-\### Thank you to our sponsor
+### Thank you to our sponsor
 
-\## Back to the mother Kombucha
+## Back to the mother Kombucha
 
-<div class="image-grid"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875400/Lookout_Ski_Resort_April_4_2026_001_sqxjib.jpg">
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875400/Lookout_Ski_Resort_April_4_2026_001_sqxjib.jpg">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_008_vjm9be.jpg">
 
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_Apre_April_4_2026_004_ekbiw5.jpg">
 
-</div>
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778875402/Lookout_Ski_Resort_April_4_2026_009_fhwg7c.jpg">
