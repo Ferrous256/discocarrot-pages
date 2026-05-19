@@ -393,6 +393,20 @@
     font-size: 0.85rem; color: var(--muted); line-height: 1.55;
   }
 
+  /* ── SHORTS GRID ── */
+  .shorts-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 24px; margin-top: 48px;
+    max-width: 900px; margin-left: auto; margin-right: auto;
+  }
+  .short-card {
+    border: 1px solid var(--slate); overflow: hidden; border-radius: 2px;
+    aspect-ratio: 9 / 16; background: var(--slate);
+  }
+  .short-card iframe {
+    width: 100%; height: 100%; display: block; border: 0;
+  }
+
   /* ── INSTAGRAM / SOCIAL ── */
   .social-section { text-align: center; }
   .social-link {
@@ -503,6 +517,7 @@
     .nav-links a.cta-btn { padding: 14px 32px; font-size: 0.85rem; }
     .about-layout, .newsletter-layout { grid-template-columns: 1fr; gap: 40px; }
     .paths-grid, .adventures-grid { grid-template-columns: 1fr; }
+    .shorts-grid { grid-template-columns: 1fr; max-width: 360px; }
     footer { flex-direction: column; gap: 24px; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
     .scroll-hint { display: none; }
@@ -669,7 +684,7 @@
 
   <div class="adventures-grid">
     <!-- Adventure 1 -->
-    <a href="https://discocarrot.com/adventures/um-railjam-2026" class="adventure-card">
+    <a href="https://discocarrot.com/blog/adventures/um-railjam-2026/" class="adventure-card">
       <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775024895/content2_lllhx4.webp" class="adventure-img" alt="UM Rail Jam 2026">
       <div class="adventure-info">
         <div class="adventure-date">February 14, 2026</div>
@@ -679,7 +694,7 @@
     </a>
 
     <!-- Adventure 2 -->
-    <a href="https://discocarrot.com/adventures/grizzly-ridge-bar-bridger" class="adventure-card">
+    <a href="https://discocarrot.com/blog/adventures/bridger-bowl-2026/" class="adventure-card">
       <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775024888/cap_C0165_00_00_16_02-cc2_wyszyd.webp" class="adventure-img" alt="Bridger Bowl Bozeman">
       <div class="adventure-info">
         <div class="adventure-date">January 26, 2026</div>
@@ -689,7 +704,7 @@
     </a>
 
     <!-- Adventure 3 -->
-    <a href="https://discocarrot.com/adventures/47z058nzz0ix0x7rvt47d6c7ikyeml" class="adventure-card">
+    <a href="https://discocarrot.com/blog/adventures/marshall-mountain-2026/" class="adventure-card">
       <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775024891/DSC07187_l6ztay.webp" class="adventure-img" alt="Marshall Mountain">
       <div class="adventure-info">
         <div class="adventure-date">January 16, 2026</div>
@@ -699,10 +714,16 @@
     </a>
   </div>
 
-  <!-- VIDEO -->
-  <div style="display: flex; justify-content: center; margin-top: 48px;">
-    <div style="border: 1px solid var(--slate); overflow: hidden; border-radius: 2px;">
-      <iframe width="315" height="560" src="https://www.youtube.com/embed/FIqF_o0w-7s" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="display: block;"></iframe>
+  <!-- VIDEO SHORTS -->
+  <div class="shorts-grid">
+    <div class="short-card">
+      <iframe src="https://www.youtube.com/embed/o4GWy-gi2Xw" title="Disco Carrot YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="short-card">
+      <iframe src="https://www.youtube.com/embed/fzNbRRnSZlE" title="Disco Carrot YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+    <div class="short-card">
+      <iframe src="https://www.youtube.com/embed/_KPcgWtmriQ" title="Disco Carrot YouTube Short" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
     </div>
   </div>
 
