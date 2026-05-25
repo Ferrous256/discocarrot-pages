@@ -32,8 +32,6 @@ Blimp fest is a fully immersive world of sound, art, and self expression. Curate
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730632/Blimpfest_May_2nd_2026_007_pznhie.jpg">
 
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778880959/Blimpfest_2026_04_fwpkmm.jpg">
-
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730632/Blimpfest_May_2nd_2026_009_ftqhzw.jpg">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730631/Blimpfest_May_2nd_2026_008_iwdotv.jpg">
