@@ -22,8 +22,6 @@ Blimp fest is a fully immersive world of sound, art, and self expression. Curate
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778880959/Blimpfest_2026_04_fwpkmm.jpg">
 
-\---
-
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730632/Blimpfest_May_2nd_2026_011_pivuxa.jpg">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730632/Blimpfest_May_2nd_2026_010_a5qzoq.jpg">
@@ -64,8 +62,6 @@ Blimp Jam is where skiers and Snowboarders tear up the terrain park up Lolo Pass
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730626/Blimpfest_May_2nd_2026_034_izkrfk.jpg">
 
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730625/Blimpfest_May_2nd_2026_029_wjqixi.jpg">
-
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730625/Blimpfest_May_2nd_2026_028_fxnlzh.jpg">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730624/Blimpfest_May_2nd_2026_025_cxczyg.jpg">
@@ -97,8 +93,6 @@ Blimp Jam is where skiers and Snowboarders tear up the terrain park up Lolo Pass
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1779730628/Blimpfest_May_2nd_2026_012_dnsfql.jpg">
 
 </div>
-
-
 
 ## Projection Mapping
 
