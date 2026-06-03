@@ -85,7 +85,7 @@ def _google_creds():
 def fetch_week_emails(gmail):
     since = (datetime.now(timezone.utc) - timedelta(days=7)).strftime("%Y/%m/%d")
     result = gmail.users().messages().list(
-        userId="me", q=f"after:{since}", maxResults=200
+        userId="me", q=f"after:{since} -in:drafts", maxResults=200
     ).execute()
     messages = result.get("messages", [])
     print(f"Found {len(messages)} emails in the past 7 days.")

@@ -151,6 +151,17 @@ def find_thread(gmail, contact_email: str) -> dict | None:
     ).execute()
 
 
+def thread_has_pending_draft(gmail, thread_id: str) -> bool:
+    drafts = gmail.users().drafts().list(
+        userId="me", q="thread:" + thread_id, maxResults=10
+    ).execute().get("drafts", [])
+    for d in drafts:
+        msg = d.get("message", {})
+        if msg.get("threadId") == thread_id:
+            return True
+    return False
+
+
 def extract_thread_text(thread: dict) -> str:
     parts = []
     for msg in thread.get("messages", []):
@@ -298,6 +309,10 @@ def main():
         thread = find_thread(gmail, contact_email)
         if not thread:
             print("  WARNING: No Gmail thread found, skipping")
+            continue
+
+        if thread_has_pending_draft(gmail, thread["id"]):
+            print("  Draft already pending on this thread, skipping")
             continue
 
         body = generate_followup(venue_row, extract_thread_text(thread))
