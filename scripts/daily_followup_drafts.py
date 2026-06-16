@@ -151,15 +151,24 @@ def find_thread(gmail, contact_email: str) -> dict | None:
     ).execute()
 
 
-def thread_has_pending_draft(gmail, thread_id: str) -> bool:
-    drafts = gmail.users().drafts().list(
-        userId="me", q="thread:" + thread_id, maxResults=10
-    ).execute().get("drafts", [])
-    for d in drafts:
-        msg = d.get("message", {})
-        if msg.get("threadId") == thread_id:
-            return True
-    return False
+def load_draft_thread_ids(gmail) -> set[str]:
+    # Gmail search has no `thread:` operator, so we can't query drafts by
+    # thread server-side. List all drafts (cheap: format=minimal returns just
+    # id + threadId) and collect threadIds into a set for O(1) membership.
+    thread_ids: set[str] = set()
+    page_token: str | None = None
+    while True:
+        resp = gmail.users().drafts().list(
+            userId="me", maxResults=500, pageToken=page_token
+        ).execute()
+        for d in resp.get("drafts", []):
+            tid = d.get("message", {}).get("threadId")
+            if tid:
+                thread_ids.add(tid)
+        page_token = resp.get("nextPageToken")
+        if not page_token:
+            break
+    return thread_ids
 
 
 def extract_thread_text(thread: dict) -> str:
@@ -288,6 +297,8 @@ def main():
     sheets = build("sheets", "v4", credentials=creds)
 
     claude_label_id = get_claude_label_id(gmail)
+    pending_draft_threads = load_draft_thread_ids(gmail)
+    print("Found " + str(len(pending_draft_threads)) + " thread(s) with pending drafts.")
 
     rows = sheets.spreadsheets().values().get(
         spreadsheetId=SHEET_ID, range=TAB + "!A:R"
@@ -311,7 +322,7 @@ def main():
             print("  WARNING: No Gmail thread found, skipping")
             continue
 
-        if thread_has_pending_draft(gmail, thread["id"]):
+        if thread["id"] in pending_draft_threads:
             print("  Draft already pending on this thread, skipping")
             continue
 
