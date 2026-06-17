@@ -34,19 +34,17 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
 <div class="image-grid">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2">  
 
-<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg" alt="cloverfield_fest_pic_2_muuf22">
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg" alt="cloverfield_fest_pic_2">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna_uzu788">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg" alt="cloverfield_fest_pic_11_r3yoct">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg" alt="cloverfield_fest_pic_11">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_10_e5h0xk.jpg" alt="cloverfield_fest_pic_10_e5h0xk">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668708/cloverfield_fest_pic_15_wndemy.jpg" alt="cloverfield_fest_pic_15">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668708/cloverfield_fest_pic_15_wndemy.jpg" alt="cloverfield_fest_pic_15_wndemy">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668716/photo2_3.2.1_cob68u.jpg" alt="photo2_3.2.1_cob68u">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781673535/DJ_1.4.1_cq4ufh.jpg alt="cloverfield DJ">
 
 </div>
 
