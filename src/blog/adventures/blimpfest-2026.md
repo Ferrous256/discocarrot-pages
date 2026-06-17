@@ -100,6 +100,4 @@ Blimp Jam is where skiers and Snowboarders tear up the terrain park up Lolo Pass
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1778880964/Blimpfest_2026_08_eoynnp.jpg">
 
-https://youtube.com/shorts/o4GWy-gi2Xw?feature=share
-
 <iframe width="100%" height="600" src="https://www.youtube-nocookie.com/embed/o4GWy-gi2Xw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
