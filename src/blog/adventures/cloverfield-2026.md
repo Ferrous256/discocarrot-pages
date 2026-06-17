@@ -10,13 +10,15 @@ excerpt: Snowcat = Mudcat
 ---
  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
 
-# Cloverfield 2026
+# INTELLIGENCE
 
-### // INTELLIGENCE BRIEFING
+### // BRIEFING
 
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
-### // ASSET PROFILE: DISCO CARROT
+# Asset Profile
+
+### // DISCO CARROT
 
 Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
@@ -30,9 +32,9 @@ Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 
 
 </div>
 
-### Night Falls
-
 ## Disco Carrot Deploys Sonic Weaponry
+
+### Night Falls
 
 <div class="image-grid">
 
@@ -48,9 +50,9 @@ Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 
 
 </div>
 
-### There is no escape
-
 ## Rain Turns to Mud
+
+### There is no escape
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
 
