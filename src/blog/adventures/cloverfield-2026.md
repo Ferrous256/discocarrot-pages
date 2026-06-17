@@ -12,13 +12,13 @@ excerpt: Snowcat = Mudcat
 
 # Cloverfield 2026
 
-### **// INTELLIGENCE BRIEFING**
+### // INTELLIGENCE BRIEFING
 
 Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
-### **// ASSET PROFILE: DISCO CARROT**
+### // ASSET PROFILE: DISCO CARROT
 
 <div class="image-grid">
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
@@ -31,17 +31,15 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 </div>
 
 ### Night Falls
-
 ## Disco Carrot Deploys Sonic Weaponry
 
 <div class="image-grid">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg" alt="cloverfield_fest_pic_2">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna">
-
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg" alt="cloverfield_fest_pic_11">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668708/cloverfield_fest_pic_15_wndemy.jpg" alt="cloverfield_fest_pic_15">
@@ -51,12 +49,10 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 </div>
 
 ### There is no escape
-
-# Rain Turns to Mud
-
-**BUT...**  Disco Carrot saves the day
+## Rain Turns to Mud
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
+**BUT...**  Disco Carrot saves the day
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
 
@@ -68,11 +64,12 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781673664/cloverfield_fest_pic_5_dtgkqv.jpg" alt="Disco Carrot in mud">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_14_vdihxs.jpg" alt="cloverfield_fest_pic_14_vdihxs">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781674738/Disco_Carrot_towing_2.18.1_qiwzp1.jpg" alt="Disco Carrot towing">
 
 </div>
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_13_prvkwm.jpg" alt="cloverfield_fest_pic_13_prvkwm">\
-\
-https://youtube.com/shorts/6IOaIsIxZhs
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_13_prvkwm.jpg" alt="cloverfield_fest_pic_13_prvkwm">
 
-<iframe width="100%" height="600" src="https://www.youtube-nocookie.com/embed/o4GWy-gi2Xw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+### // Video
+
+<iframe width="100%" height="600" src="https://www.youtube-nocookie.com/embed/6IOaIsIxZhs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
