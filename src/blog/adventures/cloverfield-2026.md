@@ -12,15 +12,13 @@ excerpt: Snowcat = Mudcat
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
 
-**// INTELLIGENCE BRIEFING**
+## **// INTELLIGENCE BRIEFING**
 
 Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
-**// ASSET PROFILE: DISCO CARROT**
-
-# A Beautiful Start to a Montana Festival by Flathead Lake
+## **// ASSET PROFILE: DISCO CARROT**
 
 <div class="image-grid">
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
@@ -32,7 +30,7 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
 </div>
 
-# Night Falls and the Disco Carrot Deploys Sonic Weaponry
+## Night Falls and the Disco Carrot Deploys Sonic Weaponry
 
 <div class="image-grid">
 
