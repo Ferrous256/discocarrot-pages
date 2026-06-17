@@ -5,7 +5,7 @@ date: 2026-05-29
 author: Brenden Hierro
 collection: Adventures
 collectionName: adventures
-thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg
+thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg
 excerpt: Snowcat = Mudcat
 ---
  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
@@ -14,11 +14,11 @@ excerpt: Snowcat = Mudcat
 
 ### // INTELLIGENCE BRIEFING
 
-Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
-
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
 ### // ASSET PROFILE: DISCO CARROT
+
+Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
 <div class="image-grid">
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
@@ -31,16 +31,16 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 </div>
 
 ### Night Falls
+
 ## Disco Carrot Deploys Sonic Weaponry
 
 <div class="image-grid">
 
-
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg" alt="cloverfield_fest_pic_2">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna">
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg" alt="cloverfield_fest_pic_11">
+
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668708/cloverfield_fest_pic_15_wndemy.jpg" alt="cloverfield_fest_pic_15">
 
@@ -49,10 +49,12 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 </div>
 
 ### There is no escape
+
 ## Rain Turns to Mud
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
-**BUT...**  Disco Carrot saves the day
+
+### \*\*BUT...\*\*  Disco Carrot saves the day
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
 
