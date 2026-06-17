@@ -20,16 +20,6 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
 **// ASSET PROFILE: DISCO CARROT**
 
-#### DESIGNATION: Mobile Art Installation / High-Output Sonic Weaponry.
-
-#### ORIGIN: Missoula Creative Underground.
-
-#### MOBILITY: Snowcat-mounted chassis. Terrain-agnostic.
-
-#### CAPABILITIES: Concert-venue grade audio transmission and immersive visual distortion.
-
-#### OBJECTIVE: To facilitate a localized energy exchange and harness time-space anomalies
-
 # A Beautiful Start to a Montana Festival by Flathead Lake
 
 <div class="image-grid">
@@ -40,7 +30,11 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667488/portos_unaojq.jpg" alt="portos_unaojq">
 
+</div>
+
 # Night Falls and the Disco Carrot Deploys Sonic Weaponry
+
+<div class="image-grid">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668710/cloverfield2_grkerw.jpg" alt="cloverfield2_grkerw">  
 
@@ -56,11 +50,15 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668716/photo2_3.2.1_cob68u.jpg" alt="photo2_3.2.1_cob68u">
 
+</div>
+
 # Rain Turns to Mud
 
 ### There is no escape
 
 **BUT...**  Disco Carrot saves the day by towing vehicles out of the venue. The snowcat is powerful enough to tow 1+tons up a muddy road. No prob.
+
+<div class="image-grid">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
 
