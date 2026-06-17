@@ -5,7 +5,7 @@ date: 2026-05-02
 author: Brenden Hierro
 collection: Adventures
 collectionName: adventures
-thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1778879985/blimp-map-1_orig_p2jl36.jpg
+thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1779730632/Blimpfest_May_2nd_2026_011_pivuxa.jpg
 excerpt: Free ski and snowboard hike park powered by live music at the top of Lolo Pass
 ---
 ### Blimpfest 2026
