@@ -8,17 +8,17 @@ collectionName: adventures
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg
 excerpt: Snowcat = Mudcat
 ---
+ <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
+
 # Cloverfield 2026
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
-
-## **// INTELLIGENCE BRIEFING**
+### **// INTELLIGENCE BRIEFING**
 
 Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
-## **// ASSET PROFILE: DISCO CARROT**
+### **// ASSET PROFILE: DISCO CARROT**
 
 <div class="image-grid">
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
@@ -30,7 +30,9 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
 </div>
 
-## Night Falls and the Disco Carrot Deploys Sonic Weaponry
+### Night Falls
+
+## Disco Carrot Deploys Sonic Weaponry
 
 <div class="image-grid">
 
@@ -44,26 +46,30 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668708/cloverfield_fest_pic_15_wndemy.jpg" alt="cloverfield_fest_pic_15">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781673535/DJ_1.4.1_cq4ufh.jpg alt="cloverfield DJ">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781673535/DJ_1.4.1_cq4ufh.jpg" alt="cloverfield_DJ">
 
 </div>
-
-# Rain Turns to Mud
 
 ### There is no escape
 
-**BUT...**  Disco Carrot saves the day by towing vehicles out of the venue. The snowcat is powerful enough to tow 1+tons up a muddy road. No prob.
+# Rain Turns to Mud
 
-<div class="image-grid">
+**BUT...**  Disco Carrot saves the day
+
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
 
+<div class="image-grid">
+
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668702/cloverfield_fest_pic_7_yg9dbj.jpg" alt="cloverfield_fest_pic_7_yg9dbj">
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
+  
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781673664/cloverfield_fest_pic_5_dtgkqv.jpg" alt="Disco Carrot in mud">
+
+
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_14_vdihxs.jpg" alt="cloverfield_fest_pic_14_vdihxs">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_13_prvkwm.jpg" alt="cloverfield_fest_pic_13_prvkwm">
-
 </div>
+
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_13_prvkwm.jpg" alt="cloverfield_fest_pic_13_prvkwm">
