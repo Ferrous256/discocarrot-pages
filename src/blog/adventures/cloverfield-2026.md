@@ -8,9 +8,40 @@ collectionName: adventures
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1781668704/cloverfield_fest_pic_11_r3yoct.jpg
 excerpt: Snowcat = Mudcat
 ---
-<div class="image-grid">
+# Cloverfield 2026
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
+
+## **// INTELLIGENCE BRIEFING**
+
+Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
+
+
+While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
+
+## **// ASSET PROFILE: DISCO CARROT**
+
+* **DESIGNATION:**
+
+   Mobile Art Installation / High-Output Sonic Weaponry.
+* **ORIGIN:**
+
+   Missoula Creative Underground.
+* **MOBILITY:**
+
+   Snowcat-mounted chassis. Terrain-agnostic.
+* **CAPABILITIES:**
+
+   Concert-venue grade audio transmission and immersive visual distortion.
+* **OBJECTIVE:**
+
+   To facilitate a localized energy exchange and harness time-space anomalies
+
+
+
+<div class="image-grid">
+
+
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna_uzu788">
 
