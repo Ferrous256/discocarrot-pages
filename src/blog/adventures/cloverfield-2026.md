@@ -51,11 +51,7 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668705/cloverfield_fest_pic_10_e5h0xk.jpg" alt="cloverfield_fest_pic_10_e5h0xk">
 
-
-
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668706/cloverfield_fest_pic_12_ebdr8u.jpg" alt="cloverfield_fest_pic_12_ebdr8u">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668706/cloverfield_fest_pic_8_gnbaee.jpg" alt="cloverfield_fest_pic_8_gnbaee">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668707/cloverfield_fest_pic_9_bsvr0y.jpg" alt="cloverfield_fest_pic_9_bsvr0y">
 
@@ -65,11 +61,9 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668716/photo2_3.2.1_cob68u.jpg" alt="photo2_3.2.1_cob68u">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668717/photo1_3.1.1_vcm8dy.jpg" alt="photo1_3.1.1_vcm8dy">
-
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_16_zmzoo1.jpg" alt="cloverfield_fest_pic_16_zmzoo1">
+
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668702/cloverfield_fest_pic_7_yg9dbj.jpg" alt="cloverfield_fest_pic_7_yg9dbj">
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
 
