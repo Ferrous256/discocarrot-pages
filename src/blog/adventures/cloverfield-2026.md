@@ -43,8 +43,6 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_2_muuf22.jpg" alt="cloverfield_fest_pic_2_muuf22">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_1_nhuj7b.jpg" alt="cloverfield_fest_pic_1_nhuj7b">
-
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna_uzu788">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
