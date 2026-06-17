@@ -12,38 +12,28 @@ excerpt: Snowcat = Mudcat
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781651933/Cloverfield_Event_flyer_zritbt.jpg" alt="Cloverfield_Event_flyer_zritbt">
 
-## **// INTELLIGENCE BRIEFING**
+**// INTELLIGENCE BRIEFING**
 
 Satellite imagery has confirmed a massive frequency anomaly at **COORDINATES: 980 BOON RD, SOMERS, MT.** 
 
 
 While multiple “Rifts” have been detected within the perimeter, high-level intel confirms that **DISCO CARROT** has been deployed as a primary tactical asset.
 
-## **// ASSET PROFILE: DISCO CARROT**
+**// ASSET PROFILE: DISCO CARROT**
 
-* **DESIGNATION:**
+ * ###### **DESIGNATION: Mobile Art Installation / High-Output Sonic Weaponry.**
 
-   Mobile Art Installation / High-Output Sonic Weaponry.
-* **ORIGIN:**
+  * ###### **ORIGIN: Missoula Creative Underground.**
 
-   Missoula Creative Underground.
-* **MOBILITY:**
+  * ###### **MOBILITY: Snowcat-mounted chassis. Terrain-agnostic.**
 
-   Snowcat-mounted chassis. Terrain-agnostic.
-* **CAPABILITIES:**
+  * ###### **CAPABILITIES: Concert-venue grade audio transmission and immersive visual distortion.**
 
-   Concert-venue grade audio transmission and immersive visual distortion.
-* **OBJECTIVE:**
-
-   To facilitate a localized energy exchange and harness time-space anomalies
+  * ###### **OBJECTIVE: To facilitate a localized energy exchange and harness time-space anomalies**
 
 
 
 <div class="image-grid">
-
-
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna_uzu788">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/moth_jacg3c.jpg" alt="moth_jacg3c">
 
@@ -55,15 +45,9 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668700/cloverfield_fest_pic_1_nhuj7b.jpg" alt="cloverfield_fest_pic_1_nhuj7b">
 
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_3_xjteed.jpg" alt="cloverfield_fest_pic_3_xjteed">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_16_zmzoo1.jpg" alt="cloverfield_fest_pic_16_zmzoo1">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781667487/Magna_uzu788.jpg" alt="Magna_uzu788">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_4_fd7jkh.jpg" alt="cloverfield_fest_pic_4_fd7jkh">
-
-  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668702/cloverfield_fest_pic_7_yg9dbj.jpg" alt="cloverfield_fest_pic_7_yg9dbj">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668702/cloverfield_fest_pic_5_m62oib.jpg" alt="cloverfield_fest_pic_5_m62oib">
 
@@ -90,5 +74,8 @@ While multiple “Rifts” have been detected within the perimeter, high-level i
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668717/photo1_3.1.1_vcm8dy.jpg" alt="photo1_3.1.1_vcm8dy">
 
   <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668739/camping_hsntjn.png" alt="camping_hsntjn">
+<img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_6_jnmfj4.jpg" alt="cloverfield_fest_pic_6_jnmfj4">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668701/cloverfield_fest_pic_16_zmzoo1.jpg" alt="cloverfield_fest_pic_16_zmzoo1">
+  <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1781668702/cloverfield_fest_pic_7_yg9dbj.jpg" alt="cloverfield_fest_pic_7_yg9dbj">
 
 </div>
