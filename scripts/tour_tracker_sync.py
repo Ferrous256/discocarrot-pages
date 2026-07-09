@@ -12,7 +12,6 @@ Required environment variables:
   GDRIVE_TRACKER_FILE_ID   (Google Sheet ID for DiscoCarrot TourTracker)
 """
 
-import json
 import os
 import sys
 from datetime import datetime, timedelta, timezone
@@ -109,6 +108,39 @@ def fetch_week_emails(gmail):
 
 # ── Claude analysis ───────────────────────────────────────────────────────────
 
+TRACKER_UPDATE_TOOL = {
+    "name": "record_tracker_updates",
+    "description": "Record outreach activity updates for the Disco Carrot tour tracker.",
+    "input_schema": {
+        "type": "object",
+        "properties": {
+            "updates": {
+                "type": "array",
+                "description": "One entry per resort/venue with new activity. Empty if nothing relevant happened.",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "resort": {"type": "string", "description": "Exact resort or venue name as it appears in the tracker."},
+                        "status": {"type": "string", "enum": VALID_STATUSES},
+                        "contact_name": {"type": "string"},
+                        "contact_email": {"type": "string"},
+                        "contact_phone": {"type": "string"},
+                        "date_last": {"type": "string", "description": "YYYY-MM-DD"},
+                        "date_first": {"type": "string", "description": "YYYY-MM-DD, only if this is the first contact."},
+                        "next_followup": {"type": "string", "description": "YYYY-MM-DD"},
+                        "outreach_type": {"type": "string", "description": "Cold, Warm, Referral, etc."},
+                        "booked_dates": {"type": "string"},
+                        "notes": {"type": "string"},
+                    },
+                    "required": ["resort"],
+                },
+            },
+        },
+        "required": ["updates"],
+    },
+}
+
+
 def analyze_emails_with_claude(email_summaries: list[str]) -> list[dict]:
     client = anthropic.Anthropic(api_key=os.environ["ANTHROPIC_API_KEY"])
     email_block = "\n---\n".join(email_summaries) if email_summaries else "(no emails)"
@@ -118,43 +150,30 @@ def analyze_emails_with_claude(email_summaries: list[str]) -> list[dict]:
 Disco Carrot is a DJ/live music act that books performances at ski resorts and live events.
 The tracker has one row per resort or venue and tracks outreach status.
 
-Valid status values:
-{json.dumps(VALID_STATUSES, indent=2)}
-
 Here are all emails from the past 7 days:
 
 {email_block}
 
 Analyze these emails and identify any outreach activity related to ski resort or venue bookings.
-For each resort/venue where something happened, return a JSON array of update objects.
-
-Each update object must have:
-- "resort" (string): exact resort or venue name as it appears in the tracker
-- "status" (string): one of the valid statuses, only if status changed
-- "contact_name" (string, optional): if a contact was identified
-- "contact_email" (string, optional): if a contact email was found
-- "contact_phone" (string, optional): if a phone number was found
-- "date_last" (string, optional): date of most recent contact, YYYY-MM-DD
-- "date_first" (string, optional): date of first contact if new outreach, YYYY-MM-DD
-- "next_followup" (string, optional): suggested follow-up date, YYYY-MM-DD
-- "outreach_type" (string, optional): "Cold", "Warm", "Referral", etc.
-- "booked_dates" (string, optional): if dates were confirmed
-- "notes" (string, optional): any relevant notes to append
-
-Return ONLY a valid JSON array. If no relevant outreach activity was found, return []."""
+Call the record_tracker_updates tool with one entry per resort/venue that had activity.
+If no relevant outreach activity was found, call it with an empty updates array."""
 
     response = client.messages.create(
         model="claude-opus-4-7",
-        max_tokens=4096,
+        max_tokens=16384,
+        tools=[TRACKER_UPDATE_TOOL],
+        tool_choice={"type": "tool", "name": TRACKER_UPDATE_TOOL["name"]},
         messages=[{"role": "user", "content": prompt}],
     )
-    raw = response.content[0].text.strip()
-    if raw.startswith("```"):
-        raw = raw.split("\n", 1)[1].rsplit("```", 1)[0]
 
-    updates = json.loads(raw)
-    print(f"Claude identified {len(updates)} tracker update(s).")
-    return updates
+    for block in response.content:
+        if getattr(block, "type", None) == "tool_use" and block.name == TRACKER_UPDATE_TOOL["name"]:
+            updates = block.input.get("updates", [])
+            print(f"Claude identified {len(updates)} tracker update(s).")
+            return updates
+
+    print(f"No tool_use block in response (stop_reason={response.stop_reason}); treating as no updates.")
+    return []
 
 
 # ── Sheets helpers ────────────────────────────────────────────────────────────
