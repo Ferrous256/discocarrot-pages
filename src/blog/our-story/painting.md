@@ -31,3 +31,7 @@ Because of how we built it and the final look we wanted, we realistically get on
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1775026414/paint2_qfvzbj.png">
 
 </div>
+
+
+
+![](https://res.cloudinary.com/dctaixj2i/image/upload/v1790825954/paint_sm_px8amk.jpg)
