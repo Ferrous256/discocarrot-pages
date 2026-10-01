@@ -9,17 +9,21 @@ thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1790822078/night_t
 excerpt: At the top of a Montana mountain sits a old fluorite quarry where kids
   float in the swimming hole under the sun and dance under an old barn at night
 ---
-![](https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/Disco_Carrot_Main_stage_nxi9fg.jpg)
-
-## Main Stage Presence
+# Main Stage Presence
 
 The Disco Carrot rolls onto the dusty mountain leaving a trail of crushed fluorite dust in it's tracks.
+
+
+
+![](https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/Disco_Carrot_Main_stage_nxi9fg.jpg)
+
+
 
 <div class="image-grid"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/pretty_DJ_mdovo7.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/DJ_leaving_DC_we199y.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/Augustus_the_something_odyfnl.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/three_people_sitting_tazltt.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/swimming_hole_am2m6g.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/swiming_hole_2_l7zrif.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821991/MC_at_CM_tlol1y.jpg"><img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821990/DJ_selfie_changover_dmxnn5.jpg"></div>
 
 <img src="https://res.cloudinary.com/dctaixj2i/image/upload/v1790821990/the_crew_uvfqv0.jpg">
 
-## Lasers!! Pew Pew!!
+### Lasers!! Pew Pew!!
 
 Disco carrot hosts the festival organizer Gruv42 and later in the night one half of the electronic music group Rabbit in the Moon is founder, vocalist, and performer Bunny (Bunny Eachon)!
 
