@@ -9,7 +9,7 @@ thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1790822078/night_t
 excerpt: At the top of a Montana mountain sits a old fluorite quarry where kids
   float in the swimming hole under the sun and dance under an old barn at night
 ---
-# Main Stage Presence
+### Main Stage Presence
 
 The Disco Carrot rolls onto the dusty mountain leaving a trail of crushed fluorite dust in it's tracks.
 
