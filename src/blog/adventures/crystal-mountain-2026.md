@@ -6,8 +6,9 @@ author: Brenden Hierro
 collection: Adventures
 collectionName: adventures
 thumbnail: https://res.cloudinary.com/dctaixj2i/image/upload/v1790822078/night_time_apfxpt.jpg
-excerpt: At the top of a Montana mountain sits a old fluorite quarry where kids
-  float in the swimming hole under the sun and dance under an old barn at night
+excerpt: At the top of a Montana mountain sits a old fluorite quarry where folks
+  float in the swimming hole under the sun and dance in an old barn under the
+  lasers
 ---
 ### Main Stage Presence
 
