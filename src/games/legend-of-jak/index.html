@@ -69,6 +69,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rend
 footer{font-family:var(--font-pixel);font-size:7px;color:var(--dim);text-align:center;letter-spacing:.1em;line-height:1.8}
 .chip:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:0 3px 0 #000}
 .status{color:var(--dim);margin-top:4px}
+#updBar{display:block;width:100%;margin:0 0 8px;font-size:10px;padding:10px 8px;background:#1d8fb8}
 #laserBtn{background:#1d8fb8;margin-top:0}#laserBtn:disabled{opacity:.5}
 .namein{display:block;font-family:var(--font-pixel);font-size:16px;letter-spacing:.08em;text-transform:uppercase;background:#000;color:var(--ink);border:3px solid var(--carrot);box-shadow:0 0 0 3px #000;padding:10px 12px;margin-top:10px;width:100%;max-width:300px;box-sizing:border-box}
 .namein::placeholder{color:#6b5a8a}
@@ -92,6 +93,7 @@ body[data-mode="game"] .knob{width:44px;height:44px;margin:-22px 0 0 -22px}
 </head>
 <body>
 <div id="app">
+  <button class="start" id="updBar" type="button" hidden>NEW VERSION READY: TAP TO UPDATE</button>
   <div class="topbar">
     <div class="brand">DISCO CARROT<small>THE LEGEND OF JAK</small></div>
     <div class="btns">
@@ -1252,6 +1254,7 @@ function openMap(sel){
   mode='map';overlay.hidden=true;dialog.hidden=false;controls.hidden=true;skipBtn.hidden=true;storyBtn.hidden=false;mapBtn.hidden=true;
   if(typeof sel!=='number'){sel=0;for(let i=0;i<RESORTS.length;i++)if(unlocked(i))sel=i;}
   if(!P.seen){P.seen=true;saveP();}
+  checkUpdate();
   M.sel=sel;M.anim=null;M.camY=null;mapInfo();fitScreen();
 }
 function mapMove(d){if(M.anim)return;const n=Math.max(-1,Math.min(RESORTS.length-1,M.sel+d));if(n===M.sel)return;M.sel=n;AudioK.sfx.blip();mapInfo();}
@@ -2448,6 +2451,15 @@ shopBtn.addEventListener('click',e=>{e.stopPropagation();openShop();});
 bassBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();bossBass();});
 laserBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();if(mode==='game')fireLaser(true);});
 muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();muteBtn.textContent=m?'SOUND: OFF':'SOUND: ON';});
+
+// update check: the website build stamps GAME_VERSION and ships version.json beside the game.
+// If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
+const GAME_VERSION='20261011230006';
+function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
+  fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
+$('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
+checkUpdate();setInterval(()=>{if(mode!=='game'&&mode!=='boss')checkUpdate();},120000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate();});
 
 // splash state
 whoEl.textContent='';dtext.textContent='Sound on! Tap here or the screen to begin, then pick your player.';countEl.textContent='';
