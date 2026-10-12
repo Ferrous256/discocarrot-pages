@@ -186,7 +186,30 @@ function makeJakMusic(ac,out){
     reese(t,m,dur,v){const f=ac.createBiquadFilter();f.type='lowpass';f.Q.value=2;f.frequency.value=520;
       vco('sawtooth',mtof(m),t,t+dur+0.03,-18).connect(f);vco('sawtooth',mtof(m),t,t+dur+0.03,18).connect(f);
       const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+0.02);g.gain.setValueAtTime(v,t+dur*0.85);g.gain.linearRampToValueAtTime(0.0001,t+dur);f.connect(g);g.connect(duck);
-      vco('sine',mtof(m-12),t,t+dur+0.03).connect(vca(t,v*0.8,dur,duck,0.01));}
+      vco('sine',mtof(m-12),t,t+dur+0.03).connect(vca(t,v*0.8,dur,duck,0.01));},
+    // house piano: bright hammer on top of a soft body
+    piano(t,ms,dur,v){const g=vca(t,v,dur,duck,0.002);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(5200,t);f.frequency.exponentialRampToValueAtTime(1400,t+dur);f.connect(g);
+      ms.forEach((m,j)=>{vco('triangle',mtof(m),t,t+dur+0.03,j%2?4:-4).connect(f);vco('p25',mtof(m+12),t,t+0.09).connect(vca(t,0.5,0.08,f));});},
+    // electric piano for garage and liquid: sine plus a little bell, slow tremolo
+    keys(t,ms,dur,v){const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+0.015);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);g.connect(duck);
+      const tr=vco('sine',5,t,t+dur+0.05),tg=ac.createGain();tg.gain.value=v*0.35;tr.connect(tg);tg.connect(g.gain);
+      ms.forEach(m=>{vco('sine',mtof(m),t,t+dur+0.03).connect(g);vco('triangle',mtof(m+12),t,t+0.25).connect(vca(t,0.25,0.22,g));});},
+    sub(t,m,dur,v){const o=vco('sine',mtof(m),t,t+dur+0.03);const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+0.01);g.gain.setValueAtTime(v,t+dur*0.8);g.gain.linearRampToValueAtTime(0.0001,t+dur);o.connect(g);g.connect(duck);},
+    cowbell(t,v){const f=ac.createBiquadFilter();f.type='bandpass';f.frequency.value=800;f.Q.value=3;const g=vca(t,v,0.16,bus,0.001);f.connect(g);vco('square',540,t,t+0.2).connect(f);vco('square',800,t,t+0.2).connect(f);},
+    rim(t,v){nz(t,0.02,'bandpass',3200,v,4);vco('triangle',1700,t,t+0.03).connect(vca(t,v*0.5,0.025,bus));},
+    shaker(t,v){nz(t,0.05,'bandpass',9000,v,1.5);},
+    snap(t,v){nz(t,0.03,'bandpass',2600,v,2);nz(t+0.004,0.05,'highpass',5000,v*0.4);},
+    ride(t,v){nz(t,0.45,'bandpass',6500,v,1.2);vco('square',4100,t,t+0.4).connect(vca(t,v*0.12,0.35,bus));},
+    brush(t,v,dur){nz(t,dur,'bandpass',3600,v,0.6);},
+    // rumble kick for warehouse techno: kick plus a dark, washed-out tail
+    rumble(t,v){const o=vco('sine',52,t,t+0.5);o.frequency.exponentialRampToValueAtTime(44,t+0.45);const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.value=140;o.connect(f);
+      const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+0.06);g.gain.exponentialRampToValueAtTime(0.0001,t+0.45);f.connect(g);g.connect(bus);nz(t,0.3,'lowpass',220,v*0.5);},
+    // muted lounge sax for the slots: buzzy reed through a soft filter with vibrato
+    sax(t,m,dur,v){const f=ac.createBiquadFilter();f.type='lowpass';f.Q.value=2;f.frequency.setValueAtTime(900,t);f.frequency.linearRampToValueAtTime(1900,t+0.06);f.frequency.exponentialRampToValueAtTime(1100,t+dur);
+      const a=vco('sawtooth',mtof(m),t,t+dur+0.05),b=vco('square',mtof(m),t,t+dur+0.05,6);const lfo=vco('sine',5.2,t,t+dur+0.05),lg=ac.createGain();lg.gain.value=0;lg.gain.setValueAtTime(0,t);lg.gain.linearRampToValueAtTime(14,t+Math.min(0.35,dur));lfo.connect(lg);lg.connect(a.detune);lg.connect(b.detune);
+      a.connect(f);b.connect(f);const g=ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(v,t+0.035);g.gain.setValueAtTime(v*0.85,t+dur*0.8);g.gain.linearRampToValueAtTime(0.0001,t+dur);f.connect(g);g.connect(bus);g.connect(echo);},
+    upright(t,m,dur,v){const f=ac.createBiquadFilter();f.type='lowpass';f.frequency.setValueAtTime(1100,t);f.frequency.exponentialRampToValueAtTime(260,t+dur);
+      vco('triangle',mtof(m),t,t+dur+0.03).connect(f);vco('sine',mtof(m),t,t+dur+0.03).connect(f);f.connect(vca(t,v,dur,bus,0.006));nz(t,0.03,'bandpass',300,v*0.3,2);}
   };
 
   const SONGS={
@@ -298,6 +321,84 @@ function makeJakMusic(ac,out){
       if(!brk&&(i===2||i===6||i===10||i===14||(H&&i%2===0)))I.stab(t,CH[k],spb*1.3,H?0.07:0.05);
       if((p>=8&&p<16)||drop||H){const n=L[k][i];if(n){I.lead(t,n,spb*2,0.1);if(H)I.lead(t,n-12,spb*1.4,0.05);}}
     }},
+
+    // classic piano house, 124 BPM in C minor: M1-style organ bass, piano stabs, shaker
+    house:{bpm:124,swing:0.07,play(s,t,spb,H){
+      const CH=[[56,60,63,67],[58,62,65,68],[60,63,67,70],[55,59,62,65]],RT=[44,46,48,43],BL={0:0,2:12,3:0,6:12,8:0,10:12,11:7,14:12};
+      const PR=[0,3,6,10,12],L=[{0:75,2:74,4:72,7:70,10:72},{0:74,3:77,6:74,8:72},{0:79,2:77,4:75,6:74,10:75},{0:74,4:71,8:74,12:77}];
+      const p=Math.floor(s/16)%32,i=s%16,k=Math.floor(s/16)%4,brk=p>=16&&p<20,drop=p>=20&&p<28;
+      if(!brk){if(i%4===0)I.kick(t,0.92);if(p>=2&&(i===4||i===12))I.clap(t,0.5);I.shaker(t,i%2?0.05:0.025);if(i%4===2)I.hat(t,0.13,true);}
+      else{if(p===18&&i===0)I.riser(t,spb*32,0.2);if(p===19){const r=i<8?4:(i<12?2:1);if(i%r===0)I.clap(t,0.2+i*0.025);}}
+      if(p===20&&i===0)I.crash(t,0.28);
+      if(BL[i]!==undefined&&(!brk||p>=18))I.bass(t,RT[k]+BL[i],spb*0.9,{type:'square',cut:H?1900:1100,q:2,v:0.2});
+      if((p>=4||H)&&(PR.includes(i)||(H&&i===13)))I.piano(t,CH[k].map(m=>m+12),spb*(i===12?3:1.6),brk?0.05:0.065);
+      if(brk&&i===0)I.pad(t,CH[k],spb*16,0.05);
+      if(drop||H){const n=L[k][i];if(n)I.bell(t,n+12,spb*2.2,0.06);}
+    }},
+    // UK garage 2-step, 132 BPM: skippy kicks, swung hats, sub bass and chopped keys
+    garage:{bpm:132,swing:0.24,play(s,t,spb,H){
+      const CH=[[69,72,76,79],[67,70,74,77],[65,69,72,76],[64,67,71,74]],RT=[45,43,41,40],SB={0:0,3:0,6:7,10:0,11:12,14:10};
+      const p=Math.floor(s/16)%32,i=s%16,k=Math.floor(s/16)%4,brk=p>=16&&p<20,drop=p>=20&&p<28;
+      if(!brk){if(i===0||(i===9&&k%2)||i===10)I.kick(t,0.85);if(i===4||i===12)I.clap(t,0.5);if(i===4||i===12)I.rim(t,0.12);
+        if(i%2===1)I.hat(t,0.07,i===7||i===15);if(p>=4&&(i===15||i===6))I.rim(t,0.08);if(H&&i%2===0)I.shaker(t,0.04);}
+      else{if(i===0)I.keys(t,CH[k],spb*14,0.05);if(p===18&&i===0)I.riser(t,spb*32,0.18);}
+      if(p===20&&i===0)I.crash(t,0.26);
+      if(SB[i]!==undefined&&(!brk||p>=18)&&p>=2)I.sub(t,RT[k]+SB[i]-12,spb*1.6,0.13);
+      if(!brk&&p>=4&&(i===3||i===8||i===14))I.keys(t,CH[k],spb*1.2,0.045);
+      if(drop||H){const L={0:76,2:79,5:76,8:74,11:72,13:74};if(L[i])I.bell(t,L[i]+(k>1?-2:0),spb*1.4,0.05);}
+    }},
+    // Detroit-style electro, 118 BPM in E phrygian: 808 cowbell, robot bass, syncopated kicks
+    electro:{bpm:118,swing:0,play(s,t,spb,H){
+      const RT=[40,40,41,38],SEQ=[0,12,0,0,12,0,1,0,0,12,0,3,0,12,1,0],ARP=[76,79,83,88];
+      const p=Math.floor(s/16)%32,i=s%16,k=Math.floor(s/16)%4,brk=p>=16&&p<20,drop=p>=20&&p<28;
+      if(!brk){if(i===0||i===7||i===10||(i===13&&k===3))I.kick(t,0.9);if(i===4||i===12)I.snare(t,0.55);
+        if(p>=2)I.hat(t,i%2?0.035:0.075,i===14);if(p>=4&&(i===2||i===11||(H&&i===6)))I.cowbell(t,0.13);if(p%4===3&&i>=12&&i%2===0)I.tom(t,0.3);}
+      else{if(i===0)I.pad(t,[52,55,59,64],spb*16,0.05);if(p===18&&i===0)I.riser(t,spb*32,0.2);}
+      if(p===20&&i===0)I.crash(t,0.28);
+      if(!brk||p>=18)I.bass(t,RT[k]+SEQ[i],spb*0.8,{type:'square',cut:H?1600:700+300*(k%2),q:6,v:0.18,acc:SEQ[i]===12});
+      if((p>=8&&!brk)||H){if(i%2===0)I.lead(t,ARP[(i/2)%4]+(k===2?1:0),spb*0.9,0.06);}
+      if(drop&&(i===0||i===6))I.saw3(t,[64,67,71].map(m=>m+(k===2?1:0)),spb*2,0.03);
+    }},
+    // warehouse techno, 136 BPM: rumble kick, rolling offbeats, metallic stabs, no acid
+    hardtechno:{bpm:136,swing:0,play(s,t,spb,H){
+      const ST=[[50,51,57],[50,51,57],[48,51,55],[49,52,56]];
+      const p=Math.floor(s/16)%32,i=s%16,k=Math.floor(s/16)%4,brk=p>=16&&p<20,drop=p>=20&&p<28;
+      if(!brk){if(i%4===0){I.kick(t,1);if(p>=2)I.rumble(t+spb*1.6,0.2);}
+        if(p>=4&&(i===4||i===12))I.clap(t,0.55);if(i%4===2)I.hat(t,0.17,true);else if(p>=2)I.hat(t,0.05,false);
+        if((drop||H)&&i%2===1)I.rim(t,0.07);if(p>=8&&i%16===14)I.ride(t,0.05);}
+      else{if(i===0)I.pad(t,[38,45,50,53],spb*16,0.06);if(p===18&&i===0)I.riser(t,spb*32,0.24);if(p===19)I.kick(t,0.2+i*0.04);}
+      if(p===20&&i===0)I.crash(t,0.32);
+      if((p>=8&&!brk&&i%3===0)||(H&&i%3===1))I.stab(t,ST[k].map(m=>m+12),spb*0.7,0.045);
+      if(drop&&(i===0||i===8))I.saw3(t,ST[k],spb*3,0.03);
+    }},
+    // liquid drum & bass, 172 BPM in D flat: rolling break, deep sub, warm electric piano
+    liquid:{bpm:172,swing:0,play(s,t,spb,H){
+      const CH=[[61,65,68,72],[58,61,65,68],[63,66,70,73],[60,63,68,72]],RT=[37,34,39,32];
+      const p=Math.floor(s/16)%32,i=s%16,k=Math.floor(s/16)%4,brk=p>=16&&p<20,drop=p>=20&&p<28;
+      if(!brk){if(i===0||i===10)I.kick(t,0.9);if(i===4||i===12)I.snare(t,0.6);if(p>=4&&(i===7||i===9||i===15))I.snare(t,0.12);
+        if(p>=2)I.shaker(t,i%2?0.03:0.05);if(i%4===2)I.ride(t,0.035);}
+      else if(p===18&&i===0)I.riser(t,spb*32,0.2);
+      if(p===20&&i===0)I.crash(t,0.28);
+      if(i===0||i===8)I.keys(t,CH[k],spb*(brk?15:7),brk?0.04:0.03);
+      if(p>=4&&!brk&&(i===0||i===6||i===10))I.sub(t,RT[k]-12+(i===10?7:0),spb*(i===0?5.5:3.5),0.12);
+      if(drop||H){const L={0:80,3:77,6:75,8:73,11:72,14:73};if(L[i])I.bell(t,L[i]-(k===1?3:0),spb*2,0.05);}
+    }},
+    // Disco Slots lounge: swinging spy-jazz, upright bass, ride, snaps and a muted sax. Each step is an eighth note.
+    spy:{bpm:50,swing:0.32,echo:0.36,play(s,t,spb,H){
+      const WALK=[[40,43,45,46],[40,47,45,43],[45,48,50,51],[47,46,45,44]];
+      const VIB=[[55,59,62,66],[55,59,62,66],[57,60,64,67],[59,63,66,69]];
+      const MEL={1:[59,1],2:[64,2],4:[66,1],5:[67,2],7:[70,1],8:[69,1],9:[67,1],10:[64,3],14:[62,1],15:[63,1],
+        16:[64,1],17:[69,2],19:[72,1],20:[71,1],21:[69,2],23:[67,1],24:[66,2],26:[63,1],27:[66,1],28:[69,1],29:[70,1],30:[71,2]};
+      const ph=Math.floor(s/32)%8,j=s%8,b=Math.floor(s/8)%4,pos=s%32;
+      if(j%2===0)I.upright(t,WALK[b][j/2],spb*1.8,0.34);
+      if(j%2===0)I.ride(t,0.04);else if(j===3||j===7)I.ride(t,0.028);
+      if(j===2||j===6){I.snap(t,0.22);I.brush(t,0.05,spb*1.5);}
+      if(j===0&&ph>=1)I.kick(t,0.18);
+      if(j===0)I.bell(t,VIB[b][0]+12,spb*3,0.025);
+      if(j===3||(H&&j===7))VIB[b].forEach(m=>I.tri(t,m,spb*1.6,0.025));
+      if(ph!==0&&ph!==4){const n=MEL[pos];if(n){I.sax(t,n[0]+(ph===6||ph===7?12:0),spb*n[1]*0.95,0.07);if(H)I.bell(t,n[0]+24,spb,0.03);}}
+      else if(ph===4&&(pos===8||pos===24))I.bell(t,pos===8?76:78,spb*4,0.04);
+    }},
     // Bridger Bowl: acid techno, 128 BPM
     techno:{bpm:128,swing:0,play(s,t,spb,H){
       const RT=[38,38,34,36],GATE=[1,0,1,1,0,1,1,0,1,0,1,1,0,1,1,1],OFF=[0,0,12,0,3,0,12,10,0,0,15,0,7,0,12,5],ACC=[0,0,1,0,0,0,1,0,0,0,1,0,0,0,1,0];
@@ -325,8 +426,8 @@ function makeJakMusic(ac,out){
 
   let cur=null,step=0,next=0,hype=false,crashNext=false;
   return {
-    setSong(name,t){const s=name?SONGS[name]||null:null;if(s===cur)return;cur=s;step=0;next=t+0.06;hype=false;warm.frequency.setTargetAtTime(8500,t,0.05);
-      if(cur)echo.delayTime.setValueAtTime(60/cur.bpm*0.75,t);},
+    setSong(name,t,at){const s=name?SONGS[name]||null:null;if(s===cur)return;cur=s;step=at||0;next=t+0.06;hype=false;warm.frequency.setTargetAtTime(8500,t,0.05);
+      if(cur)echo.delayTime.setValueAtTime(cur.echo||60/cur.bpm*0.75,t);},
     setHype(on,t){if(on&&!hype)crashNext=true;hype=!!on;warm.frequency.setTargetAtTime(on?15000:8500,t,0.08);},
     schedule(until){if(!cur)return;const spb=60/cur.bpm/4;
       while(next<until){const tt=next+((step%2)?cur.swing*spb:0);if(crashNext){I.crash(tt,0.3);crashNext=false;}cur.play(step,tt,spb,hype);step++;next+=spb;}},
@@ -495,7 +596,7 @@ const AudioK=(()=>{
   }
   let eng=null,wanted=null;
   function sched(){if(ac&&eng)eng.schedule(ac.currentTime+0.15);}
-  function setSong(name){wanted=name||null;if(eng)eng.setSong(wanted,ac.currentTime);}
+  function setSong(name,at){wanted=name||null;if(eng)eng.setSong(wanted,ac.currentTime,at);}
   function setHype(on){if(eng)eng.setHype(on,ac.currentTime);}
   const now=()=>ac?ac.currentTime:0;
   const sfx={
@@ -531,7 +632,7 @@ const AudioK=(()=>{
     src.start(t);src.stop(t+d+0.05);sSrc=src;
   }
   function toggle(){muted=!muted;try{localStorage.setItem('jak-muted',muted?'1':'0');}catch(e){}if(master)master.gain.value=muted?0:0.16;if(sGain)sGain.gain.value=muted?0:0.9;return muted;}
-  return {init,setSong,setHype,sfx,toggle,isMuted:()=>muted,decode,playSample};
+  return {init,setSong,setHype,sfx,toggle,isMuted:()=>muted,decode,playSample,current:()=>wanted};
 })();
 
 // ---------- DOM ----------
@@ -1062,18 +1163,18 @@ const RESORTS=[
  {id:'lookout',song:'dubstep',name:'LOOKOUT PASS',label:'LOOKOUT',x:28,y:78,lx:8,ly:92,la:'left',grumps:3,hazard:null,
   via:[[168,110],[150,150],[60,148]],
   blurb:'Right off I-90 on the Idaho-Montana line, two time zones and buried in snow. Deep powder bogs Jak down, so stick to the groomers.'},
- {id:'snowbowl',song:'techno',name:'MONTANA SNOWBOWL',label:'SNOWBOWL',x:96,y:62,lx:96,ly:40,la:'center',grumps:4,hazard:null,
+ {id:'snowbowl',song:'electro',name:'MONTANA SNOWBOWL',label:'SNOWBOWL',x:96,y:62,lx:96,ly:40,la:'center',grumps:4,hazard:null,
   blurb:'One big steep bowl above Missoula. Black runs drag Jak downhill, so climb on the cat tracks beside Grizzly and LaValle Creek.'},
  {id:'bigsky',song:'peak',name:'BIG SKY',label:'BIG SKY',x:186,y:176,lx:186,ly:186,la:'center',grumps:5,hazard:'fuel',
   via:[[150,48],[248,96],[248,170]],
   blurb:'The big one: Lone Peak, Andesite and Moonlight Basin. Steep, deep, and a long way from a gas can. The golden carrot waits on Lone Peak.'},
- {id:'boss_mtut',boss:true,song:'techno',name:'GRUMP KING',label:'BOSS',x:194,y:246,lx:206,ly:242,la:'left',via:[[214,212]],
+ {id:'boss_mtut',boss:true,song:'hardtechno',name:'GRUMP KING',label:'BOSS',x:194,y:246,lx:206,ly:242,la:'left',via:[[214,212]],
   blurb:'The Grump King blocks I-15 at Monida Pass. Tap to fire lasers, hit BASS to smash his canes, and dodge his spinning cane attack. Beat him to reach Utah.'},
- {id:'snowbasin',song:'disco',name:'SNOWBASIN',label:'SNOWBASIN',x:100,y:300,lx:100,ly:310,la:'center',grumps:4,hazard:'fuel',via:[[150,266]],
+ {id:'snowbasin',song:'house',name:'SNOWBASIN',label:'SNOWBASIN',x:100,y:300,lx:100,ly:310,la:'center',grumps:4,hazard:'fuel',via:[[150,266]],
   blurb:'Mount Ogden, north of Salt Lake. Gondolas, the Allen Peak Tram and the John Paul downhill. The generator is thirsty again.'},
  {id:'brighton',song:'trance',name:'BRIGHTON',label:'BRIGHTON',x:196,y:342,lx:196,ly:352,la:'center',grumps:4,hazard:null,
   blurb:'Big Cottonwood Canyon under the lights. Majestic trees, Millicent steeps, and 200+ lit acres of night skiing. Lasers help.'},
- {id:'sundance',song:'map',name:'SUNDANCE',label:'SUNDANCE',x:90,y:440,lx:90,ly:450,la:'center',grumps:4,hazard:null,via:[[120,360]],
+ {id:'sundance',song:'garage',name:'SUNDANCE',label:'SUNDANCE',x:90,y:440,lx:90,ly:450,la:'center',grumps:4,hazard:null,via:[[120,360]],
   blurb:"Night skiing below Mt Timpanogos. Outlaw and Jake's are lit, Bearclaw Cabin up top, Red's and Stairway on the dark back side."},
  {id:'alta',song:'breaks',name:'ALTA',label:'ALTA',x:206,y:392,lx:218,ly:388,la:'left',grumps:5,hazard:null,
   blurb:'Skiers only, always has been. Collins Gulch, Albion Basin, the Baldy Chutes and High Rustler. Deep and steep.'},
@@ -1368,15 +1469,16 @@ const BUFF_NAMES={carrots:'CARROT RAIN',grumps:'GRUMPS STAY HOME',speed:'TURBO T
 function buffList(b){return Object.keys(BUFF_NAMES).filter(k=>b&&b[k]).map(k=>BUFF_NAMES[k]);}
 const SL={ret:null,bet:5,reels:[0,2,4],final:[0,2,4],spinning:false,t0:0,msg:'PICK A BET AND SPIN',msgCol:'#fff',win:0};
 function pickSym(){const tot=SYMS.reduce((a,s)=>a+s.w,0);let r=Math.random()*tot;for(let i=0;i<SYMS.length;i++){r-=SYMS[i].w;if(r<0)return i;}return 0;}
-function openSlots(ret){SL.ret=ret;SL.spinning=false;SL.msg='PICK A BET AND SPIN';SL.msgCol='#fff';mode='slots';overlay.hidden=true;dialog.hidden=false;controls.hidden=true;fitScreen();slotsInfo();}
+function openSlots(ret){SL.prev=AudioK.current();AudioK.setSong('spy');SL.ret=ret;SL.spinning=false;SL.msg='PICK A BET AND SPIN';SL.msgCol='#fff';mode='slots';overlay.hidden=true;dialog.hidden=false;controls.hidden=true;fitScreen();slotsInfo();}
 function slotsInfo(){whoEl.textContent='DISCO SLOTS';dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
   dtext.appendChild(mk('div','',`Bet Workshop carrots. You have ${P.bank}.`));
   const r1=mk('div','maprow');[2,5,10].forEach(v=>{const b=btn(`BET ${v}`,'chip',()=>{SL.bet=v;AudioK.sfx.blip();slotsInfo();},SL.spinning);if(SL.bet===v)b.style.borderColor='var(--gold)';r1.appendChild(b);});
-  const r2=mk('div','maprow'),sp=btn(SL.spinning?'SPINNING...':'SPIN','start',slotSpin,SL.spinning||P.bank<SL.bet);sp.id='slotSpin';r2.append(sp,btn('LEAVE','chip',()=>{if(!SL.spinning&&SL.ret)SL.ret();},SL.spinning));
+  const r2=mk('div','maprow'),sp=btn(SL.spinning?'SPINNING...':'SPIN','start',slotSpin,SL.spinning||P.bank<SL.bet);sp.id='slotSpin';r2.append(sp,btn('LEAVE','chip',leaveSlots,SL.spinning));
   dtext.append(r1,r2);
   const bl=buffList(P.buffs);if(bl.length){dtext.appendChild(mk('div','status','NEXT LEVEL BONUS:'));bl.forEach(n=>dtext.appendChild(mk('div','status','+ '+n)));}
   else dtext.appendChild(mk('div','status','3 CARROTS: CARROT RAIN / 3 GRUMPS: GRUMPS STAY HOME / 3 SNOWFLAKES: TURBO / 3 GOLD: JACKPOT'));
   if(!SL.spinning&&P.bank>=SL.bet)sp.focus({preventScroll:true});}
+function leaveSlots(){if(SL.spinning||!SL.ret)return;AudioK.setSong(SL.prev||'map');SL.ret();}
 function slotSpin(){if(SL.spinning||P.bank<SL.bet)return;P.bank-=SL.bet;saveP();SL.final=[pickSym(),pickSym(),pickSym()];SL.spinning=true;SL.t0=performance.now();SL.msg='GOOD LUCK!';SL.msgCol='#fff';AudioK.sfx.honk();slotsInfo();}
 function slotSettle(){const f=SL.final.map(i=>SYMS[i].id),b=SL.bet;let win=0,msg='NO LUCK. SPIN AGAIN?',col='#ff8fc8';
   const same=f[0]===f[1]&&f[1]===f[2],pair=!same&&(f[0]===f[1]||f[1]===f[2]||f[0]===f[2]);
@@ -1390,6 +1492,7 @@ function slotSettle(){const f=SL.final.map(i=>SYMS[i].id),b=SL.bet;let win=0,msg
     AudioK.sfx.gold();}
   else if(pair){win=Math.floor(b*1.5);msg=`PAIR! +${win}`;col='#3ad06a';AudioK.sfx.recruit();}
   else AudioK.sfx.over();
+  if(win>b){AudioK.setHype(true);clearTimeout(SL.hypeT);SL.hypeT=setTimeout(()=>{if(mode==='slots')AudioK.setHype(false);},4000);}
   P.bank+=win;saveP();SL.win=win;SL.msg=msg;SL.msgCol=col;SL.spinning=false;slotsInfo();}
 function updateSlots(now){if(!SL.spinning)return;const e=now-SL.t0;
   for(let i=0;i<3;i++){if(e<800+i*500){SL.reels[i]=(SL.reels[i]+0.6)%SYMS.length;if(Math.random()<0.15)AudioK.sfx.blip();}else SL.reels[i]=SL.final[i];}
@@ -1421,7 +1524,7 @@ function openBoss(ri){const r=RESORTS[ri];Object.assign(BS,{ri,hp:120,maxHp:120,
   canes:[],rings:[],beams:[],parts:[],floats:[],laserCd:0,bassCd:0,banner:null,shake:0});
   mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;
   hint.hidden=coarse;hint.innerHTML='<b>Arrow keys</b> move Jak. <b>Click</b> to fire lasers. <b>Space</b> (or BASS) blasts his canes away. Dodge the spin!';
-  AudioK.init();AudioK.setSong('techno');fitScreen();}
+  AudioK.init();AudioK.setSong('hardtechno');fitScreen();}
 function bossBanner(lines,col,life=1.6){BS.banner={lines,col,life};}
 function bossFloat(x,y,s,col){BS.floats.push({x,y,s,col,life:1});}
 function bossBurst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,sp=rnd(30,100);BS.parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-20,life:rnd(0.4,0.9),col:cols[i%cols.length]});}}
@@ -1977,7 +2080,7 @@ function startGame(ri){
   mode='game';dialog.hidden=true;controls.hidden=false;overlay.hidden=true;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;
   G.ri=ri;G.R=RESORTS[ri];
   {const pk=P.picks[G.R.id]||{};G.driver=DRIVERS[pk.d!==undefined?pk.d:0]||DRIVERS[0];G.dj=DJS[pk.j!==undefined?pk.j:0]||DJS[0];G.mods=crewMods(G.driver,G.dj);}
-  AudioK.setSong(null);AudioK.setSong(G.R.song);
+  AudioK.setSong(null);AudioK.setSong(G.R.song);G.song=G.R.song;G.played=[G.R.song];G.genreIdx=(Math.max(0,GENRES.indexOf(G.R.song))+G.ri*2)%GENRES.length;
   const fuel=G.R.hazard==='fuel';
   hint.hidden=coarse;
   {const W0=WORLDS[G.R.id];hint.innerHTML='<b>Arrow keys</b> or <b>WASD</b> to drive Jak. Orange <b>cat tracks</b> are the fast lane up the mountain. Park at the base lodge door to <b>shop</b>.'+(fuel?' Grab red <b>gas cans</b> to keep the generator running.':'')+
@@ -2008,10 +2111,16 @@ function startGame(ri){
 function burst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=rnd(30,90);G.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-20,life:rnd(0.5,1),col:cols[i%cols.length]});}}
 function floatText(x,y,s,col){G.floats.push({x,y,s,col,life:1.1});}
 function setBanner(lines,col,dur=2.2){G.banner={lines,col,life:dur};}
+const GENRES=['house','techno','dnb','garage','electro','trance','breaks','hardtechno','liquid','dubstep','peak','disco'];
+const GENRE_NAMES={disco:'DISCO HOUSE',house:'PIANO HOUSE',techno:'ACID TECHNO',hardtechno:'WAREHOUSE TECHNO',trance:'TRANCE',dubstep:'DUBSTEP',breaks:'BREAKBEAT',
+  dnb:'DRUM & BASS',liquid:'LIQUID D&B',garage:'UK GARAGE',electro:'ELECTRO',peak:'PEAK-TIME HOUSE',map:'DEEP HOUSE',spy:'LOUNGE'};
+function nextGenre(){let k=G.genreIdx;for(let n=0;n<GENRES.length;n++){k=(k+1)%GENRES.length;if(GENRES[k]!==G.song&&!G.played.includes(GENRES[k]))break;}
+  G.genreIdx=k;return GENRES[k];}
 function startParty(){
-  const n=G.followers.length;G.party=G.partyMax=G.mods.party+Math.min(4,n*0.2);AudioK.setHype(true);AudioK.sfx.party();playPartySample();
+  const n=G.followers.length;G.party=G.partyMax=G.mods.party+Math.min(4,n*0.2);
+  G.song=nextGenre();G.played.push(G.song);if(G.played.length>=GENRES.length-1)G.played=[G.song];AudioK.setSong(G.song,20*16);AudioK.setHype(true);AudioK.sfx.party();playPartySample();
   const bonus=n*100,carrots=Math.floor(n/3)+G.mods.partyCarrots;G.score+=bonus;if(carrots){P.bank+=carrots;saveP();}
-  setBanner(['DANCE PARTY! DJ '+G.dj.name,n?`CREW +${bonus}`+(carrots?` / +${carrots} CARROTS`:''):'GRAB SOME CREW!'],PAL.Y,2.4);
+  setBanner(['DANCE PARTY! DJ '+G.dj.name,'NOW PLAYING: '+GENRE_NAMES[G.song],n?`CREW +${bonus}`+(carrots?` / +${carrots} CARROTS`:''):'GRAB SOME CREW!'],PAL.Y,2.8);
 }
 function endParty(){
   G.party=0;G.joy=0;G.parties++;G.level++;AudioK.setHype(false);
@@ -2048,7 +2157,7 @@ function updateFuel(dt,j){
   for(let i=0;i<G.cans.length;i++){const c=G.cans[i];if(dist(c,j)<16){
     G.fuel=Math.min(100,G.fuel+60);G.score+=25;G.cansGot++;AudioK.sfx.refuel();burst(c.x,c.y-6,10,['#e0262f','#fff',PAL.Y]);floatText(c.x,c.y-20,'FUEL!','#ff6b6b');
     G.cans[i]=freeSpot(90);if(G.fuel>=25)G.lowWarned=false;
-    if(G.dark){G.dark=false;AudioK.setSong(G.R.song);setBanner(['POWER BACK ON!'],PAL.N,1.6);}}}
+    if(G.dark){G.dark=false;AudioK.setSong(G.song||G.R.song);setBanner(['POWER BACK ON!'],PAL.N,1.6);}}}
 }
 function moveAgent(a,vx,vy,dt){const nx=a.x+vx*dt,ny=a.y+vy*dt;if(walkable(nx,ny,3,2)){a.x=nx;a.y=ny;return true;}
   if(walkable(nx,a.y,3,2)){a.x=nx;return true;}if(walkable(a.x,ny,3,2)){a.y=ny;return true;}return false;}
@@ -2283,7 +2392,7 @@ window.addEventListener('keydown',e=>{
     if(e.key===' '||e.key==='b'||e.key==='B'){e.preventDefault();bossBass();}
     if(e.key==='l'||e.key==='L'||e.key==='Enter'){e.preventDefault();if(BS.intro>0)BS.intro=0;else bossLaser(BS.b.x,BS.b.y-28);}
     if(e.key==='m'||e.key==='M')muteBtn.click();return;}
-  if(mode==='slots'){if(e.key===' '||e.key==='Enter'){if(e.target&&e.target.tagName==='BUTTON')return;e.preventDefault();slotSpin();}else if(e.key==='Escape'&&!SL.spinning&&SL.ret)SL.ret();return;}
+  if(mode==='slots'){if(e.key===' '||e.key==='Enter'){if(e.target&&e.target.tagName==='BUTTON')return;e.preventDefault();slotSpin();}else if(e.key==='Escape')leaveSlots();return;}
   if(mode==='preview'||mode==='crew'||mode==='results'){const k=e.key;
     if(k==='m'||k==='M'){muteBtn.click();return;}if(e.repeat)return;
     if(mode==='preview'&&(k===' '||k==='Enter')){e.preventDefault();openCrew(PV.ri);}
