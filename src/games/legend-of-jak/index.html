@@ -69,6 +69,7 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rend
 footer{font-family:var(--font-pixel);font-size:7px;color:var(--dim);text-align:center;letter-spacing:.1em;line-height:1.8}
 .chip:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:0 3px 0 #000}
 .status{color:var(--dim);margin-top:4px}
+#laserBtn{background:#1d8fb8;margin-top:0}#laserBtn:disabled{opacity:.5}
 .namein{display:block;font-family:var(--font-pixel);font-size:16px;letter-spacing:.08em;text-transform:uppercase;background:#000;color:var(--ink);border:3px solid var(--carrot);box-shadow:0 0 0 3px #000;padding:10px 12px;margin-top:10px;width:100%;max-width:300px;box-sizing:border-box}
 .namein::placeholder{color:#6b5a8a}
 .maprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
@@ -121,6 +122,7 @@ body[data-mode="game"] .knob{width:44px;height:44px;margin:-22px 0 0 -22px}
       <div class="hint" id="hint"><b>Arrow keys</b> or <b>WASD</b> to drive Jak. Eat <b>disco carrots</b>, pick up <b>skiers and dancers</b>, dodge the <b>Grumps</b>.</div>
       <button class="chip" id="shopBtn" type="button" hidden>ENTER SHOP</button>
       <button class="start" id="bassBtn" type="button" hidden>BASS</button>
+      <button class="start" id="laserBtn" type="button" hidden>LASER</button>
       <div class="pad" id="pad"><div class="knob" id="knob"></div></div>
     </div>
   </div>
@@ -640,7 +642,7 @@ const $=id=>document.getElementById(id);
 const dialog=$('dialog'),whoEl=$('who'),dtext=$('dtext'),nextEl=$('next'),countEl=$('count');
 const overlay=$('overlay'),ovTitle=$('ovTitle'),ovText=$('ovText'),ovBtns=$('ovBtns');
 const controls=$('controls'),pad=$('pad'),knob=$('knob'),hint=$('hint');
-const skipBtn=$('skipBtn'),storyBtn=$('storyBtn'),muteBtn=$('muteBtn'),mapBtn=$('mapBtn'),sampleFile=$('sampleFile'),shopBtn=$('shopBtn'),bassBtn=$('bassBtn');
+const skipBtn=$('skipBtn'),storyBtn=$('storyBtn'),muteBtn=$('muteBtn'),mapBtn=$('mapBtn'),sampleFile=$('sampleFile'),shopBtn=$('shopBtn'),bassBtn=$('bassBtn'),laserBtn=$('laserBtn');
 muteBtn.textContent=AudioK.isMuted()?'SOUND: OFF':'SOUND: ON';
 if(coarse)hint.innerHTML='Drag the <b>stick</b> (or the screen) to drive Jak. Eat <b>disco carrots</b>, pick up <b>skiers and dancers</b>, dodge the <b>Grumps</b>.';
 else pad.hidden=true;
@@ -1189,7 +1191,7 @@ const UPGRADES=[
  {id:'subs',name:'SUBWOOFERS',desc:'Bass pulls skiers from farther.',costs:[8,16,28]},
  {id:'tank',name:'FUEL TANK',desc:'Generator burns gas slower.',costs:[10,20,32]},
  {id:'cage',name:'ROLL CAGE',desc:'One more heart.',costs:[20,40]},
- {id:'laser',name:'LASERS',desc:'Night levels: zap Grumps.',costs:[12,24,36]}
+ {id:'laser',name:'LASERS',desc:'Zap Grumps. Auto-fires, or tap LASER / press L. Stronger at night.',costs:[12,24,36]}
 ];
 // ---------- saves: one save per player, so everyone on a shared device keeps their own tour ----------
 const LEGACY_KEY='jak-tour-v1',PLAYERS_KEY='jak-players',SAVE_PREFIX='jak-save-';
@@ -1302,7 +1304,8 @@ function openShop(){if(mode!=='game')return;mode='shop';overlay.hidden=true;dial
 function shopInfo(focusId){whoEl.textContent='THE WORKSHOP / '+G.D.lodges[0].name;dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
   buildWorkshop(dtext);const row=mk('div','maprow');const back=btn('BACK TO THE MOUNTAIN','start',leaveShop);back.id='shopBack';row.appendChild(back);dtext.appendChild(row);
   const f=focusId&&document.getElementById(focusId);if(f&&!f.disabled)f.focus({preventScroll:true});}
-function leaveShop(){const mh=3+(P.up.cage||0);if(mh>G.maxHearts){G.hearts+=mh-G.maxHearts;G.maxHearts=mh;}resumeGame();G.shopCool=1.5;}
+function leaveShop(){const mh=3+(P.up.cage||0);if(mh>G.maxHearts){G.hearts+=mh-G.maxHearts;G.maxHearts=mh;}resumeGame();G.shopCool=1.5;
+  if(P.up.laser>0&&!G.laserTold){G.laserTold=true;G.laserCd=0;setBanner(['LASERS ONLINE!',coarse?'TAP LASER TO ZAP GRUMPS':'PRESS L TO ZAP GRUMPS','IT ALSO FIRES ON ITS OWN'],'#5fe8ff',3);}}
 function drawShop(now){
   for(let x=0;x<256;x+=8)R(x,0,8,170,(x/8)%2?'#6a4428':'#5e3c22');for(let x=0;x<256;x+=8)R(x,0,1,170,'#4a2c16');
   R(0,170,256,54,'#3a2a1a');for(let y=176;y<224;y+=8)R(0,y,256,1,'#2a1c10');
@@ -1448,7 +1451,7 @@ function showResultsUI(){const st=RS.st,g=goldCount(),rr=RESORTS[RS.ri];if(mode!
   row.append(btn('SLOTS','chip',()=>openSlots(showResultsUI)),btn('KEEP PARTYING','chip',resumeGame),btn('REPLAY','chip',()=>openCrew(RS.ri)));
   dtext.appendChild(mk('div','',st.unlocks.length?`New crew unlocked: ${st.unlocks.join(', ')}.`:`Golden carrot ${g} of ${LEVEL_COUNT}. +10 Workshop carrots.`));
   dtext.appendChild(row);row.querySelector('.start').focus({preventScroll:true});}
-function resumeGame(){mode='game';dialog.hidden=true;controls.hidden=false;overlay.hidden=true;mapBtn.hidden=false;fitScreen();G.won=false;AudioK.setHype(false);}
+function resumeGame(){laserBtn.hidden=!(P.up.laser>0);mode='game';dialog.hidden=true;controls.hidden=false;overlay.hidden=true;mapBtn.hidden=false;fitScreen();G.won=false;AudioK.setHype(false);}
 function drawResults(now){
   const st=RS.st,r=RESORTS[RS.ri];drawResortScene(r.id,now,{party:true,jakX:4});
   R(0,0,256,26,PAL.K);R(0,26,256,1,PAL.O);drawLogo(4,1,14,PAL.O);txt(r.name,132,4,PAL.Y,8,'center');txt('LEVEL CLEARED!',132,15,'#fff',8,'center',null);
@@ -1465,7 +1468,7 @@ function drawResults(now){
 
 // ---------- Disco Slots: gamble Workshop carrots for carrots and next-level boosts ----------
 const SYMS=[{id:'carrot',w:30},{id:'gold',w:6},{id:'ball',w:14},{id:'grump',w:18},{id:'snow',w:16},{id:'jak',w:16}];
-const BUFF_NAMES={carrots:'CARROT RAIN',grumps:'GRUMPS STAY HOME',speed:'TURBO TRACKS'};
+const BUFF_NAMES={carrots:'CARROT RAIN',grumps:'NO GRUMPS',speed:'TURBO TRACKS'};
 function buffList(b){return Object.keys(BUFF_NAMES).filter(k=>b&&b[k]).map(k=>BUFF_NAMES[k]);}
 const SL={ret:null,bet:5,reels:[0,2,4],final:[0,2,4],spinning:false,t0:0,msg:'PICK A BET AND SPIN',msgCol:'#fff',win:0};
 function pickSym(){const tot=SYMS.reduce((a,s)=>a+s.w,0);let r=Math.random()*tot;for(let i=0;i<SYMS.length;i++){r-=SYMS[i].w;if(r<0)return i;}return 0;}
@@ -1476,7 +1479,7 @@ function slotsInfo(){whoEl.textContent='DISCO SLOTS';dtext.innerHTML='';nextEl.h
   const r2=mk('div','maprow'),sp=btn(SL.spinning?'SPINNING...':'SPIN','start',slotSpin,SL.spinning||P.bank<SL.bet);sp.id='slotSpin';r2.append(sp,btn('LEAVE','chip',leaveSlots,SL.spinning));
   dtext.append(r1,r2);
   const bl=buffList(P.buffs);if(bl.length){dtext.appendChild(mk('div','status','NEXT LEVEL BONUS:'));bl.forEach(n=>dtext.appendChild(mk('div','status','+ '+n)));}
-  else dtext.appendChild(mk('div','status','3 CARROTS: CARROT RAIN / 3 GRUMPS: GRUMPS STAY HOME / 3 SNOWFLAKES: TURBO / 3 GOLD: JACKPOT'));
+  else dtext.appendChild(mk('div','status','3 CARROTS: CARROT RAIN (MORE CARROTS) / 3 GRUMPS: NO GRUMPS / 3 SNOWFLAKES: TURBO SPEED / 3 GOLD: JACKPOT'));
   if(!SL.spinning&&P.bank>=SL.bet)sp.focus({preventScroll:true});}
 function leaveSlots(){if(SL.spinning||!SL.ret)return;AudioK.setSong(SL.prev||'map');SL.ret();}
 function slotSpin(){if(SL.spinning||P.bank<SL.bet)return;P.bank-=SL.bet;saveP();SL.final=[pickSym(),pickSym(),pickSym()];SL.spinning=true;SL.t0=performance.now();SL.msg='GOOD LUCK!';SL.msgCol='#fff';AudioK.sfx.honk();slotsInfo();}
@@ -1485,7 +1488,7 @@ function slotSettle(){const f=SL.final.map(i=>SYMS[i].id),b=SL.bet;let win=0,msg
   if(same){const s=f[0];
     if(s==='gold'){win=b*10;P.buffs.carrots=P.buffs.grumps=P.buffs.speed=true;msg='JACKPOT! ALL BOOSTS!';col=PAL.Y;}
     else if(s==='carrot'){win=b*3;P.buffs.carrots=true;msg='CARROT RAIN NEXT LEVEL!';col=PAL.O;}
-    else if(s==='grump'){win=b;P.buffs.grumps=true;msg='GRUMPS STAY HOME!';col='#9fd8ff';}
+    else if(s==='grump'){win=b;P.buffs.grumps=true;msg='NO GRUMPS NEXT LEVEL!';col='#9fd8ff';}
     else if(s==='snow'){win=b;P.buffs.speed=true;msg='TURBO TRACKS!';col='#5fe8ff';}
     else if(s==='ball'){win=b*5;msg=`DISCO! +${b*5}`;col='#ff4fd8';}
     else {win=b*4;const k=['carrots','grumps','speed'][Math.floor(Math.random()*3)];P.buffs[k]=true;msg='JAK BONUS: '+BUFF_NAMES[k];col=PAL.Y;}
@@ -1522,7 +1525,7 @@ function openBoss(ri){const r=RESORTS[ri];Object.assign(BS,{ri,hp:120,maxHp:120,
   jak:{x:50,y:170,face:1,inv:0},hearts:3+(P.up.cage||0),maxHearts:3+(P.up.cage||0),
   b:{x:200,y:160,face:-1,state:'walk',tx:200,ty:160,throwT:2,spinT:5,stateT:0,yell:0,say:'',dizzy:0,spinA:0,flash:0,vx:0,vy:0,hitT:0},
   canes:[],rings:[],beams:[],parts:[],floats:[],laserCd:0,bassCd:0,banner:null,shake:0});
-  mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;
+  mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;laserBtn.hidden=true;
   hint.hidden=coarse;hint.innerHTML='<b>Arrow keys</b> move Jak. <b>Click</b> to fire lasers. <b>Space</b> (or BASS) blasts his canes away. Dodge the spin!';
   AudioK.init();AudioK.setSong('hardtechno');fitScreen();}
 function bossBanner(lines,col,life=1.6){BS.banner={lines,col,life};}
@@ -2068,6 +2071,15 @@ function freeSpot(minFromJak=70){
   const c=G.open[Math.floor(Math.random()*G.open.length)];return {x:c.x,y:c.y};
 }
 function newCrowd(){const p=freeSpot(90);return {x:p.x,y:p.y,type:Math.random()<0.5?'skier':'dancer',col:CROWD_COLS[Math.floor(Math.random()*CROWD_COLS.length)],hair:['#222','#c84','#fd5','#ddd'][Math.floor(Math.random()*4)],vx:0,vy:0,t:0,noJoin:0,lured:false,ph:Math.random()*1000};}
+function laserRange(){return (60+(P.up.laser||0)*22)*G.mods.laser*(G.D.night?1.35:1);}
+function fireLaser(manual){const j=G.jak,tier=P.up.laser||0;if(!tier||G.dark||G.over||G.won)return;
+  if(G.laserCd>0){if(manual)AudioK.sfx.blip();return;}
+  const range=laserRange()*(manual?1.25:1);let tg=null,bd=range;
+  for(const g of G.grumps){if(g.stun>0)continue;const d=dist(g,j);if(d<bd){bd=d;tg=g;}}
+  const cd=Math.max(1,4.2-tier*1.0)*(G.D.night?0.75:1);
+  if(tg){tg.stun=1.7;tg.yell=1.5;tg.say='bright';G.zaps++;G.beam={g:tg,life:0.35,h:Math.random()*360};G.laserCd=cd;AudioK.sfx.blip();floatText(tg.x,tg.y-30,'ZAP!','#5fe8ff');}
+  else if(manual){const a=Math.atan2(j.vy||0,j.vx||j.face||1);G.beam={tx:j.x+Math.cos(a)*range,ty:j.y+Math.sin(a)*range,life:0.25,h:Math.random()*360};G.laserCd=0.6;AudioK.sfx.blip();floatText(j.x,j.y-34,'NO GRUMP IN RANGE','#5fe8ff');}
+  else G.laserScan=0.3;}
 function newGrump(){const p=freeSpot(160);return {x:p.x,y:p.y,vx:0,vy:0,t:0,yell:0,cool:rnd(1,3),face:1,ph:Math.random()*1000};}
 function drawCan(x,y,t){
   R(x+1,y+2,9,10,PAL.K);R(x+2,y+3,7,8,'#e0262f');R(x+2,y+3,7,1,'#ff6b6b');R(x+3,y+6,5,1,PAL.Y);R(x+2,y+10,7,1,'#8f1018');
@@ -2096,7 +2108,7 @@ function startGame(ri){
     laserCd:1,beam:null,patrol:null,patrolT:rnd(30,50)*G.mods.patrol,npcs:[],atShop:false,shopCool:0,yeti:null,yetiT:rnd(55,85),bear:null,bearT:rnd(45,75),snowballs:[],frozen:0,claw:0});shopBtn.hidden=true;
   {const sk=!!D.skiersOnly,tips=[["CAT TRACKS ARE","THE FAST WAY UP"],["YETI? DODGE","THE SNOWBALLS"],["POLAR BEAR!","WATCH FOR THE !"],["GRUMPS CAN'T","CUT THRU TREES"],["BIG CREW MEANS","LONGER PARTIES"],["SKI PATROL","HEALS HEARTS"],["EVERY 3 CREW","= 1 CARROT"]];
     const extra=[];if(fuel)extra.push(["WATCH THAT","GAS GAUGE!"]);if(D.powder)extra.push(["DEEP POWDER?","STAY GROOMED"]);if(D.steep)extra.push(["BLACK RUNS","PULL YOU DOWN"]);
-    if(D.night)extra.push(P.up.laser?["LASERS STUN","GRUMPS AT NIGHT"]:["NIGHT SKIING?","BUY LASERS!"]);if(sk)extra.push(["NO SNOWBOARDS","AT ALTA, BUD"]);
+    if(P.up.laser)extra.push(["LASERS READY:",coarse?"TAP LASER":"PRESS L (OR AUTO)"]);else if(D.night)extra.push(["NIGHT SKIING?","BUY LASERS!"]);if(sk)extra.push(["NO SNOWBOARDS","AT ALTA, BUD"]);
     const pool=[...extra,...tips.sort(()=>Math.random()-0.5)];
     const near=()=>{for(let k=0;k<60;k++){const c=G.open[Math.floor(Math.random()*G.open.length)];const d=Math.hypot(c.x-D.start[0],c.y-D.start[1]);if(d>50&&d<140&&walkable(c.x,c.y))return {x:c.x,y:c.y};}return freeSpot(80);};
     const kinds=['operator',sk?'skier':'boarder','skier'];
@@ -2104,9 +2116,9 @@ function startGame(ri){
   for(let i=0;i<Math.round(D.carrots*(G.buffs.carrots?1.6:1));i++)G.carrots.push(freeSpot(60));
   if(fuel)for(let i=0;i<6;i++)G.cans.push(freeSpot(90));
   for(let i=0;i<D.crowd;i++){const c=newCrowd();if(D.skiersOnly)c.type='skier';G.crowd.push(c);}
-  for(let i=0;i<Math.max(1,Math.ceil(G.R.grumps*(G.buffs.grumps?0.5:1)));i++)G.grumps.push(newGrump());
+  if(!G.buffs.grumps)for(let i=0;i<G.R.grumps;i++)G.grumps.push(newGrump());
   {const bl=buffList(G.buffs);if(bl.length)setBanner(['SLOTS BONUS',bl.join(' + ')],PAL.Y,6.5);}
-  bassBtn.hidden=true;
+  bassBtn.hidden=true;laserBtn.hidden=!(P.up.laser>0);
 }
 function burst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=rnd(30,90);G.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-20,life:rnd(0.5,1),col:cols[i%cols.length]});}}
 function floatText(x,y,s,col){G.floats.push({x,y,s,col,life:1.1});}
@@ -2214,12 +2226,8 @@ function updateGame(dt,now){
     else{if(g.t<=0){const a=Math.random()*Math.PI*2;g.vx=Math.cos(a)*10;g.vy=Math.sin(a)*10;g.t=rnd(1.5,3);}if(!moveAgent(g,g.vx,g.vy,dt))g.t=0;if(Math.abs(g.vx)>1)g.face=g.vx>0?1:-1;}
     if(d<14&&j.inv<=0&&G.party<=0&&!G.dark&&!j.ride)hitJak(g);
     if(G.over)return;}
-  // lasers: night levels only, needs the Workshop upgrade (DJ lights stat boosts range)
-  if(G.D.night&&(P.up.laser||0)>0&&!G.dark){G.laserCd-=dt;
-    if(G.laserCd<=0){const tier=P.up.laser,range=(60+tier*22)*G.mods.laser;let tg=null,bd=range;
-      for(const g of G.grumps){if(g.stun>0)continue;const d=dist(g,j);if(d<bd){bd=d;tg=g;}}
-      if(tg){tg.stun=1.7;tg.yell=1.5;tg.say='bright';G.zaps++;G.beam={g:tg,life:0.35,h:Math.random()*360};G.laserCd=Math.max(1.2,4.6-tier*1.1);AudioK.sfx.blip();floatText(tg.x,tg.y-30,'ZAP!','#5fe8ff');}
-      else G.laserCd=0.3;}}
+  // lasers: every mountain once bought (longer reach and faster recharge at night); auto-fire plus manual LASER button / L key
+  if((P.up.laser||0)>0&&!G.dark){G.laserCd-=dt;G.laserScan=(G.laserScan||0)-dt;if(G.laserCd<=0&&G.laserScan<=0)fireLaser(false);}
   if(G.beam){G.beam.life-=dt;if(G.beam.life<=0)G.beam=null;}
   // ski patrol: rare, restores a heart
   if(!G.patrol){G.patrolT-=dt;if(G.patrolT<=0){const p=freeSpot(140);G.patrol={x:p.x,y:p.y,life:28,vx:0,vy:0,t:0};floatText(j.x,j.y-34,'SKI PATROL NEARBY!','#ff6b6b');}}
@@ -2296,7 +2304,7 @@ function drawGame(now){
     R(ex-8,ey-8,16,16,'#ff3b3b');R(ex-7,ey-7,14,14,'#fff');txt('!',ex,ey-4,'#ff3b3b',8,'center',null);}
   if(G.dark){ctx.globalAlpha=0.42;R(-4,-4,W+8,H+8,'#0b0620');ctx.globalAlpha=1;}
   if(G.atShop){const L=G.D.lodges[0],bob=Math.round(Math.sin(now/180)*2);txt(coarse?'TAP SHOP':'PRESS E: SHOP',L.x-camX,L.y-camY-46+bob,PAL.Y,8,'center');}
-  if(G.beam&&G.grumps.includes(G.beam.g)){const g=G.beam.g,sx=j.x-camX,sy=j.y-camY-22;for(let k=-1;k<=1;k++)pline(sx,sy+k,g.x-camX,g.y-camY-10+k,k?hsl(G.beam.h+now*0.5,100,70):'#fff');}
+  if(G.beam&&(G.beam.g?G.grumps.includes(G.beam.g):true)){const b=G.beam,sx=j.x-camX,sy=j.y-camY-22,ex=b.g?b.g.x-camX:b.tx-camX,ey=b.g?b.g.y-camY-10:b.ty-camY-10;for(let k=-1;k<=1;k++)pline(sx,sy+k,ex,ey+k,k?hsl(b.h+now*0.5,100,70):'#fff');}
   for(const g of G.grumps)if(g.yell>0&&vis(g.x,g.y))bubble(g.x-camX,g.y-camY-20,g.say==='bright'?["HEY! THAT'S","TOO BRIGHT!"]:["HEY! THAT'S","TOO LOUD!"]);
   for(const n of G.npcs)if(n.near)bubble(n.x-camX,n.y-camY-20,n.tip,'#1a1030');
   for(const f of G.floats)txt(f.s,f.x-camX,f.y-camY,f.col,8,'center');
@@ -2333,6 +2341,7 @@ function drawGame(now){
   for(let k=1;k<5;k++)R(jx+27+k*10,5,1,6,PAL.K);
   txt('CREW'+String(G.followers.length).padStart(2,'0'),jx+84,4,'#ff8fc8',8,'left',null);
   txt(String(G.score).padStart(6,'0'),W-4,4,'#fff',8,'right',null);
+  if((P.up.laser||0)>0){const rdy=G.laserCd<=0&&!G.dark;if(!fuel){R(W-50,hudH,50,12,PAL.K);R(W-50,hudH+11,50,1,PAL.O);R(W-51,hudH,1,12,PAL.O);}txt('LASER',W-4,17,rdy?'#5fe8ff':'#4a5a7a',8,'right',null);}
   if(fuel){
     const low=G.fuel<25,fl=Math.floor(now/250)%2;
     txt('GAS',4,17,'#ff6b6b',8,'left',null);R(30,17,104,8,'#3a2a5a');
@@ -2413,6 +2422,7 @@ window.addEventListener('keydown',e=>{
   }
   if(mode==='shop'){if(e.key==='Escape'){e.preventDefault();leaveShop();}return;}
   if(mode==='game'&&(e.key==='e'||e.key==='E')&&G.atShop){e.preventDefault();openShop();return;}
+  if(mode==='game'&&(e.key==='l'||e.key==='L')){e.preventDefault();fireLaser(true);return;}
   if(KEYMAP[e.key]){keys[KEYMAP[e.key]]=true;if(mode==='game'){e.preventDefault();if(G.intro>0)G.intro=0;}}
   if(e.key===' '||e.key==='Enter'){e.preventDefault();if(mode==='game'&&G.intro>0)G.intro=0;else if(mode==='story'&&pageObj().final&&typedLen>=pageObj().text.length)openMap();else advance();}
   if(e.key==='m'||e.key==='M')muteBtn.click();
@@ -2436,6 +2446,7 @@ mapBtn.addEventListener('click',()=>{openMap(G.ri);});
 storyBtn.addEventListener('click',()=>{startStory();});
 shopBtn.addEventListener('click',e=>{e.stopPropagation();openShop();});
 bassBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();bossBass();});
+laserBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();if(mode==='game')fireLaser(true);});
 muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();muteBtn.textContent=m?'SOUND: OFF':'SOUND: ON';});
 
 // splash state
