@@ -2,6 +2,8 @@ module.exports = function(eleventyConfig) {
   // Pass through static assets
   eleventyConfig.addPassthroughCopy("src/assets");
   eleventyConfig.addPassthroughCopy("src/admin");
+  eleventyConfig.addPassthroughCopy("src/games");
+  eleventyConfig.ignores.add("src/games/**");
 
   // Date formatting filter
   eleventyConfig.addFilter("dateFormat", function(date) {

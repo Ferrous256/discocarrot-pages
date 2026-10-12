@@ -1,0 +1,73 @@
+---
+layout: base.njk
+title: The Legend of Jak
+description: Play The Legend of Jak, a free 16-bit game from Disco Carrot. Drive Jak the jackalope snowcat across real Montana and Utah ski resort trail maps, eat disco carrots, throw dance parties and beat the Grump King.
+permalink: /game/
+---
+<style>
+  .game-stage {
+    padding-top: 68px;
+    background: #0d0718;
+  }
+  .game-frame {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 68px);
+    height: calc(100dvh - 68px);
+    border: 0;
+    background: #0d0718;
+  }
+  .game-about {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 48px 80px;
+  }
+  .game-about .eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem; letter-spacing: 0.25em; text-transform: uppercase;
+    color: var(--orange); margin-bottom: 6px;
+  }
+  .game-about h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(2.6rem, 6vw, 4.4rem);
+    line-height: 0.95; letter-spacing: 0.02em;
+    color: var(--white); margin-bottom: 18px;
+  }
+  .game-about p {
+    font-size: 1rem; line-height: 1.7; color: var(--muted); margin-bottom: 14px;
+  }
+  .game-about p strong { color: var(--ice); font-weight: 500; }
+  .game-about .full-link {
+    display: inline-block; margin-top: 10px;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase;
+    color: var(--midnight); background: var(--orange);
+    padding: 12px 22px; border-radius: 2px; text-decoration: none;
+    transition: background 0.2s;
+  }
+  .game-about .full-link:hover { background: var(--gold); }
+  @media (max-width: 900px) {
+    .game-stage { padding-top: 58px; }
+    .game-frame { height: calc(100vh - 58px); height: calc(100dvh - 58px); }
+    .game-about { padding: 40px 24px 64px; }
+  }
+</style>
+
+<section class="game-stage">
+  <iframe class="game-frame" id="gameFrame" src="/games/legend-of-jak/" title="The Legend of Jak, a 16-bit Disco Carrot game" allow="autoplay; fullscreen"></iframe>
+</section>
+
+<section class="game-about">
+  <div class="eyebrow">Now playing</div>
+  <h1>The Legend of Jak</h1>
+  <p>Drive <strong>Jak the jackalope snowcat</strong> across real Montana and Utah trail maps. Eat disco carrots, pick up skiers and dancers, dodge the Grumps, and throw three dance parties on each mountain to earn its golden carrot. Then beat the Grump King at Monida Pass to reach Utah.</p>
+  <p>Works on phones and computers. Every player picks their own name, so each person keeps their own tour, carrots and upgrades on this device.</p>
+  <a class="full-link" href="/games/legend-of-jak/">Play full screen →</a>
+</section>
+
+<script>
+  (function () {
+    var f = document.getElementById('gameFrame');
+    f.addEventListener('load', function () { try { f.contentWindow.focus(); } catch (e) {} });
+  })();
+</script>

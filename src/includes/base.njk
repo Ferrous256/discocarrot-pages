@@ -111,7 +111,7 @@
     font-size: 0.68rem; letter-spacing: 0.15em; text-transform: uppercase;
     color: var(--muted); text-decoration: none; transition: color 0.2s;
   }
-  .nav-links a:hover { color: var(--orange); }
+  .nav-links a:hover, .nav-links a[aria-current="page"] { color: var(--orange); }
   .nav-links a.cta-btn {
     color: var(--midnight); background: var(--orange);
     padding: 10px 24px; border-radius: 2px;
@@ -182,6 +182,7 @@
     <a href="/adventures/">Adventures</a>
     <a href="/sponsorship/">Sponsors</a>
     <a href="/ski-resorts/">For Resorts</a>
+    <a href="/game/"{% if page.url == "/game/" %} aria-current="page"{% endif %}>Game<span style="display:inline-block;margin-left:6px;padding:2px 5px;border-radius:2px;background:#FF5C00;color:#060C18;font-size:0.55rem;letter-spacing:0.1em;vertical-align:1px">New</span></a>
     <a href="/contact/" class="cta-btn">Contact →</a>
   </div>
 </nav>
@@ -196,6 +197,7 @@
     <a href="/adventures/">Adventures</a>
     <a href="/ski-resorts/">For Resorts</a>
     <a href="/sponsorship/">Sponsorship</a>
+    <a href="/game/">Game</a>
     <a href="/contact/">Contact</a>
     <a href="/request-quote/">Request Quote</a>
 </div>
