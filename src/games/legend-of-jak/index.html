@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Drive Jak the jackalope snowcat across real Montana and Utah ski resort trail maps, eat disco carrots, gather your crew, throw dance parties and beat the Grump King. A free 16-bit game from Disco Carrot.">
+<meta name="description" content="Drive Jak the jackalope snowcat across real ski resort trail maps and downtown parades in Montana, Utah, Wyoming and Colorado. Eat disco carrots, gather your crew, throw dance parties and beat the state-line bosses. A free 16-bit game from Disco Carrot.">
 <meta name="theme-color" content="#0d0718">
 <meta property="og:title" content="The Legend of Jak | Disco Carrot">
 <meta property="og:description" content="A free 16-bit snowcat dance-party game from Disco Carrot. Catch your disco carrot.">
@@ -39,7 +39,13 @@
   --font-body:'VT323', 'Courier New', monospace;
   color-scheme: dark;
 }
-html,body{height:100%}
+html,body{height:100%;overscroll-behavior:none}
+/* a game, not a page: no text selection, no long-press callouts, no double-tap zoom */
+body{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-text-size-adjust:100%}
+input,textarea{-webkit-user-select:text;user-select:text;-webkit-touch-callout:default}
+button,.chip,.start,.dialog,.pad{touch-action:manipulation}
+body[data-mode="game"],body[data-mode="boss"]{overflow:hidden;position:fixed;inset:0;width:100%}
+body[data-mode="game"] #app,body[data-mode="boss"] #app,body[data-mode="game"] .controls,body[data-mode="boss"] .controls{touch-action:none}
 [hidden]{display:none!important}
 body{background:var(--bg);color:var(--ink);font-family:var(--font-body);margin:0;-webkit-tap-highlight-color:transparent}
 #app{box-sizing:border-box;max-width:860px;margin:0 auto;padding-inline:16px;padding-block:10px 14px;display:flex;flex-direction:column;gap:10px;min-height:100%}
@@ -90,12 +96,28 @@ body.fs.land .topbar{grid-column:1 / span 2}
 body.fs.land .screen{grid-column:1;grid-row:2;margin:0}
 body.fs.land .under{grid-column:2;grid-row:2;height:100%}
 body.fs.land .controls{flex-direction:column;justify-content:flex-end;height:100%}
+/* portrait full screen while playing: the game fills the display edge to edge and the stick and buttons float over it */
+body.fs.over #app{padding:env(safe-area-inset-top,0px) env(safe-area-inset-right,0px) 0 env(safe-area-inset-left,0px);gap:0}
+body.fs.over .screen{border:0;margin:0 auto}
+body.fs.over .under{position:fixed;left:0;right:0;bottom:0;width:auto!important;padding:0 10px calc(env(safe-area-inset-bottom,0px) + 10px);overflow:visible;z-index:6;pointer-events:none}
+body.fs.over .under>*{pointer-events:auto}
+body.fs.over .controls{background:transparent}
+body.fs.over .pad{background:radial-gradient(circle,rgba(42,26,72,.55) 0 55%,rgba(27,16,48,.55) 56%);border-color:rgba(255,255,255,.35)}
+body.fs.over .controls .start,body.fs.over .controls .chip{opacity:.92}
+body.fs.over .topbar{padding:2px 4px}
 #fsTip{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:60;font-family:var(--font-pixel);font-size:9px;line-height:1.6;background:var(--panel);border:3px solid var(--gold);padding:10px;color:var(--ink)}
 #updBar{display:block;width:100%;margin:0 0 8px;font-size:10px;padding:10px 8px;background:#1d8fb8}
 #laserBtn{background:#1d8fb8;margin-top:0}#laserBtn.charging{background:#2a3a4a;color:#8ab;animation:none}
 #baconBtn{background:#8a2a1a;color:#ffe0c8;border-color:#e0806a}
+#devBtn{background:#3a0d0d;border-color:#ff3b3b;color:#ff8a8a}
+#devPanel{position:fixed;left:50%;top:calc(env(safe-area-inset-top,0px) + 44px);transform:translateX(-50%);z-index:80;width:min(92vw,360px);background:#1a0808;border:3px solid #ff3b3b;box-shadow:0 0 0 3px #000;padding:10px;display:grid;gap:8px;font-family:var(--font-pixel);font-size:8px;color:#ffb0b0;line-height:1.6}
+#devPanel .row{display:flex;flex-wrap:wrap;gap:6px}
+#devPanel .chip{background:#3a0d0d;border-color:#ff6b6b}
 .namein{display:block;font-family:var(--font-pixel);font-size:16px;letter-spacing:.08em;text-transform:uppercase;background:#000;color:var(--ink);border:3px solid var(--carrot);box-shadow:0 0 0 3px #000;padding:10px 12px;margin-top:10px;width:100%;max-width:300px;box-sizing:border-box}
 .namein::placeholder{color:#6b5a8a}
+.acctin{text-transform:none;font-size:12px;letter-spacing:.02em;max-width:340px}
+.acctform{display:grid;gap:2px}
+.acctmsg{color:#ff8fc8;min-height:1em}
 .maprow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
 .maprow .start{margin-top:0;font-size:11px;padding:11px 14px}
 .shop{display:grid;gap:7px;margin-top:6px;font-size:.78em}
@@ -126,6 +148,7 @@ body[data-mode="game"] .knob{width:44px;height:44px;margin:-22px 0 0 -22px}
       <button class="chip" id="mapBtn" type="button" hidden>TOUR MAP</button>
       <button class="chip" id="fsBtn" type="button">FULL SCREEN</button>
       <button class="chip" id="muteBtn" type="button">SOUND: ON</button>
+      <button class="chip" id="devBtn" type="button" hidden>DEV</button>
     </div>
   </div>
 
@@ -155,6 +178,7 @@ body[data-mode="game"] .knob{width:44px;height:44px;margin:-22px 0 0 -22px}
     </div>
   </div>
   <input type="file" id="sampleFile" accept="audio/*" hidden>
+  <div id="devPanel" hidden></div>
   <footer>THIOKOL ENTERTAINMENT &middot; MISSOULA, MONTANA &middot; @DISCOCARROTSNOWCAT</footer>
 </div>
 
@@ -468,12 +492,15 @@ function makeJakMusic(ac,out){
 <script>
 (()=>{
 'use strict';
-let W=256,H=224;
+let W=256,H=224,HUDB=0; // HUDB: canvas pixels hidden under the on-screen controls in full screen
 const cv=document.getElementById('cv');
 let ctx=cv.getContext('2d');
 ctx.imageSmoothingEnabled=false;
 const reduceMotion=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 const coarse=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
+// developer cheats: add ?dev=1 to the address (or tap the DISCO CARROT logo 5 times) to turn on, ?dev=0 to turn off
+const DEV={on:false};
+try{const q=location.search;if(/[?&]dev=1/.test(q))localStorage.setItem('jak-dev','1');if(/[?&]dev=0/.test(q))localStorage.removeItem('jak-dev');DEV.on=localStorage.getItem('jak-dev')==='1';}catch(e){}
 
 const PAL={K:'#140b22',O:'#ff5c00',DO:'#b83a00',LO:'#ff9a4d',Y:'#ffd23f',W:'#ffffff',G:'#9a9ab0',DG:'#3b3b52',LG:'#c8c8dc',B:'#a06a3a',PK:'#ff8fc8',CY:'#5fe8ff',DCY:'#1d6f8f',N:'#3ad06a',DN:'#1f7a44',SK:'#f2c29b',SN:'#eef3ff',SN2:'#cfdcf5'};
 
@@ -701,13 +728,16 @@ function fitScreen(){
   document.body.dataset.mode=mode;
   let w=256,h=224;
   const fs=document.body.classList.contains('fs');
-  if(fs){const land=window.innerWidth>window.innerHeight;document.body.classList.toggle('land',land);
-    const top=topbarEl.offsetHeight+8,side=land?Math.min(340,Math.max(220,window.innerWidth*0.3)):0;
-    const below=land?0:(mode==='game'||mode==='boss'?(controls.hidden?0:controls.offsetHeight+6):Math.min(window.innerHeight*0.42,Math.max(120,underEl.scrollHeight))+6);
-    const availW=window.innerWidth-side-12,availH=window.innerHeight-top-below-8;
-    if(mode==='game'){const a=availW/availH;if(a<1){w=256;h=Math.max(224,Math.min(620,Math.round(256/a)));}else{h=224;w=Math.max(256,Math.min(560,Math.round(224*a)));}}
+  HUDB=0;
+  if(fs){const land=window.innerWidth>window.innerHeight,vh=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.body.classList.toggle('land',land);
+    const act=mode==='game'||mode==='boss',over=act&&!land;document.body.classList.toggle('over',over);
+    const top=topbarEl.offsetHeight+6,side=land?Math.min(340,Math.max(220,window.innerWidth*0.3)):0;
+    const below=land||over?0:Math.min(vh*0.42,Math.max(120,underEl.scrollHeight))+6;
+    const availW=window.innerWidth-side-(over?0:12),availH=vh-top-below-(over?0:8);
+    if(mode==='game'||(mode==='boss'&&!land)){const a=availW/availH;if(a<1){w=256;h=Math.max(224,Math.min(640,Math.round(256/a)));}else if(mode==='game'){h=224;w=Math.max(256,Math.min(560,Math.round(224*a)));}}
     const sc=Math.min(availW/w,availH/h),px=Math.floor(w*sc)+'px';
     screenEl.style.width=px;screenEl.style.aspectRatio=`${w}/${h}`;underEl.style.width='';
+    if(over&&!controls.hidden)HUDB=Math.ceil((controls.offsetHeight+10)/sc);
     if(w!==W||h!==H){W=w;H=h;cv.width=w;cv.height=h;ctx.imageSmoothingEnabled=false;}return;}
   document.body.classList.remove('land');
   if(mode==='game'){
@@ -894,7 +924,7 @@ function startStory(){
   enterScene(0);fitScreen();
 }
 function advance(){
-  if(mode==='splash'){openPlayers();return;}
+  if(mode==='splash'){if(PL.last&&acctOf(PL.last)&&PL.list.some(p=>p.id===PL.last)){AudioK.init();AudioK.setSong('story');pickPlayer(PL.last);}else openPlayers();return;}
   if(mode!=='story')return;
   const pg=pageObj();
   if(typedLen<pg.text.length){typedLen=pg.text.length;dtext.textContent=pg.text;return;}
@@ -928,7 +958,12 @@ const PS={mode:'list'};
 function playerGold(id){const sv=lsGet(SAVE_PREFIX+id)||{};return RESORTS.filter(r=>!r.boss&&sv.cleared&&sv.cleared[r.id]).length;}
 function openPlayers(){AudioK.init();AudioK.setSong('story');mode='players';overlay.hidden=true;dialog.hidden=false;controls.hidden=true;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=true;
   PS.mode=PL.list.length?'list':'new';fitScreen();playersUI();}
-function pickPlayer(id){PL.cur=id;PL.last=id;savePlayers();applySave(lsGet(SAVE_PREFIX+id));AudioK.sfx.recruit();if(P.seen)openMap();else startStory();}
+function pickPlayer(id,fresh){PL.cur=id;PL.last=id;savePlayers();applySave(lsGet(SAVE_PREFIX+id));AudioK.sfx.recruit();
+  const a=acctOf(id),go=()=>{if(PL.cur!==id)return;if(P.seen)openMap();else startStory();};
+  if(!API||!a||fresh)return go();
+  whoEl.textContent='LOADING YOUR TOUR';dtext.innerHTML='';dtext.appendChild(mk('div','',`Getting ${curName()}'s tour from your account...`));
+  api('/save',{token:a.token}).then(res=>{if(res&&res.save&&(+res.t||0)>(P.t||0)){applySave(res.save);P.t=+res.t;lsSet(SAVE_PREFIX+id,P);}else if((P.t||0)>((res&&+res.t)||0))cloudPush(true);})
+    .catch(e=>{if(e.status===401){a.token=null;savePlayers();CLOUD.note='Signed out. Sign in again to keep saving online.';}}).finally(go);}
 function cleanName(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9 .!\-]/g,'').replace(/\s+/g,' ').trim().slice(0,10);}
 function addPlayer(raw){let name=cleanName(raw)||`PLAYER ${PL.list.length+1}`;
   const taken=n=>PL.list.some(p=>p.name===n);if(taken(name)){let k=2;while(taken((name.slice(0,8)+' '+k).trim()))k++;name=(name.slice(0,8)+' '+k).trim();}
@@ -939,12 +974,12 @@ function playersUI(){dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='
     const inp=mk('input','namein');inp.type='text';inp.maxLength=10;inp.placeholder='YOUR NAME';inp.autocomplete='off';inp.spellcheck=false;inp.setAttribute('aria-label','Player name');inp.setAttribute('autocapitalize','characters');
     inp.addEventListener('click',e=>e.stopPropagation());
     inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();addPlayer(inp.value);}else if(e.key==='Escape'&&PL.list.length){PS.mode='list';playersUI();}});
-    const row=mk('div','maprow');row.appendChild(btn("LET'S GO",'start',()=>addPlayer(inp.value)));if(PL.list.length)row.appendChild(btn('BACK','chip',()=>{PS.mode='list';playersUI();}));
+    const row=mk('div','maprow');row.appendChild(btn("LET'S GO",'start',()=>addPlayer(inp.value)));if(API)row.appendChild(btn('SIGN IN','chip',()=>acctForm('login',null,()=>{PS.mode=PL.list.length?'list':'new';playersUI();})));if(PL.list.length)row.appendChild(btn('BACK','chip',()=>{PS.mode='list';playersUI();}));
     dtext.append(inp,row);setTimeout(()=>inp.focus({preventScroll:true}),30);return;}
   const del=PS.mode==='delete';whoEl.textContent=del?'REMOVE A PLAYER':"WHO'S PLAYING?";
   dtext.appendChild(mk('div','',del?'Tap a name to erase that player and their save.':'Pick your name to keep your own tour going.'));
   const list=mk('div','maprow');
-  PL.list.forEach(p=>{const b=btn(`${p.name} ${playerGold(p.id)}/${LEVEL_COUNT}`,del?'chip':(p.id===PL.last?'start':'chip'),()=>{
+  PL.list.forEach(p=>{const b=btn(`${p.name}${p.acct&&p.acct.token?' @':''} ${playerGold(p.id)}/${LEVEL_COUNT}`,del?'chip':(p.id===PL.last?'start':'chip'),()=>{
       if(!del)return pickPlayer(p.id);
       if(PS.confirm!==p.id){PS.confirm=p.id;playersUI();return;}
       PL.list=PL.list.filter(q=>q.id!==p.id);lsDel(SAVE_PREFIX+p.id);if(PL.last===p.id)PL.last=null;if(PL.cur===p.id)PL.cur=null;PS.confirm=null;savePlayers();AudioK.sfx.splat();
@@ -954,7 +989,7 @@ function playersUI(){dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='
   dtext.appendChild(list);
   const row=mk('div','maprow');
   if(del)row.appendChild(btn('DONE','chip',()=>{PS.mode='list';PS.confirm=null;playersUI();}));
-  else{if(PL.list.length<8)row.appendChild(btn('+ NEW PLAYER','chip',()=>{PS.mode='new';playersUI();}));row.appendChild(btn('REMOVE','chip',()=>{PS.mode='delete';PS.confirm=null;playersUI();}));}
+  else{if(PL.list.length<8)row.appendChild(btn('+ NEW PLAYER','chip',()=>{PS.mode='new';playersUI();}));if(API)row.appendChild(btn('SIGN IN','chip',()=>acctForm('login',null,()=>{PS.mode=PL.list.length?'list':'new';playersUI();})));row.appendChild(btn('REMOVE','chip',()=>{PS.mode='delete';PS.confirm=null;playersUI();}));}
   dtext.appendChild(row);
   const f=dtext.querySelector('.start')||dtext.querySelector('button');if(f)f.focus({preventScroll:true});}
 function drawPlayers(t){SCENES[0].draw(t);ctx.globalAlpha=0.7;R(0,140,W,40,'#000');ctx.globalAlpha=1;
@@ -1154,10 +1189,20 @@ function drawYeti(x,y,t,throwing,face=1){const b=Math.floor(t/260)%2,p=(dx,dy,w,
   p(2,7,12,11,F);p(2,15,12,2,S);for(let k=0;k<6;k++)p(2+k*2,17,1,1,S);
   p(4,0,8,8,F);p(3,1,1,3,F);p(12,1,1,3,F);p(5,2,6,5,'#6f8fca');p(6,3,1,1,'#111');p(9,3,1,1,'#111');p(6,5,4,1,'#2a1030');p(6,6,1,1,'#fff');p(9,6,1,1,'#fff');
   p(0,8,2,9,F);if(throwing){p(14,2,2,7,F);p(13,0,3,3,'#ffffff');p(13,0,3,1,'#cfe0ff');}else p(14,8,2,9,F);}
-function drawPolarBear(x,y,t,face=1){const f=Math.floor(t/90)%2,p=(dx,dy,w,h,c)=>R(face===1?x+dx:x+(28-dx-w),y+dy,w,h,c),F='#f6f8ff',S='#d8deec';
+function drawPolarBear(x,y,t,face=1,swipe=0){const f=Math.floor(t/90)%2,p=(dx,dy,w,h,c)=>R(face===1?x+dx:x+(28-dx-w),y+dy,w,h,c),F='#f6f8ff',S='#d8deec';
   p(4,14,20,1,'rgba(0,0,0,0.18)');
   p(4,3,16,9,F);p(6,2,9,1,F);p(4,10,16,2,S);p(19,4,6,6,F);p(24,6,3,3,'#e6eaf4');p(26,6,1,1,'#111');p(22,5,1,1,'#111');p(20,3,2,2,F);p(21,3,1,1,'#c8cede');p(1,4,3,2,F);
+  if(swipe){p(5,11,3,3,F);p(4,13,2,1,'#333');p(20,1,4,3,F);p(23,-2,3,4,F);p(26,-2,1,1,'#333');p(26,0,1,1,'#333');p(25,2,1,1,'#333');p(22,5,1,1,'#111');p(23,8,3,1,'#5a1a2a');return;}
   if(f){p(5,11,3,3,F);p(16,11,3,3,F);p(4,13,2,1,'#333');p(18,13,2,1,'#333');}else{p(8,11,3,3,F);p(13,11,3,3,F);p(10,13,2,1,'#333');p(14,13,2,1,'#333');}}
+// standing tall on the hind legs (throwing pose holds a snowball up high)
+function drawPolarBearStand(x,y,t,face=1,throwing=false,roar=false){const p=(dx,dy,w,h,c)=>R(face===1?x+dx:x+(20-dx-w),y+dy,w,h,c),F='#f6f8ff',S='#d8deec',K='#111';
+  p(3,29,14,1,'rgba(0,0,0,0.18)');
+  p(5,22,4,7,F);p(11,22,4,7,F);p(4,28,6,1,S);p(10,28,6,1,S);p(4,28,1,1,'#333');p(6,28,1,1,'#333');p(14,28,1,1,'#333');p(16,28,1,1,'#333');
+  p(4,10,12,13,F);p(5,9,10,2,F);p(7,15,7,7,S);p(4,21,12,1,S);
+  p(6,2,9,8,F);p(5,1,2,2,F);p(13,1,2,2,F);p(6,1,1,1,'#c8cede');p(14,1,1,1,'#c8cede');p(13,5,5,4,'#e6eaf4');p(17,5,1,2,K);p(12,4,1,1,K);
+  if(roar){p(14,8,3,2,'#5a1a2a');p(14,8,1,1,'#fff');}else p(14,8,2,1,'#8a8ea0');
+  if(throwing){p(1,-1,3,12,F);p(0,-6,6,6,'#ffffff');p(0,-6,6,1,'#cfe0ff');p(5,-5,1,4,'#9fb6dc');p(15,12,4,3,F);p(18,12,1,1,'#333');p(18,14,1,1,'#333');}
+  else{p(1,10,4,4,F);p(0,13,1,1,'#333');p(1,13,1,1,'#333');p(15,10,5,3,F);p(19,10,1,1,'#333');p(19,12,1,1,'#333');}}
 function drawPatrol(x,y,t){const b=Math.floor(t/200)%2;y+=b;
   R(x+3,y-1,4,3,'#f0f0f0');R(x+3,y+2,4,2,PAL.SK);R(x+2,y+4,6,6,'#d0202a');R(x+4,y+5,2,4,'#fff');R(x+3,y+6,4,2,'#fff');
   R(x+3,y+10,4,3,'#1a1a2a');R(x,y+5,1,9,PAL.G);R(x+9,y+5,1,9,PAL.G);R(x-1,y+13,12,1,'#d0202a');
@@ -1187,7 +1232,24 @@ const SCENE_ART={
 function ridgeAt(rg,x){for(let i=0;i<rg.length-1;i++){const [x0,y0]=rg[i],[x1,y1]=rg[i+1];if(x>=x0&&x<=x1)return y0+(y1-y0)*((x-x0)/(x1-x0||1));}return rg[rg.length-1][1];}
 function drawSceneLodge(x,y,roof,night){R(x-22,y-10,44,20,PAL.K);R(x-21,y-4,42,13,'#8a5a3a');for(let r=0;r<10;r++)R(x-22+r,y-13+r,44-r*2,1,r===0?'#fff':roof);
   for(let k=0;k<4;k++)R(x-17+k*9,y-1,5,4,night?'#ffd76a':'#5fe8ff');R(x-2,y+2,5,7,'#3a2416');}
+// downtown on parade day: the hills behind town, a row of storefronts, bunting over the street
+function drawCityScene(id,t,o={}){const GY=186,msla=id==='missoula';
+  sky('#3d6fc9','#c6e6ff');R(26,22,12,12,'#fff6c8');R(24,24,16,8,'#fff6c8');
+  if(msla){const hill=(cx,w,h,c)=>{for(let x=cx-w;x<cx+w;x++){const k=1-Math.abs(x-cx)/w,hh=Math.round(h*Math.sqrt(k));R(x,GY-40-hh,1,hh,c);}};
+    hill(60,90,70,'#9aaed0');hill(200,80,56,'#8aa0c8');R(56,GY-96,2,12,'#fff');R(64,GY-96,2,12,'#fff');R(58,GY-94,2,3,'#fff');R(62,GY-94,2,3,'#fff');R(60,GY-92,2,3,'#fff');
+    R(206,GY-84,2,10,'#fff');R(206,GY-76,6,2,'#fff');txt('MT SENTINEL',60,GY-40-78,'#3a4a7a',8,'center',null);}
+  else{mountains(GY-46,70,'#8aa6d6','#eef4ff',41);R(150,GY-92,2,10,'#fff');R(158,GY-92,2,10,'#fff');R(152,GY-90,2,3,'#fff');R(156,GY-90,2,3,'#fff');R(154,GY-88,2,3,'#fff');txt('BRIDGER RANGE',128,30,'#3a4a7a',8,'center',null);}
+  R(0,GY-44,256,44,'#c9d0e2');
+  const fronts=msla?[['NP DEPOT','#8a3a2a'],['FLORENCE','#d8ccb0'],['WILMA','#e0cfa0'],['MERC','#9a4a32']]:[['BAXTER','#7a3a2e'],['ELLEN','#b06a4a'],['RIALTO','#6a3a5a'],['EMERSON','#9a5a3a']];
+  fronts.forEach(([n,c],k)=>{const x=6+k*62,h=34+((k*13)%3)*8,y=GY-h;R(x,y,56,h,PAL.K);R(x+1,y+1,54,h-1,c);for(let r2=0;r2<2;r2++)for(let wx=x+5;wx<x+50;wx+=9)R(wx,y+6+r2*10,5,6,'#e8f0ff');
+    R(x+4,GY-12,48,10,PAL.K);R(x+5,GY-11,46,8,'#2a1030');txt(n,x+28,GY-11,PAL.Y,6,'center',null);});
+  R(0,GY,256,224-GY,'#55566a');R(0,GY,256,4,'#b9c0d2');for(let x=0;x<256;x+=20)R(x,GY+18,10,2,PAL.Y);
+  for(let x=0;x<256;x+=8){const yy=GY-50+Math.round(Math.sin(x/40)*4);R(x,yy,4,4,hsl(x*3+t*0.05,90,60));R(x+1,yy+4,2,2,hsl(x*3+t*0.05,90,45));}
+  for(let i=0;i<10;i++)drawDancer(70+i*16+(i%2)*4,GY+4+(i%2)*6,t+i*90,hsl(i*40,85,55),i%3?'#222':'#fd5');
+  if(o.party){for(let k=0;k<4;k++){const ph=((t/1400)+k*0.31)%1,cx=40+k*58,cy=40+((k*37)%34),rr=ph*26;for(let a=0;a<12;a++){const an=a/12*Math.PI*2;R(cx+Math.cos(an)*rr,cy+Math.sin(an)*rr,2,2,hsl(k*90+a*8));}}}
+  drawJakPoly(o.jakX!==undefined?o.jakX:12,GY-38,0.8,{face:1,t,roll:t/40,eyes:true,lights:true,wiggle:true,beat:o.party&&Math.floor(t/240)%2===0});}
 function drawResortScene(id,t,o={}){
+  if(WORLDS[id]&&WORLDS[id].city)return drawCityScene(id,t,o);
   const A=SCENE_ART[id]||SCENE_ART.marshall,night=!!A.night,GY=186;
   if(night){sky('#05081c','#1c2550');stars(t,60);R(206,22,12,12,'#fff3c0');R(204,24,16,8,'#fff3c0');R(210,24,4,3,'#e8dca0');}
   else{sky('#3d6fc9','#c6e6ff');R(26,22,12,12,'#fff6c8');R(24,24,16,8,'#fff6c8');}
@@ -1225,20 +1287,22 @@ function drawResortScene(id,t,o={}){
 
 // ---------- tour + progress ----------
 const RESORTS=[
- {id:'marshall',song:'disco',name:'MARSHALL MOUNTAIN',label:'MARSHALL',x:136,y:92,lx:148,ly:88,la:'left',grumps:2,hazard:null,
+ {id:'marshall',song:'disco',name:'MARSHALL MOUNTAIN',label:'MARSHALL',x:176,y:78,lx:166,ly:74,la:'right',grumps:2,hazard:null,
   blurb:'The home hill outside Missoula, under the night-skiing lights. Work the runs off the triple chair and T-bar and find the summit.'},
- {id:'bridger',song:'techno',name:'BRIDGER BOWL',label:'BRIDGER',x:206,y:128,lx:206,ly:138,la:'center',grumps:3,hazard:'fuel',
-  blurb:'Eight lifts, Deer Park to the Ridge. The generator drinks gas: grab red cans or the music dies and your crew drifts off.'},
- {id:'lookout',song:'dubstep',name:'LOOKOUT PASS',label:'LOOKOUT',x:28,y:78,lx:8,ly:92,la:'left',grumps:3,hazard:null,
-  via:[[168,110],[150,150],[60,148]],
-  blurb:'Right off I-90 on the Idaho-Montana line, two time zones and buried in snow. Deep powder bogs Jak down, so stick to the groomers.'},
- {id:'snowbowl',song:'electro',name:'MONTANA SNOWBOWL',label:'SNOWBOWL',x:96,y:62,lx:96,ly:40,la:'center',grumps:4,hazard:null,
+ {id:'missoula',city:true,song:'garage',name:'MISSOULA DOWNTOWN',label:'DOWNTOWN',x:112,y:150,lx:112,ly:160,la:'center',grumps:3,hazard:null,via:[[176,128]],
+  blurb:'Parade day downtown! Lead the parade from the old Northern Pacific depot down Higgins Avenue, hit every checkpoint, pack the sidewalks into your conga line and finish at Caras Park on the Clark Fork.'},
+ {id:'snowbowl',song:'electro',name:'MONTANA SNOWBOWL',label:'SNOWBOWL',x:70,y:52,lx:82,ly:48,la:'left',grumps:3,hazard:null,via:[[64,140],[56,80]],
   blurb:'One big steep bowl above Missoula. Black runs drag Jak downhill, so climb on the cat tracks beside Grizzly and LaValle Creek.'},
- {id:'bigsky',song:'peak',name:'BIG SKY',label:'BIG SKY',x:186,y:176,lx:186,ly:186,la:'center',grumps:5,hazard:'fuel',
-  via:[[150,48],[248,96],[248,170]],
+ {id:'lookout',song:'dubstep',name:'LOOKOUT PASS',label:'LOOKOUT',x:22,y:100,lx:6,ly:112,la:'left',grumps:3,hazard:null,
+  blurb:'Right off I-90 on the Idaho-Montana line, two time zones and buried in snow. Deep powder bogs Jak down, so stick to the groomers.'},
+ {id:'bridger',song:'techno',name:'BRIDGER BOWL',label:'BRIDGER',x:214,y:118,lx:214,ly:128,la:'center',grumps:4,hazard:'fuel',via:[[12,72],[12,36],[248,36],[248,100]],
+  blurb:'Eight lifts, Deer Park to the Ridge. The generator drinks gas: grab red cans (or buy gas at the shop) or the music dies and your crew drifts off.'},
+ {id:'bozeman',city:true,song:'house',name:'BOZEMAN DOWNTOWN',label:'BOZEMAN',x:232,y:164,lx:218,ly:160,la:'right',grumps:4,hazard:null,
+  blurb:'Parade on Main Street! Roll east from Grand Avenue past the Baxter and the Ellen Theatre, hit every checkpoint, and finish the parade at Bogert Park.'},
+ {id:'bigsky',song:'peak',name:'BIG SKY',label:'BIG SKY',x:178,y:198,lx:168,ly:194,la:'right',grumps:5,hazard:'fuel',
   blurb:'The big one: Lone Peak, Andesite and Moonlight Basin. Steep, deep, and a long way from a gas can. The golden carrot waits on Lone Peak.'},
- {id:'boss_mtut',boss:true,song:'hardtechno',name:'GRUMP KING',label:'BOSS',x:194,y:246,lx:206,ly:242,la:'left',via:[[214,212]],
-  blurb:'The Grump King blocks I-15 at Monida Pass. Tap to fire lasers, hit BASS to smash his canes, and dodge his spinning cane attack. Beat him to reach Utah.'},
+ {id:'boss_mtut',boss:true,song:'hardtechno',name:'GRUMP KING',label:'GRUMP KING',x:150,y:232,lx:138,ly:228,la:'right',
+  blurb:'The Grump King blocks I-15 at Monida Pass, right on the Montana-Idaho line. Tap to fire lasers, hit BASS to smash his canes, and dodge his spinning cane attack. Beat him to reach Utah.'},
  {id:'snowbasin',song:'house',name:'SNOWBASIN',label:'SNOWBASIN',x:100,y:300,lx:100,ly:310,la:'center',grumps:4,hazard:'fuel',via:[[150,266]],
   blurb:'Mount Ogden, north of Salt Lake. Gondolas, the Allen Peak Tram and the John Paul downhill. The generator is thirsty again.'},
  {id:'brighton',song:'trance',name:'BRIGHTON',label:'BRIGHTON',x:196,y:342,lx:196,ly:352,la:'center',grumps:4,hazard:null,
@@ -1249,46 +1313,48 @@ const RESORTS=[
   blurb:'Skiers only, always has been. Collins Gulch, Albion Basin, the Baldy Chutes and High Rustler. Deep and steep.'},
  {id:'snowbird',song:'dnb',name:'SNOWBIRD',label:'SNOWBIRD',x:150,y:378,lx:138,ly:374,la:'right',grumps:6,hazard:'fuel',
   blurb:"Utah's finale. The Tram to Hidden Peak, the Cirque, Gad Valley, and the Peruvian Tunnel to Mineral Basin. Everything at once."},
- {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN',label:'BOSS',x:200,y:490,lx:212,ly:486,la:'left',via:[[200,420]],
-  blurb:'The Grump Queen holds Salt River Pass on US-89. She lobs snowballs and does a slow royal spin. Beat her to reach Wyoming.'},
- {id:'snowking',song:'disco',name:'SNOW KING',label:'SNOW KING',x:190,y:560,lx:190,ly:570,la:'center',grumps:5,hazard:null,
+ {id:'boss_teton',boss:true,song:'dubstep',name:'THE YETI',label:'YETI',x:36,y:470,lx:36,ly:480,la:'center',via:[[112,408],[30,424]],
+  blurb:'The Yeti came down out of the Uintas to guard the Utah-Wyoming line. He hurls giant snowballs and curls into a rolling snowball to flatten you. The Grump Queen is waiting right behind him.'},
+ {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN',label:'GRUMP QUEEN',x:150,y:470,lx:150,ly:480,la:'center',
+  blurb:'The Grump Queen holds the Utah-Wyoming line on US-89. She lobs snowballs and does a royal spin. Beat her to reach Wyoming.'},
+ {id:'snowking',song:'disco',name:'SNOW KING',label:'SNOW KING',x:190,y:560,lx:190,ly:570,la:'center',grumps:5,hazard:null,via:[[190,500]],
   blurb:"Jackson's town hill: short, steep and lit at night. Exhibition drops right off the summit above the Town Square."},
  {id:'targhee',song:'liquid',name:'GRAND TARGHEE',label:'TARGHEE',x:50,y:530,lx:62,ly:526,la:'left',grumps:5,hazard:'fuel',via:[[120,560]],
   blurb:"The snowy west side of the Tetons. Dreamcatcher to Fred's Mountain, deep powder everywhere, and a thirsty generator."},
- {id:'boss_teton',boss:true,song:'dubstep',name:'THE YETI',label:'BOSS',x:84,y:584,lx:96,ly:580,la:'left',
-  blurb:'The Yeti lives on Teton Pass, the road over to Jackson. He hurls giant snowballs and curls into a rolling snowball to flatten you.'},
- {id:'jackson',song:'peak',name:'JACKSON HOLE',label:'JACKSON HOLE',x:110,y:620,lx:110,ly:630,la:'center',grumps:6,hazard:null,
+ {id:'jackson',song:'peak',name:'JACKSON HOLE',label:'JACKSON HOLE',x:110,y:610,lx:110,ly:620,la:'center',grumps:6,hazard:null,via:[[70,590]],
   blurb:"Big Red, the Aerial Tram, to Rendezvous Mountain. Corbet's Couloir, Rendezvous Bowl and 4,000 feet of steep. The snow is piling up."},
- {id:'boss_wyco',boss:true,song:'hardtechno',name:'THE POLAR BEAR',label:'BOSS',x:200,y:676,lx:212,ly:672,la:'left',via:[[200,640]],
-  blurb:'The Polar Bear guards the Colorado line at Baggs. He throws ice chunks and charges claws-first. Beat him to reach Colorado.'},
- {id:'steamboat',song:'house',name:'STEAMBOAT',label:'STEAMBOAT',x:60,y:716,lx:72,ly:712,la:'left',grumps:6,hazard:null,via:[[120,700]],
+ {id:'boss_berthoud',boss:true,song:'hardtechno',name:'THE SNOWMAN',label:'SNOWMAN',x:60,y:652,lx:60,ly:662,la:'center',
+  blurb:'A giant Snowman blocks WY-230 where it climbs over the Snowy Range into Colorado. It throws coal and spins its stick arms. The Polar Bear is next.'},
+ {id:'boss_wyco',boss:true,song:'hardtechno',name:'THE POLAR BEAR',label:'POLAR BEAR',x:150,y:652,lx:150,ly:662,la:'center',
+  blurb:'The Polar Bear guards the Wyoming-Colorado line. Up on his hind legs he hurls snowballs; down on all fours he charges in and swipes with his claws. Beat him to reach Colorado.'},
+ {id:'steamboat',song:'house',name:'STEAMBOAT',label:'STEAMBOAT',x:60,y:716,lx:72,ly:712,la:'left',grumps:6,hazard:null,via:[[150,690],[90,700]],
   blurb:'Champagne Powder under the lights. Mt Werner up top, Shadows and Closets in the trees, and the Sundown side goes dark after hours.'},
  {id:'winterpark',song:'electro',name:'WINTER PARK',label:'WINTER PARK',x:190,y:760,lx:190,ly:770,la:'center',grumps:6,hazard:null,
   blurb:"Mary Jane's bumps, Parsenn Bowl above treeline and a whole lot of snow. Watch the snowpack."},
- {id:'boss_berthoud',boss:true,song:'hardtechno',name:'THE SNOWMAN',label:'BOSS',x:140,y:790,lx:152,ly:786,la:'left',
-  blurb:'A giant Snowman blocks Berthoud Pass on US-40. It throws coal and spins its stick arms. Melt its heart with bass.'},
  {id:'breck',song:'trance',name:'BRECKENRIDGE',label:'BRECK',x:70,y:810,lx:82,ly:806,la:'left',grumps:7,hazard:'fuel',
   blurb:'Peak 6 to Peak 10 and the Imperial Express, the highest chairlift in North America. Big bowls up top and a long way from gas.'},
  {id:'vail',song:'dnb',name:'VAIL',label:'VAIL',x:180,y:852,lx:192,ly:848,la:'left',grumps:7,hazard:null,
   blurb:'The legendary Back Bowls: miles of wide-open snow. Riva Ridge, Prima and Mid-Vail. Huge, open and fast.'},
  {id:'abasin',song:'breaks',name:'ARAPAHOE BASIN',label:'A-BASIN',x:100,y:888,lx:112,ly:884,la:'left',grumps:7,hazard:'fuel',
   blurb:"The Legend. Pallavicini, Montezuma Bowl and the East Wall towering over it all. Steep, deep and snowing. Colorado's last stop before Loveland Pass."},
- {id:'boss_final',boss:true,song:'hardtechno',name:'THE GIANT PINE',label:'FINAL BOSS',x:190,y:930,lx:178,ly:926,la:'right',via:[[180,920]],
+ {id:'boss_final',boss:true,song:'hardtechno',name:'THE GIANT PINE',label:'GIANT PINE',x:190,y:930,lx:178,ly:926,la:'right',via:[[180,920]],
   blurb:'The final boss: a Giant Pine on Loveland Pass, right on the Continental Divide. It fires pinecones and needle storms in every direction.'}
 ];
-const HQ={x:100,y:104,label:'MISSOULA HQ',lx:100,ly:114};
+// tour order before the downtown parades and the state-line bosses, so older saves land on the right stop
+const OLD_ORDER=['marshall','bridger','lookout','snowbowl','bigsky','boss_mtut','snowbasin','brighton','sundance','alta','snowbird','boss_utwy','snowking','targhee','boss_teton','jackson','boss_wyco','steamboat','winterpark','boss_berthoud','breck','vail','abasin','boss_final'];
+const HQ={x:100,y:100,label:'MISSOULA HQ',lx:100,ly:112};
 const PEAKS=[[40,500,7],[236,520,8],[150,600,9],[30,660,6],[236,620,7],[130,700,8],[236,760,7],[30,770,7],[130,800,8],[236,880,8],[30,900,6],[150,910,7],[176,38,9],[222,62,7],[36,36,6],[150,196,8],[96,200,7],[30,178,8],[236,206,6],[112,176,6],[60,124,5],[232,30,6],[60,330,8],[236,312,7],[30,400,7],[236,440,6],[160,452,7],[134,296,6],[40,262,6],[230,262,7]];
 const MAP_H=970;
 const UPGRADES=[
- {id:'tracks',name:'TRACKS',desc:'Jak drives faster.',costs:[8,16,28]},
- {id:'subs',name:'SUBWOOFERS',desc:'Bass pulls skiers from farther.',costs:[8,16,28]},
- {id:'tank',name:'FUEL TANK',desc:'Generator burns gas slower.',costs:[10,20,32]},
- {id:'cage',name:'ROLL CAGE',desc:'One more heart.',costs:[20,40]},
- {id:'laser',name:'LASERS',desc:'Charges up, then tap LASER (or press L) to zap the nearest Grump. Upgrades charge faster.',costs:[12,24,36]}
+ {id:'tracks',name:'TRACKS',desc:'Jak drives faster.',costs:[32,64,112]},
+ {id:'subs',name:'SUBWOOFERS',desc:'Bass pulls skiers from farther.',costs:[32,64,112]},
+ {id:'tank',name:'FUEL TANK',desc:'Generator burns gas slower.',costs:[40,80,128]},
+ {id:'cage',name:'ROLL CAGE',desc:'One more heart.',costs:[80,160]},
+ {id:'laser',name:'LASERS',desc:'Charges up, then tap LASER (or press L) to zap the nearest Grump. Upgrades charge faster and hit bosses harder.',costs:[48,96,144]}
 ];
 // ---------- saves: one save per player, so everyone on a shared device keeps their own tour ----------
 const LEGACY_KEY='jak-tour-v1',PLAYERS_KEY='jak-players',SAVE_PREFIX='jak-save-';
-function freshP(){return {cleared:{},best:{},bank:0,up:{tracks:0,subs:0,tank:0,cage:0,laser:0},at:0,picks:{},buffs:{},bacon:0,tipIdx:0,v:2,seen:false};}
+function freshP(){return {t:0,cleared:{},best:{},bank:0,up:{tracks:0,subs:0,tank:0,cage:0,laser:0},at:0,atId:'hq',picks:{},lastPick:null,buffs:{},bacon:0,tipIdx:0,v:3,seen:false};}
 const P=freshP();
 function lsGet(k){try{return JSON.parse(localStorage.getItem(k)||'null');}catch(e){return null;}}
 function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
@@ -1296,16 +1362,70 @@ function lsDel(k){try{localStorage.removeItem(k);}catch(e){}}
 function applySave(s){const f=freshP();for(const k of Object.keys(f))P[k]=f[k];
   if(!s||typeof s!=='object')return;
   Object.assign(P.cleared,s.cleared||{});Object.assign(P.best,s.best||{});Object.assign(P.up,s.up||{});Object.assign(P.picks,s.picks||{});Object.assign(P.buffs,s.buffs||{});
-  P.bank=+s.bank||0;P.at=+s.at||0;P.bacon=Math.min(3,+s.bacon||0);P.tipIdx=+s.tipIdx||0;P.seen=!!s.seen||P.at>0||Object.keys(P.cleared).length>0;
-  if(!s.v){if(['snowbasin','brighton','sundance','alta','snowbird'].some(k=>P.cleared[k]))P.cleared.boss_mtut=true;if(P.at>=6)P.at++;}
-  if(['snowking','targhee','jackson'].some(k=>P.cleared[k]))P.cleared.boss_utwy=true;if(P.cleared.jackson)P.cleared.boss_teton=true;if(['breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_berthoud=true;if(['steamboat','winterpark','breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_wyco=true;}
+  P.bank=+s.bank||0;P.at=+s.at||0;P.t=+s.t||0;
+  {let oa=P.at;if(!s.v&&oa>=6)oa++;const id=s.atId||((s.v||0)<3?(oa>0?OLD_ORDER[oa-1]:'hq'):null);if(id){const k=id==='hq'?0:RESORTS.findIndex(x=>x.id===id)+1;if(k>=0)P.at=k;}P.at=Math.max(0,Math.min(RESORTS.length,P.at));}if(s.lastPick&&typeof s.lastPick==='object')P.lastPick={d:+s.lastPick.d||0,j:+s.lastPick.j||0};
+  else{const rk=RESORTS.slice().reverse().find(x=>P.picks[x.id]);if(rk)P.lastPick={...P.picks[rk.id]};}P.bacon=Math.min(3,+s.bacon||0);P.tipIdx=+s.tipIdx||0;P.seen=!!s.seen||P.at>0||Object.keys(P.cleared).length>0;
+  if(!s.v){if(['snowbasin','brighton','sundance','alta','snowbird'].some(k=>P.cleared[k]))P.cleared.boss_mtut=true;}
+  if(['snowking','targhee','jackson'].some(k=>P.cleared[k]))P.cleared.boss_utwy=true;if(P.cleared.jackson)P.cleared.boss_teton=true;if(['breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_berthoud=true;if(['steamboat','winterpark','breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_wyco=true;
+  // a boss you already got past stays beaten, wherever it now sits on the tour
+  {let last=-1;RESORTS.forEach((x,k)=>{if(P.cleared[x.id])last=k;});for(let k=0;k<last;k++)if(RESORTS[k].boss)P.cleared[RESORTS[k].id]=true;}
+  P.v=3;}
 const PL=lsGet(PLAYERS_KEY)||{list:[],last:null};PL.cur=null;
 if(!Array.isArray(PL.list))PL.list=[];
 {const old=lsGet(LEGACY_KEY);if(!PL.list.length&&old){PL.list.push({id:'p1',name:'PLAYER 1'});lsSet(SAVE_PREFIX+'p1',old);PL.last='p1';savePlayers();}}
 function savePlayers(){lsSet(PLAYERS_KEY,{list:PL.list,last:PL.last});}
-function saveP(){if(PL.cur)lsSet(SAVE_PREFIX+PL.cur,P);}
+function saveP(){if(PL.cur){P.t=Date.now();lsSet(SAVE_PREFIX+PL.cur,P);cloudPush();}}
+// ---------- accounts: email + password, so a tour follows the player to any phone or computer ----------
+// Lives on discocarrot.com (the site runs the account service). Elsewhere the game keeps saving on this device only.
+const API=location.protocol.startsWith('http')&&/(^|\.)discocarrot\.com$|\.netlify\.app$|^localhost$|^127\.0\.0\.1$/.test(location.hostname)?'/api/jak':null;
+const CLOUD={timer:null,pending:false,note:''};
+function acctOf(id){const p=PL.list.find(q=>q.id===id);return p&&p.acct&&p.acct.token?p.acct:null;}
+async function api(path,o={}){const ac=window.AbortController?new AbortController():null,to=setTimeout(()=>ac&&ac.abort(),9000);
+  try{const r=await fetch(API+path,{method:o.method||'GET',headers:{'content-type':'application/json',...(o.token?{authorization:'Bearer '+o.token}:{})},body:o.body?JSON.stringify(o.body):undefined,keepalive:!!o.keepalive,cache:'no-store',signal:ac?ac.signal:undefined});
+    let j=null;try{j=await r.json();}catch(e){}if(!r.ok){const e=new Error((j&&j.error)||'Something went wrong.');e.status=r.status;e.body=j;throw e;}return j;}
+  catch(e){if(!e.status){const n=new Error("Couldn't reach discocarrot.com. Check your connection and try again.");n.status=0;throw n;}throw e;}finally{clearTimeout(to);}}
+function cloudPush(now){const id=PL.cur,a=acctOf(id);if(!API||!a)return;CLOUD.pending=true;clearTimeout(CLOUD.timer);
+  const go=()=>{if(!CLOUD.pending||PL.cur!==id)return;CLOUD.pending=false;
+    api('/save',{method:'PUT',token:a.token,body:{save:P,t:P.t||Date.now()},keepalive:true}).then(()=>{CLOUD.note='';})
+      .catch(e=>{if(e.status===401){a.token=null;savePlayers();CLOUD.note='Signed out. Sign in again to keep saving online.';}else if(e.status===409){CLOUD.note='';}else{CLOUD.pending=true;CLOUD.note='Saved on this device. Will save online when the connection is back.';}});};
+  if(now)go();else CLOUD.timer=setTimeout(go,2500);}
+document.addEventListener('visibilitychange',()=>{if(document.hidden&&CLOUD.pending)cloudPush(true);});
+window.addEventListener('pagehide',()=>{if(CLOUD.pending)cloudPush(true);});
+function uniqueName(n){n=cleanName(n)||'PLAYER';const taken=x=>PL.list.some(p=>p.name===x);if(!taken(n))return n;let k=2;while(taken((n.slice(0,8)+' '+k).trim()))k++;return (n.slice(0,8)+' '+k).trim();}
+// sign in or sign up; attachTo = an existing local player whose progress goes into the new account
+async function acctSubmit(kind,email,pw,name,attachTo){
+  const body={email,password:pw,name};if(attachTo&&kind==='signup'&&attachTo===PL.cur){P.t=P.t||Date.now();body.save=P;body.t=P.t;}
+  const res=await api('/'+kind,{method:'POST',body});
+  let p=attachTo?PL.list.find(q=>q.id===attachTo):PL.list.find(q=>q.acct&&q.acct.email===res.email);
+  if(!p){if(PL.list.length>=8)PL.list=PL.list.filter(q=>q.acct||q.id===PL.last).slice(-7);p={id:'a'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36),name:uniqueName(res.name)};PL.list.push(p);}
+  p.acct={email:res.email,token:res.token};
+  const local=lsGet(SAVE_PREFIX+p.id);if(res.save&&(+res.t||0)>((local&&+local.t)||0))lsSet(SAVE_PREFIX+p.id,{...res.save,t:+res.t});
+  savePlayers();return p;}
+function acctForm(kind,attachTo,back){
+  whoEl.textContent=kind==='login'?'SIGN IN':'CREATE ACCOUNT';dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
+  if(!API){dtext.appendChild(mk('div','','Accounts work on discocarrot.com/game. Play there to save your tour to an account.'));const row=mk('div','maprow');row.appendChild(btn('BACK','chip',back));dtext.appendChild(row);return;}
+  dtext.appendChild(mk('div','',kind==='login'?'Pick up your tour right where you left off, on any phone or computer.':attachTo?`Save ${curName()}'s tour to an account so it follows you to any device.`:'Make an account so your tour follows you to any device.'));
+  const form=mk('form','acctform');form.noValidate=true;form.addEventListener('click',e=>e.stopPropagation());
+  const field=(type,ph,ac,cls)=>{const i=mk('input',cls||'namein acctin');i.type=type;i.placeholder=ph;i.autocomplete=ac;i.spellcheck=false;i.setAttribute('aria-label',ph);i.setAttribute('autocapitalize','none');i.addEventListener('keydown',e=>e.stopPropagation());return i;};
+  const em=field('email','EMAIL','email'),pw=field('password',kind==='login'?'PASSWORD':'PASSWORD (8+ CHARACTERS)',kind==='login'?'current-password':'new-password');
+  let nm=null;if(kind==='signup'&&!attachTo){nm=field('text','PLAYER NAME','nickname','namein');nm.maxLength=10;nm.setAttribute('autocapitalize','characters');}
+  const msg=mk('div','acctmsg',''),row=mk('div','maprow'),go=btn(kind==='login'?'SIGN IN':'CREATE ACCOUNT','start',()=>{});go.type='submit';
+  row.append(go,btn(kind==='login'?'NEW ACCOUNT':'I HAVE ONE','chip',()=>acctForm(kind==='login'?'signup':'login',attachTo,back)),btn('BACK','chip',back));
+  form.append(...(nm?[nm]:[]),em,pw,msg,row);dtext.appendChild(form);
+  async function submit(){const e=em.value.trim(),p=pw.value;
+    if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)){msg.textContent="That email doesn't look right.";em.focus();return;}
+    if(p.length<(kind==='login'?1:8)){msg.textContent=kind==='login'?'Type your password.':'Use a password with at least 8 characters.';pw.focus();return;}
+    go.disabled=true;msg.style.color='#a596c4';msg.textContent=kind==='login'?'Signing in...':'Creating your account...';
+    try{const pl=await acctSubmit(kind,e,p,nm?nm.value:curName(),attachTo);AudioK.sfx.recruit();
+      if(attachTo){CLOUD.note='';whoEl.textContent='SAVED ONLINE';dtext.innerHTML='';dtext.appendChild(mk('div','',`${curName()}'s tour is saved to ${pl.acct.email}. Sign in with it on any device to keep going.`));const r2=mk('div','maprow');r2.appendChild(btn('BACK','start',back));dtext.appendChild(r2);r2.querySelector('button').focus({preventScroll:true});}
+      else pickPlayer(pl.id,true);}
+    catch(err){go.disabled=false;msg.style.color='';msg.textContent=err.message;}}
+  form.addEventListener('submit',ev=>{ev.preventDefault();submit();});
+  setTimeout(()=>(nm||em).focus({preventScroll:true}),30);}
+function signOut(){const p=PL.list.find(q=>q.id===PL.cur);if(!p||!p.acct)return;const tok=p.acct.token;cloudPush(true);
+  if(API&&tok)setTimeout(()=>api('/logout',{method:'POST',token:tok}).catch(()=>{}),400);p.acct=null;savePlayers();AudioK.sfx.blip();}
 function curName(){const p=PL.list.find(q=>q.id===PL.cur);return p?p.name:'';}
-function unlocked(i){const r=RESORTS[i];if(!r||r.soon)return false;return i===0||!!P.cleared[RESORTS[i-1].id];}
+function unlocked(i){const r=RESORTS[i];if(!r||r.soon)return false;if(DEV.on)return true;return i===0||!!P.cleared[r.id]||!!P.cleared[RESORTS[i-1].id];}
 function goldCount(){return RESORTS.filter(r=>!r.boss&&P.cleared[r.id]).length;}
 const LEVEL_COUNT=RESORTS.filter(r=>!r.boss).length;
 function stopNo(ri){return RESORTS.slice(0,ri+1).filter(r=>!r.boss).length;}
@@ -1361,17 +1481,21 @@ function mapInfo(focusId){
     dtext.appendChild(mk('div','','Home base. The Workshop now lives at every base lodge: park Jak at the lodge door on the mountain and tap SHOP.'));
     dtext.appendChild(mk('div','status',`CARROTS BANKED: ${P.bank}`));
     {const r0=mk('div','maprow');r0.append(btn('PLAY DISCO SLOTS','start',()=>openSlots(()=>openMap(-1))),btn('SWITCH PLAYER','chip',openPlayers));dtext.appendChild(r0);
-     dtext.appendChild(mk('div','status',`PLAYER: ${curName()}`));}
+     dtext.appendChild(mk('div','status',`PLAYER: ${curName()}`));
+     if(API){const a=acctOf(PL.cur),r1=mk('div','maprow');
+       if(a){dtext.appendChild(mk('div','status',`SAVED ONLINE: ${a.email}`));r1.appendChild(btn('SIGN OUT','chip',()=>{signOut();mapInfo();}));}
+       else r1.appendChild(btn('SAVE TO ACCOUNT','chip',()=>acctForm('signup',PL.cur,()=>openMap(-1))));
+       dtext.appendChild(r1);if(CLOUD.note)dtext.appendChild(mk('div','status',CLOUD.note));}}
     nav.append(prev,next);dtext.appendChild(nav);
   }else{
     const i=M.sel,r=RESORTS[i];whoEl.textContent=r.name;
     dtext.appendChild(mk('div','',r.blurb));
     let st;
-    if(r.boss)st=P.cleared[r.id]?'DEFEATED. THE PASS IS OPEN':(unlocked(i)?'BOSS FIGHT: BEAT HIM TO REACH UTAH':`LOCKED: CLEAR ${RESORTS[i-1].name} FIRST`);
+    if(r.boss){const cf=BOSSES[r.id]||{};st=P.cleared[r.id]?'DEFEATED. THE LINE IS OPEN':(unlocked(i)?(cf.state?`BOSS FIGHT: WIN TO REACH ${cf.state}`:'BOSS FIGHT: WIN TO KEEP ROLLING'):`LOCKED: CLEAR ${RESORTS[i-1].name} FIRST`);}
     else if(P.cleared[r.id])st=`CLEARED. BEST ${P.best[r.id]||0}`;
     else if(unlocked(i))st=P.best[r.id]?`BEST ${P.best[r.id]}`:'READY TO ROLL';
     else if(r.soon)st='COMING SOON';
-    else st=RESORTS[i-1].boss?'LOCKED: DEFEAT THE GRUMP KING':`LOCKED: CLEAR ${RESORTS[i-1].name} FIRST`;
+    else st=RESORTS[i-1].boss?`LOCKED: DEFEAT ${RESORTS[i-1].name}`:`LOCKED: CLEAR ${RESORTS[i-1].name} FIRST`;
     dtext.appendChild(mk('div','status',st));
     const play=unlocked(i)?btn(M.anim?'ROLLING...':(r.boss?(P.cleared[r.id]?'REMATCH':'FIGHT'):'PLAY'),'start',mapPlay,!!M.anim):btn(r.soon?'SOON':'LOCKED','chip',()=>{},true);play.id='mapPlay';
     nav.append(prev,play,next);dtext.appendChild(nav);
@@ -1381,6 +1505,9 @@ function mapInfo(focusId){
 function buildWorkshop(box){
     box.appendChild(mk('div','',`Spend carrots on Jak. You have ${P.bank}.`));
     const shop=mk('div','shop');
+    if(mode==='shop'&&G.R&&G.R.hazard==='fuel'){const row=mk('div','shop-row'),nm=mk('div','nm'),f=Math.round(G.fuel||0);nm.appendChild(mk('b','','GAS'));
+      nm.appendChild(document.createTextNode(G.dark?'The generator is OUT. Fill it up and the music comes back.':`Fill the generator to the top. Tank is at ${f}%.`));
+      const b=btn(f>=100&&!G.dark?'TANK FULL':`BUY ${GAS_COST}`,'chip',buyGas,(f>=100&&!G.dark)||P.bank<GAS_COST);b.id='buy-gas';row.append(nm,b);shop.appendChild(row);}
     UPGRADES.forEach(u=>{
       const tier=P.up[u.id]||0,max=u.costs.length,cost=u.costs[tier];
       const row=mk('div','shop-row'),nm=mk('div','nm');
@@ -1416,7 +1543,9 @@ function drawShop(now){
   drawJakPoly(6,108,0.62,{face:1,t:now,roll:0,eyes:true,lights:true,wiggle:true});
   R(196,196,56,20,PAL.K);drawCarrot(200,198,now,false);txt(String(P.bank).padStart(3,'0'),248,202,'#fff',8,'right',null);
 }
-const BACON_COST=6;
+const BACON_COST=6,GAS_COST=2;
+function buyGas(){if(mode!=='shop'||P.bank<GAS_COST||(G.fuel>=100&&!G.dark))return;P.bank-=GAS_COST;G.fuel=100;G.lowWarned=false;saveP();AudioK.sfx.refuel();
+  if(G.dark){G.dark=false;AudioK.setSong(G.song||G.R.song);setBanner(['POWER BACK ON!'],PAL.N,1.6);}refreshShopUI('buy-gas');}
 function buyBacon(){if((P.bacon||0)>=3||P.bank<BACON_COST)return;P.bank-=BACON_COST;P.bacon=(P.bacon||0)+1;saveP();AudioK.sfx.chomp();refreshShopUI('buy-bacon');}
 let baconShown='';
 function updBaconBtn(){const show=(mode==='game'||mode==='boss')&&(P.bacon||0)>0;if(!show){if(!baconBtn.hidden)baconBtn.hidden=true;baconShown='';return;}
@@ -1437,7 +1566,7 @@ function mapPlay(){
 }
 function updateMap(now){
   if(!M.anim)return;const a=M.anim;
-  if(now-a.t0>=Math.max(1,a.path.length-1)*a.seg+250){P.at=a.path[a.path.length-1];saveP();M.anim=null;openPreview(P.at-1);}
+  if(now-a.t0>=Math.max(1,a.path.length-1)*a.seg+250){P.at=a.path[a.path.length-1];P.atId=P.at===0?'hq':RESORTS[P.at-1].id;saveP();M.anim=null;openPreview(P.at-1);}
 }
 function rigPos(now){
   if(M.anim){const a=M.anim,n=a.path.length-1;
@@ -1454,8 +1583,30 @@ function mapTap(e){
   if(hit===null)return;
   if(hit===M.sel&&hit>=0)mapPlay();else{M.sel=hit;AudioK.sfx.blip();mapInfo();}
 }
+// tiny, outlined portraits of each boss for the tour map
+function drawBossIcon(id,x,y,now,cl,un){const cf=BOSSES[id]||BOSSES.boss_mtut,k=cf.kind,fr=un&&!cl?Math.floor(now/300)%2:0;
+  const pad=cl?'#2f6a3a':un?(fr?'#ff3b3b':'#b01a30'):'#5a1020';
+  R(x-10,y+3,20,4,PAL.K);R(x-9,y+3,18,3,pad);R(x-11,y+4,22,2,PAL.K);R(x-10,y+4,20,1,pad);
+  let c,dx,dy;
+  if(k==='grump')c=outlined('mi'+id+fr,15,23,1,4,()=>{const sv=BS.cfg;BS.cfg=cf;R(1,6,10,8,cf.cape);drawGrump(0,0,fr*400,!!fr,1);
+      if(cf.crown==='queen'){R(3,-3,6,2,'#e8e8f0');R(4,-4,1,1,'#e8e8f0');R(7,-4,1,1,'#e8e8f0');R(5,-4,2,1,'#ff4fd8');}else{R(3,-3,6,2,PAL.Y);R(3,-4,1,1,PAL.Y);R(5,-4,2,1,PAL.Y);R(8,-4,1,1,PAL.Y);R(5,-2,2,1,'#e0262f');}BS.cfg=sv;});
+  else if(k==='yeti')c=outlined('miy'+fr,18,24,1,1,()=>drawYeti(0,0,fr*260,!!fr,1));
+  else if(k==='bear')c=outlined('bs'+(fr?1:0)+'01',22,36,1,7,()=>drawPolarBearStand(0,0,0,1,!!fr,false));
+  else if(k==='snowman')c=outlined('mis'+fr,28,34,6,7,()=>drawSnowmanBoss(fr*300,1));
+  else c=outlined('mit'+fr,30,30,5,1,()=>drawPineBoss(fr*350,!!fr));
+  const sc=k==='snowman'||k==='tree'?0.7:1,w=Math.round(c.width*sc),h=Math.round(c.height*sc);dx=x-w/2;dy=y+5-h;
+  ctx.save();ctx.imageSmoothingEnabled=false;if(!un&&!cl)ctx.globalAlpha=0.55;ctx.drawImage(c,Math.round(dx),Math.round(dy),w,h);ctx.restore();
+  if(cl){R(x+6,y-12,7,7,PAL.K);R(x+7,y-11,5,5,'#3ad06a');R(x+8,y-9,1,1,'#fff');R(x+9,y-8,1,1,'#fff');R(x+10,y-9,1,1,'#fff');R(x+11,y-10,1,1,'#fff');}}
+// a little downtown block with parade flags
+function drawCityIcon(x,y,now,cl,un){const f=Math.floor(now/250)%2;
+  R(x-9,y-9,18,15,PAL.K);R(x-8,y-6,6,11,un?'#a0603a':'#5a4a5a');R(x-2,y-8,5,13,un?'#c0503a':'#6a5a6a');R(x+3,y-4,5,9,un?'#8a6a4a':'#4a4050');
+  for(let k=0;k<3;k++){R(x-7+k*5,y-3,2,2,un?'#ffd76a':'#3a3048');R(x-7+k*5,y+1,2,2,un?'#ffd76a':'#3a3048');}
+  for(let k=0;k<4;k++)R(x-9+k*5,y-11,3,2,hsl(k*80+(f?40:0),90,60));
+  if(cl)drawCarrot(x+3,y-20,now,true);}
 function drawPeak(x,y,s){for(let r=0;r<=s;r++)R(x-r,y+r,r*2+1,1,r<s*0.4?'#e8f0ff':(r%2?'#2c3868':'#33407a'));}
-function drawRig(cx,by,face,t,moving){
+function drawRig(cx,by,face,t,moving){ // the same low-poly Jak you drive in the game, shrunk for the map
+  const hop=moving&&Math.floor(t/110)%2?1:0;drawJakPoly(Math.round(cx-13),Math.round(by-22-hop),0.3,{face,t,roll:moving?t/40:0,eyes:true,lights:true,wiggle:moving});}
+function drawRigOld(cx,by,face,t,moving){
   const x=Math.round(cx-15),y=Math.round(by-19-(moving&&Math.floor(t/110)%2?1:0));
   const p=(dx,dy,w,h,c)=>R(face===1?x+dx:x+(31-dx-w),y+dy,w,h,c);
   p(0,9,17,2,'#4a5068');p(15,6,5,2,'#4a5068');p(2,11,3,2,PAL.K);p(7,11,3,2,PAL.K);
@@ -1482,8 +1633,8 @@ function drawMap(now){
   txt(HQ.label,HQ.lx,HQ.ly,M.sel===-1?PAL.Y:'#c9b8ff',8,'center');
   RESORTS.forEach((r,i)=>{
     const un=unlocked(i),cl=!!P.cleared[r.id];
-    if(r.boss){R(r.x-7,r.y-7,14,14,PAL.K);R(r.x-6,r.y-6,12,12,cl?'#3a6a3a':(un&&Math.floor(now/300)%2?'#ff3b3b':'#8a1020'));R(r.x-4,r.y-6,2,3,PAL.Y);R(r.x-1,r.y-7,2,4,PAL.Y);R(r.x+2,r.y-6,2,3,PAL.Y);R(r.x-4,r.y-3,8,2,PAL.Y);
-      R(r.x-3,r.y,2,2,'#fff');R(r.x+1,r.y,2,2,'#fff');if(cl){R(r.x-3,r.y+3,6,1,'#fff');}txt(r.label,r.lx,r.ly,i===M.sel?PAL.Y:(un?'#ff6b6b':'#7a84b0'),8,r.la);return;}
+    if(r.boss){drawBossIcon(r.id,r.x,r.y,now,cl,un);txt(r.label,r.lx,r.ly,i===M.sel?PAL.Y:(cl?'#7ad07a':un?'#ff6b6b':'#7a84b0'),8,r.la);return;}
+    if(r.city){drawCityIcon(r.x,r.y,now,cl,un);txt(r.label,r.lx,r.ly,i===M.sel?PAL.Y:(un?'#fff':'#7a84b0'),8,r.la);return;}
     if(cl)drawCarrot(r.x-5,r.y-14,now,true);
     else{R(r.x-5,r.y-5,10,10,PAL.K);R(r.x-4,r.y-4,8,8,un?(Math.floor(now/350)%2?PAL.O:PAL.Y):(r.soon?'#3a4678':'#6a6a8a'));
       if(!un){R(r.x-2,r.y-2,4,4,PAL.K);R(r.x-1,r.y-1,2,2,'#9a9ab0');}}
@@ -1501,23 +1652,24 @@ function drawMap(now){
 
 // ---------- level preview, crew select, results ----------
 const PV={ri:0},CS={ri:0,d:0,j:0,focus:0},RS={ri:0,st:null};
-const STATE_OF={boss_teton:'TETON PASS',boss_berthoud:'BERTHOUD PASS',boss_final:'LOVELAND PASS',boss_mtut:'MONIDA PASS',boss_utwy:'SALT RIVER PASS',boss_wyco:'BAGGS, WYOMING',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
+const STATE_OF={missoula:'MONTANA',bozeman:'MONTANA',boss_teton:'UTAH / WYOMING LINE',boss_berthoud:'WYOMING / COLORADO LINE',boss_final:'LOVELAND PASS',boss_mtut:'MONTANA / IDAHO LINE',boss_utwy:'UTAH / WYOMING LINE',boss_wyco:'WYOMING / COLORADO LINE',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
 function setScreen(m){mode=m;overlay.hidden=true;dialog.hidden=false;controls.hidden=true;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;fitScreen();}
-function hazardsText(id){const D=WORLDS[id],r=RESORTS.find(x=>x.id===id),h=[];if(D.night)h.push('NIGHT SKIING');if(r&&r.hazard==='fuel')h.push('GENERATOR');if(D.powder)h.push('DEEP POWDER');if(D.steep)h.push('STEEP RUNS');if(D.skiersOnly)h.push('SKIERS ONLY');return h.join(' / ')||'LEARN THE ROPES';}
+function hazardsText(id){const D=WORLDS[id],r=RESORTS.find(x=>x.id===id),h=[];if(D.city)return 'PARADE DAY / '+D.checks.length+' CHECKPOINTS';if(D.night)h.push('NIGHT SKIING');if(r&&r.hazard==='fuel')h.push('GENERATOR');if(D.powder)h.push('DEEP POWDER');if(D.steep)h.push('STEEP RUNS');if(D.skiersOnly)h.push('SKIERS ONLY');return h.join(' / ')||'LEARN THE ROPES';}
 function openPreview(ri){if(RESORTS[ri].boss)return openBoss(ri);PV.ri=ri;PV.t0=performance.now();setScreen('preview');const r=RESORTS[ri];
   whoEl.textContent=r.name;dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
   dtext.appendChild(mk('div','',r.blurb));dtext.appendChild(mk('div','status',hazardsText(r.id)));
-  const row=mk('div','maprow');row.append(btn('CREW SELECT','start',()=>openCrew(ri)),btn('SLOTS','chip',()=>openSlots(()=>openPreview(ri))),btn('TOUR MAP','chip',()=>openMap(ri)));
+  const sc=savedCrew(),row=mk('div','maprow');
+  dtext.appendChild(mk('div','status',`CREW: ${DRIVERS[sc.d].name} + DJ ${DJS[sc.j].name}`));
+  row.append(btn("LET'S ROLL",'start',()=>quickStart(ri)),btn('CHANGE CREW','chip',()=>openCrew(ri)),btn('SLOTS','chip',()=>openSlots(()=>openPreview(ri))),btn('TOUR MAP','chip',()=>openMap(ri)));
   {const bl=buffList(P.buffs);if(bl.length){dtext.appendChild(mk('div','status','BONUS READY:'));bl.forEach(n=>dtext.appendChild(mk('div','status','+ '+n)));}}dtext.appendChild(row);
   row.querySelector('.start').focus({preventScroll:true});}
 const STATE_GATE={utah:'boss_mtut',wyoming:'boss_utwy',colorado:'boss_wyco',finale:'boss_final'};
 const STATE_LABEL={utah:'in Utah',wyoming:'in Wyoming',colorado:'in Colorado',finale:'after the Loveland Pass bosses'};
 function stateOpen(st){return !st||!!P.cleared[STATE_GATE[st]];}
 function unlockedList(arr){const g=goldCount();return arr.map((c,i)=>i).filter(i=>!arr[i].hidden&&arr[i].unlock<=g&&stateOpen(arr[i].state));}
-function openCrew(ri){CS.ri=ri;const id=RESORTS[ri].id,pk=P.picks[id];
-  const dl=unlockedList(DRIVERS),jl=unlockedList(DJS);
-  CS.d=pk&&dl.includes(pk.d)?pk.d:dl[0];
-  CS.j=pk&&jl.includes(pk.j)?pk.j:jl[0];
+function savedCrew(){const pk=P.lastPick,dl=unlockedList(DRIVERS),jl=unlockedList(DJS);
+  return {d:pk&&dl.includes(pk.d)?pk.d:dl[0],j:pk&&jl.includes(pk.j)?pk.j:jl[0]};}
+function openCrew(ri){CS.ri=ri;const sc=savedCrew();CS.d=sc.d;CS.j=sc.j;
   CS.focus=0;setScreen('crew');AudioK.setSong(RESORTS[ri].song);crewInfo();}
 function crewCycle(kind,dir){const arr=kind==='d'?DRIVERS:DJS,list=unlockedList(arr),cur=kind==='d'?CS.d:CS.j;
   const k=(list.indexOf(cur)+dir+list.length)%list.length;if(kind==='d')CS.d=list[k];else CS.j=list[k];AudioK.sfx.blip();crewInfo();}
@@ -1529,7 +1681,8 @@ function crewInfo(){whoEl.textContent='CREW SELECT';dtext.innerHTML='';nextEl.hi
   const go=btn("LET'S ROLL",'start',crewStart);r3.append(go,btn('BACK','chip',()=>openPreview(CS.ri)));
   dtext.append(r1,r2,r3);if(nd)dtext.appendChild(mk('div','status',`${nd} more crew unlock with golden carrots.`));
   {const nx=[...DRIVERS,...DJS].find(c=>!c.hidden&&!stateOpen(c.state));if(nx)dtext.appendChild(mk('div','status',`More crew join ${STATE_LABEL[nx.state]||'later'}. Beat the boss at the state line!`));}go.focus({preventScroll:true});}
-function crewStart(){const id=RESORTS[CS.ri].id;P.picks[id]={d:CS.d,j:CS.j};saveP();startGame(CS.ri);}
+function crewStart(){const id=RESORTS[CS.ri].id;P.picks[id]={d:CS.d,j:CS.j};P.lastPick={d:CS.d,j:CS.j};saveP();startGame(CS.ri);}
+function quickStart(ri){const sc=savedCrew();CS.ri=ri;CS.d=sc.d;CS.j=sc.j;crewStart();}
 function drawCrewCard(x,kind,c,focus,now){
   const y=28,w=120;R(x,y,w,190,'#140b22');R(x,y,w,2,focus?PAL.Y:'#3b2a63');R(x,y+188,w,2,focus?PAL.Y:'#3b2a63');R(x,y,2,190,focus?PAL.Y:'#3b2a63');R(x+w-2,y,2,190,focus?PAL.Y:'#3b2a63');
   txt(kind==='d'?'DRIVER':'DJ',x+w/2,y+6,kind==='d'?PAL.O:'#ff4fd8',8,'center',null);
@@ -1572,7 +1725,7 @@ function showResultsUI(){const st=RS.st,g=goldCount(),rr=RESORTS[RS.ri];if(mode!
   whoEl.textContent=rr.name+' CLEARED!';dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
   const ni=RS.ri+1,row=mk('div','maprow');
   if(RESORTS[ni]&&unlocked(ni))row.appendChild(btn('NEXT STOP','start',()=>openMap(ni)));else row.appendChild(btn('TOUR MAP','start',()=>openMap()));
-  row.append(btn('SLOTS','chip',()=>openSlots(showResultsUI)),btn('KEEP PARTYING','chip',resumeGame),btn('REPLAY','chip',()=>openCrew(RS.ri)));
+  row.append(btn('SLOTS','chip',()=>openSlots(showResultsUI)),btn('KEEP PARTYING','chip',resumeGame),btn('REPLAY','chip',()=>quickStart(RS.ri)));
   dtext.appendChild(mk('div','',st.unlocks.length?`New crew unlocked: ${st.unlocks.join(', ')}.`:`Golden carrot ${g} of ${LEVEL_COUNT}. +10 Workshop carrots.`));
   dtext.appendChild(row);row.querySelector('.start').focus({preventScroll:true});}
 function resumeGame(){laserBtn.hidden=!(P.up.laser>0);mode='game';dialog.hidden=true;controls.hidden=false;overlay.hidden=true;mapBtn.hidden=false;fitScreen();G.won=false;AudioK.setHype(false);}
@@ -1648,13 +1801,13 @@ const BS={};
 const BOSSES={
  boss_mtut:{kind:'grump',special:'spin',name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,spread:3,spinGap:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],
   taunt:'HEY! TOO LOUD!',roar:'GRRRR!',mad:"HE'S REALLY MAD NOW",dodge:'DODGE THE CANE SPIN',winLine:'He put down the cane and started dancing.'},
- boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, US-89',sign:'SALT RIVER',sign2:'WYOMING>',hp:135,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.05,spread:3,spinGap:0.95,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
+ boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'UTAH / WYOMING LINE, US-89',sign:'UTAH',sign2:'WYOMING>',hp:140,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.08,spread:3,spinGap:0.95,state:'WYOMING',pass:'The Utah-Wyoming line',crew:['ray','wolf'],
   taunt:'HOW RUDE!',roar:'OFF WITH YOUR BASS!',mad:'THE QUEEN IS NOT AMUSED',dodge:'DODGE THE ROYAL SPIN',winLine:'She dropped her snowballs and started voguing.'},
- boss_teton:{kind:'yeti',special:'roll',name:'YETI',place:'TETON PASS, WY-22',sign:'TETON PASS',sign2:'JACKSON>',hp:150,proj:'bigball',spd:1.1,spread:2,spinGap:1,mid:true,pass:'Teton Pass',crew:[],
+ boss_teton:{kind:'yeti',special:'roll',name:'YETI',place:'UINTAS, UTAH / WYOMING LINE',sign:'UINTAS',sign2:'WYOMING>',hp:130,proj:'bigball',spd:1.02,spread:2,spinGap:1.05,mid:true,pass:'The Uinta crossing',crew:[],
   taunt:'RAAAWR!',roar:'ROLL OUT!',mad:'THE YETI IS FURIOUS',dodge:'DODGE THE ROLLING SNOWBALL',winLine:'The Yeti traded his snowballs for a glow stick.'},
- boss_wyco:{kind:'bear',special:'charge',name:'POLAR BEAR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:170,proj:'ice',spd:1.2,spread:3,spinGap:1,state:'COLORADO',pass:'The Colorado line',crew:['betty','raven'],
-  taunt:'GRRRAAH!',roar:'CHAAARGE!',mad:'THE BEAR IS ENRAGED',dodge:'DODGE THE CLAW CHARGE',winLine:'The Polar Bear stopped swiping and started shuffling.'},
- boss_berthoud:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'BERTHOUD PASS, US-40',sign:'BERTHOUD PASS',sign2:'BRECK>',hp:185,proj:'coal',spd:1.25,spread:3,spinGap:1,mid:true,pass:'Berthoud Pass',crew:[],
+ boss_wyco:{kind:'bear',special:'swipe',name:'POLAR BEAR',place:'WYOMING / COLORADO LINE',sign:'WYOMING',sign2:'COLORADO>',hp:185,proj:'snowball',spd:1.15,spread:3,spinGap:1,state:'COLORADO',pass:'The Wyoming-Colorado line',crew:['betty','raven'],
+  taunt:'GRRRAAH!',roar:'CHAAARGE!',mad:'THE BEAR IS ENRAGED',dodge:'DODGE SNOWBALLS AND CLAWS',winLine:'The Polar Bear stopped swiping and started shuffling.'},
+ boss_berthoud:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'SNOWY RANGE, WYOMING / COLORADO LINE',sign:'SNOWY RANGE',sign2:'COLORADO>',hp:165,proj:'coal',spd:1.15,spread:3,spinGap:1,mid:true,pass:'The Snowy Range',crew:[],
   taunt:'TOO WARM!',roar:'BRRRR!',mad:'THE SNOWMAN IS MELTING MAD',dodge:'DODGE THE STICK-ARM SPIN',winLine:'The Snowman did the melt... on the dance floor.'},
  boss_final:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, US-6',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:210,proj:'cone',spd:1.1,spread:3,spinGap:0.9,final:true,pass:'Loveland Pass',crew:['annie','danny'],
   taunt:'LEAF ME ALONE!',roar:'NEEDLES!',mad:'THE PINE IS BRISTLING',dodge:'DODGE THE NEEDLE STORM',winLine:'The Giant Pine shook off its needles and started swaying to the beat.'},
@@ -1665,8 +1818,8 @@ function openBoss(ri){const r=RESORTS[ri],cf=BOSSES[r.id]||BOSSES.boss_mtut;Obje
   jak:{x:50,y:170,face:1,inv:0},hearts:3+(P.up.cage||0),maxHearts:3+(P.up.cage||0),
   b:{x:200,y:160,face:-1,state:'walk',tx:200,ty:160,throwT:2,spinT:5*(cf.spinGap||1),stateT:0,yell:0,say:'',dizzy:0,spinA:0,flash:0,vx:0,vy:0,hitT:0},
   canes:[],rings:[],beams:[],parts:[],floats:[],laserCd:0,bassCd:0,banner:null,shake:0});
-  mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;laserBtn.hidden=true;
-  hint.hidden=coarse;hint.innerHTML='<b>Arrow keys</b> move Jak. <b>Click</b> to fire lasers. <b>Space</b> (or BASS) blasts his canes away. Dodge the spin!';
+  mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;laserBtn.hidden=false;laserBtn.textContent='LASER';laserBtn.classList.remove('charging');laserShown='';
+  hint.hidden=coarse;hint.innerHTML='<b>Arrow keys</b> move Jak. <b>Click</b> or <b>L</b> fires lasers. <b>Space</b> (or BASS) blasts what it throws. Dodge the special attack!';
   AudioK.init();AudioK.setSong('hardtechno');fitScreen();updBaconBtn();}
 function bossBanner(lines,col,life=1.6){BS.banner={lines,col,life};}
 function bossFloat(x,y,s,col){BS.floats.push({x,y,s,col,life:1});}
@@ -1677,10 +1830,13 @@ function bossDamage(n,src){const b=BS.b;if(BS.over)return;const dmg=b.state==='d
   if(BS.hp<=0&&BS.cfg.next){const nx=BOSSES[BS.cfg.next];bossBurst(b.x,b.y-30,40,['#fff','#cfe0ff',PAL.Y]);BS.cfg=nx;BS.hp=BS.maxHp=nx.hp;BS.phase=1;BS.canes.length=0;
     Object.assign(b,{x:200,y:160,state:'walk',tx:200,ty:160,throwT:2.2,spinT:5,stateT:0,yell:1.5,say:nx.taunt});AudioK.sfx.thunder();bossBanner(['ROUND 2!','THE '+nx.name],PAL.Y,2.4);return;}
   if(BS.hp<=0){BS.over=true;BS.won=true;BS.endT=2.6;b.state='groove';AudioK.sfx.gold();bossBanner(['THE '+bossCfg().name,'GROOVES!'],PAL.Y,2.6);P.cleared[RESORTS[BS.ri].id]=true;P.bank+=30;saveP();}}
-function bossLaserAt(e){if(mode!=='boss'||BS.over)return;if(BS.intro>0){BS.intro=0;return;}const r=cv.getBoundingClientRect();bossLaser((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);}
+function bossLaserAt(e){if(mode!=='boss'||BS.over)return;if(BS.intro>0){BS.intro=0;return;}const r=cv.getBoundingClientRect();bossLaser((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H-(BS.oy||0));}
 function bossLaser(tx,ty){if(BS.laserCd>0||BS.over)return;const j=BS.jak,sx=j.x+j.face*14,sy=j.y-26;BS.laserCd=0.28;
   const dx=tx-sx,dy=ty-sy,L=Math.hypot(dx,dy)||1,ex=sx+dx/L*320,ey=sy+dy/L*320;BS.beams.push({sx,sy,ex,ey,life:0.14,h:Math.random()*360});AudioK.sfx.blip();
-  const b=BS.b;if(segDist(b.x,b.y-28,sx,sy,ex,ey)<22)bossDamage(2,'laser');}
+  // the beam hits anywhere on the boss's body, head to feet
+  const b=BS.b,k=BS.cfg.kind,tall=b.state==='spin'?48:k==='bear'?(b.state==='stand'?104:46):k==='yeti'?68:k==='snowman'?88:k==='tree'?84:54;
+  let hit=false;for(let yy=b.y-8;yy>=b.y-tall+8&&!hit;yy-=12)if(segDist(b.x,yy,sx,sy,ex,ey)<(k==='bear'&&b.state!=='stand'?26:20))hit=true;
+  if(hit)bossDamage(2+(P.up.laser||0),'laser');}
 function bossBass(){if(mode!=='boss')return;if(BS.intro>0){BS.intro=0;return;}if(BS.bassCd>0||BS.over)return;BS.bassCd=1.8;const j=BS.jak;BS.rings.push({x:j.x,y:j.y-14,r:4,life:0.5,hit:false});AudioK.sfx.beat();AudioK.sfx.party();}
 function bossHitJak(){const j=BS.jak;if(j.inv>0||BS.over)return;BS.hearts--;j.inv=1.3;BS.shake=0.35;AudioK.sfx.hurt();bossBurst(j.x,j.y-16,14,['#ff3b3b','#fff']);
   if(BS.hearts<=0){BS.over=true;BS.won=false;BS.endT=1.6;AudioK.setSong(null);AudioK.sfx.over();bossBanner(['THE '+bossCfg().name,'WINS THIS ROUND'],'#ff3b3b',2);}}
@@ -1693,6 +1849,26 @@ function bossEnd(){const won=BS.won;mode='bossEnd';dialog.hidden=false;controls.
   const row=mk('div','maprow'),ni=BS.ri+1;
   if(won&&RESORTS[ni])row.appendChild(btn('NEXT STOP','start',()=>openMap(ni)));else row.appendChild(btn('RETRY','start',()=>openBoss(BS.ri)));
   row.appendChild(btn('TOUR MAP','chip',()=>openMap(BS.ri)));dtext.appendChild(row);row.querySelector('.start').focus({preventScroll:true});}
+function updateBear(dt,mad,j,b){const cf=BS.cfg;
+  if(b.state==='walk'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy);if(d<4){b.tx=rnd(130,232);b.ty=rnd(132,204);}else{const sp=(mad?58:42)*cf.spd;b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;}
+    b.face=j.x>b.x?1:-1;b.throwT-=dt;b.spinT-=dt;
+    if(b.spinT<=0){b.state='roar';b.stateT=mad?0.55:0.8;b.yell=1;b.say=cf.roar;AudioK.sfx.growl();}
+    else if(b.throwT<=0){b.state='stand';b.stateT=mad?0.8:1.0;b.thrown=false;}}
+  else if(b.state==='stand'){b.stateT-=dt;b.face=j.x>b.x?1:-1; // up on the hind legs, wind up, throw
+    if(!b.thrown&&b.stateT<(mad?0.38:0.45)){b.thrown=true;const sx=b.x+b.face*14,sy=b.y-92,a=Math.atan2(j.y-16-sy,j.x-sx),offs=mad?[-0.26,0,0.26]:[0];
+      for(const off of offs){const sp=(mad?140:118)*cf.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}AudioK.sfx.toss();if(Math.random()<0.35){b.yell=0.8;b.say=cf.taunt;}}
+    if(b.stateT<=0){b.state='walk';b.throwT=mad?rnd(1.0,1.5):rnd(1.6,2.3);}}
+  else if(b.state==='roar'){b.stateT-=dt;b.face=j.x>b.x?1:-1;
+    if(b.stateT<=0){const d=Math.hypot(j.x-b.x,j.y-b.y)||1,sp=(mad?210:172)*cf.spd;b.vx=(j.x-b.x)/d*sp;b.vy=(j.y-b.y)/d*sp;b.face=b.vx>0?1:-1;b.state='charge';b.stateT=1.25;}}
+  else if(b.state==='charge'){b.stateT-=dt;b.x+=b.vx*dt;b.y+=b.vy*dt; // all fours, flat out
+    if(Math.random()<dt*30)BS.parts.push({x:b.x+rnd(-14,14),y:b.y,vx:-b.vx*0.15,vy:-20,life:0.4,col:'#fff'});if(Math.random()<dt*6)AudioK.sfx.swipe();
+    const d=Math.hypot(j.x-b.x,j.y-b.y);
+    if(d<44||b.stateT<=0||b.x<26||b.x>230||b.y<132||b.y>204){b.state='swipe';b.stateT=0.5;b.hitDone=false;b.face=j.x>b.x?1:-1;AudioK.sfx.swipe();}}
+  else if(b.state==='swipe'){b.stateT-=dt; // big paw swing in front of him
+    const fx=b.x+b.face*34,fy=b.y-14;
+    if(!b.hitDone&&b.stateT<0.36&&Math.abs(j.x-fx)<36&&Math.abs(j.y-fy)<30){b.hitDone=true;bossHitJak();bossFloat(j.x,j.y-44,'SWIPE!','#ff3b3b');}
+    if(b.stateT<=0){b.state='dizzy';b.stateT=1.4;bossBanner(['WINDED!','DOUBLE DAMAGE'],PAL.Y,1.2);}}
+  else if(b.state==='dizzy'){b.stateT-=dt;if(b.stateT<=0){b.state='walk';b.spinT=(mad?rnd(3.2,4.4):rnd(4.4,6.2))*(cf.spinGap||1);b.tx=rnd(150,232);b.ty=rnd(130,204);b.throwT=Math.min(b.throwT,0.6);}}}
 function updateBoss(dt,now){
   for(let i=BS.parts.length-1;i>=0;i--){const p=BS.parts[i];p.life-=dt;p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=90*dt;if(p.life<=0)BS.parts.splice(i,1);}
   for(let i=BS.floats.length-1;i>=0;i--){const f=BS.floats[i];f.life-=dt;f.y-=20*dt;if(f.life<=0)BS.floats.splice(i,1);}
@@ -1713,7 +1889,8 @@ function updateBoss(dt,now){
     if(r.life<=0)BS.rings.splice(i,1);}
   // the Grump King
   const mad=BS.phase===2;b.x=Math.max(24,Math.min(232,b.x));b.y=Math.max(130,Math.min(206,b.y));
-  if(b.state==='walk'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy);if(d<4){b.tx=rnd(120,232);b.ty=rnd(130,204);}else{const sp=(mad?62:42)*BS.cfg.spd;b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;}
+  if(BS.cfg.kind==='bear')updateBear(dt,mad,j,b);
+  else if(b.state==='walk'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy);if(d<4){b.tx=rnd(120,232);b.ty=rnd(130,204);}else{const sp=(mad?62:42)*BS.cfg.spd;b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;}
     b.face=j.x>b.x?1:-1;b.throwT-=dt;b.spinT-=dt;
     if(b.throwT<=0){b.throwT=mad?rnd(0.9,1.3):rnd(1.4,2);const sx=b.x+b.face*10,sy=b.y-40,a=Math.atan2(j.y-16-sy,j.x-sx);
       {const n=mad?(BS.cfg.spread||3):1,offs=n===1?[0]:n===2?[-0.16,0.16]:[-0.28,0,0.28];for(const off of offs){const sp=(mad?135:115)*BS.cfg.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}}AudioK.sfx.toss();if(Math.random()<0.3){b.yell=1;b.say=BS.cfg.taunt||'HEY!';}}
@@ -1727,7 +1904,8 @@ function updateBoss(dt,now){
     if(BS.cfg.special==='charge'&&Math.random()<dt*8)AudioK.sfx.swipe();
     if(b.stateT<=0||b.x<26||b.x>230||b.y<132||b.y>204){b.state='dizzy';b.stateT=1.5;bossBanner([BS.cfg.kind==='bear'?'WINDED!':'DIZZY!','DOUBLE DAMAGE'],PAL.Y,1.2);}}
   else if(b.state==='dizzy'){b.stateT-=dt;if(b.stateT<=0){b.state='walk';b.spinT=(mad?rnd(3.5,5):rnd(5,7))*(BS.cfg.spinGap||1);b.tx=rnd(150,232);b.ty=rnd(130,204);}}
-  if(b.state!=='spin'&&Math.hypot(b.x-j.x,b.y-j.y)<20)bossHitJak();
+  if(b.state==='charge'&&Math.hypot(b.x-j.x,b.y-j.y)<26)bossHitJak();
+  else if(b.state!=='spin'&&b.state!=='swipe'&&Math.hypot(b.x-j.x,b.y-j.y)<20)bossHitJak();
   for(let i=BS.canes.length-1;i>=0;i--){const c=BS.canes[i];c.x+=c.vx*dt;c.y+=c.vy*dt;c.a+=dt*14;
     if(c.x<-10||c.x>266||c.y<40||c.y>230){BS.canes.splice(i,1);continue;}
     if(Math.hypot(c.x-j.x,c.y-(j.y-16))<(BS.cfg.proj==='bigball'&&!c.needle?18:14)){BS.canes.splice(i,1);bossHitJak();}}
@@ -1768,7 +1946,9 @@ function drawBossSprite(x,y,t,o){const cf=BS.cfg||BOSSES.boss_mtut,k=cf.kind,fac
   if(k==='grump'){drawGrumpKing(x,y,t,o);return;}
   let c,dx,dy;
   if(k==='yeti'){const fr=Math.floor(t/260)%2;c=outlined('y'+fr+face+(o.yell?1:0),18,24,1,1,()=>drawYeti(0,0,t,!!o.yell,face));dx=x-27;dy=y-69;}
-  else if(k==='bear'){const fr=Math.floor(t/90)%2;c=outlined('b'+fr+face,30,17,1,1,()=>drawPolarBear(0,0,t,face));dx=x-45;dy=y-48;}
+  else if(k==='bear'){const pose=o.pose;
+    if(pose==='stand'){const th=o.throwing?1:0,ro=o.yell?1:0;c=outlined('bs'+th+ro+face,22,36,1,7,()=>drawPolarBearStand(0,0,t,face,!!th,!!ro));dx=x-36;dy=y-111;}
+    else{const sw=pose==='swipe'?1:0,fr=sw?0:Math.floor(t/(pose==='charge'?55:90))%2;c=outlined('b'+fr+face+sw,30,20,1,4,()=>drawPolarBear(0,0,fr*90,face,sw));dx=x-45;dy=y-57;}}
   else if(k==='snowman'){const fr=Math.floor(t/300)%2;c=outlined('s'+fr+face,28,34,6,7,()=>drawSnowmanBoss(t,face));dx=x-42;dy=y-95;}
   else if(k==='tree'){const fr=Math.floor(t/350)%2;c=outlined('t'+fr+(o.yell?1:0),30,30,5,1,()=>drawPineBoss(t,!!o.yell));dx=x-45;dy=y-87;}
   ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(c,Math.round(dx),Math.round(dy),c.width*3,c.height*3);ctx.restore();
@@ -1791,7 +1971,13 @@ function drawBossProj(c,now){const pr=BS.cfg.proj;
   else if(pr==='pole'){const dx=Math.cos(c.a)*9,dy=Math.sin(c.a)*9;pline(c.x-dx,c.y-dy,c.x+dx,c.y+dy,'#c8c8d8');R(c.x+dx-1,c.y+dy-1,3,3,'#e0262f');R(c.x-dx-1,c.y-dy-1,2,2,'#222');}
   else drawCane(c.x,c.y,c.a,1.4);}
 function drawBoss(now){
-  const b=BS.b,j=BS.jak;ctx.save();if(BS.shake>0&&!reduceMotion)ctx.translate(Math.round(rnd(-2,2)),Math.round(rnd(-2,2)));
+  const b=BS.b,j=BS.jak,oy=BS.oy=Math.max(0,Math.min(H-224,H-224-HUDB+Math.min(HUDB,30)));
+  if(oy>0){const n=16,bh=Math.ceil(oy/n)+1;for(let i=0;i<n;i++)R(0,i*bh,W,bh,mix('#16264e','#3a5a9a',i/(n-1)));
+    for(let i=0;i<30;i++){const sx=(i*97+13)%W,sy=(i*53+7)%Math.max(8,oy-20);if((Math.floor(now/400)+i)%4)R(sx,sy+30,1,1,'#c8d8ff');}
+    for(let k=0;k<3;k++){ctx.globalAlpha=0.16+0.06*Math.sin(now/900+k);for(let x=0;x<W;x+=2){const y=36+k*18+Math.sin(x/34+now/1500+k)*10+Math.sin(x/13+k)*4;R(x,y,2,14+k*4,k===1?'#5fffb0':'#7ae0ff');}}ctx.globalAlpha=1;
+    {const hb=oy+30;for(let x=0;x<W;x++){const h=Math.round(46+26*Math.sin(x*0.035+1.3)+12*Math.sin(x*0.11)+6*Math.sin(x*0.29));R(x,hb-h,1,h,'#24365e');if(h>60)R(x,hb-h,1,Math.min(8,h-60),'#c8d4f0');}}
+    R(0,oy+224,W,H-oy-224,'#eef3ff');for(let i=0;i<30;i++)R((i*53)%W,oy+228+(i*29)%Math.max(4,H-oy-232),6,1,'#d6e0f5');}
+  ctx.save();ctx.translate(0,oy);if(BS.shake>0&&!reduceMotion)ctx.translate(Math.round(rnd(-2,2)),Math.round(rnd(-2,2)));
   sky('#3a5a9a','#c6d8f0');mountains(118,58,'#7f98c8','#eef4ff',23);mountains(126,36,'#5a6fa0','#dfe8fa',29);
   R(0,118,256,106,'#eef3ff');for(let i=0;i<40;i++)R((i*53)%256,124+(i*29)%80,6,1,'#d6e0f5');
   R(0,186,256,22,'#4a4a58');for(let x=(Math.floor(now/40))%24-24;x<256;x+=24)R(x,196,12,2,PAL.Y);R(0,184,256,2,'#e8eefc');R(0,208,256,2,'#e8eefc');
@@ -1801,7 +1987,11 @@ function drawBoss(now){
   for(const r of BS.rings){ctx.strokeStyle=hsl(now*0.4+r.r*3,100,65);ctx.lineWidth=3;ctx.globalAlpha=Math.max(0,r.life*2);ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
   const list=[{y:j.y,d:()=>{if(j.inv>0&&Math.floor(now/90)%2)return;drawJakPoly(j.x-22,j.y-40,0.5,{face:j.face,t:now,roll:now/40,eyes:true,lights:true,wiggle:true});}},
     {y:b.y,d:()=>{if(b.state==='spin'){drawBossSpin(b,now);}
-      else{const shake=b.state==='wind'?rnd(-2,2):0;drawBossSprite(b.x+shake,b.y,now*(b.state==='groove'?2:1),{yell:b.yell>0||b.state==='wind',face:b.state==='groove'?(Math.floor(now/200)%2?1:-1):b.face,flash:b.flash});
+      else{const shake=(b.state==='wind'||b.state==='roar')?rnd(-2,2):0,bear=BS.cfg.kind==='bear';
+        const pose=bear?(b.state==='stand'?'stand':b.state==='groove'?(Math.floor(now/400)%2?'stand':'walk'):b.state):null;
+        drawBossSprite(b.x+shake,b.y,now*(b.state==='groove'?2:1),{yell:b.yell>0||b.state==='wind'||b.state==='roar',face:b.state==='groove'?(Math.floor(now/200)%2?1:-1):b.face,flash:b.flash,pose,throwing:b.state==='stand'&&!b.thrown});
+        if(bear&&b.state==='swipe'){const k=1-b.stateT/0.5,fx=b.x+b.face*30;for(let s=0;s<3;s++){const ox=fx+b.face*(s*7-6),a0=b.y-58+k*26;pline(ox,a0,ox+b.face*10,a0+30,s%2?'#fff':'#ff3b3b');pline(ox+1,a0,ox+b.face*10+1,a0+30,s%2?'#fff':'#ff3b3b');}}
+        if(b.state==='roar'&&Math.floor(now/100)%2)txt('!',b.x,b.y-72,'#ff3b3b',16,'center');
         if(b.state==='wind'&&Math.floor(now/100)%2)txt('!',b.x,b.y-72,'#ff3b3b',16,'center');
         if(b.state==='dizzy')for(let k=0;k<4;k++){const a=now/150+k*1.57;R(b.x+Math.cos(a)*14,b.y-64+Math.sin(a)*4,3,3,PAL.Y);}}}}];
   list.sort((p,q)=>p.y-q.y).forEach(e=>e.d());
@@ -1815,20 +2005,51 @@ function drawBoss(now){
   R(0,0,256,30,PAL.K);R(0,30,256,1,PAL.O);txt(BS.cfg.name,6,4,'#ff6b6b',8,'left',null);R(6,15,170,8,'#3a2a5a');R(7,16,168*BS.hp/BS.maxHp,6,BS.phase===2?(Math.floor(now/150)%2?'#ff3b3b':'#ff8a3b'):'#ff3b3b');
   for(let i=0;i<BS.maxHearts;i++)heart(250-(BS.maxHearts-i)*9,5,i<BS.hearts?'#ff3b6b':'#4a3a5a');
   const bc=BS.bassCd>0?'#5a4a6a':'#5fe8ff';txt('BASS',250,17,bc,8,'right',null);
+  ctx.save();ctx.translate(0,oy);
   if(BS.banner){const bb=BS.banner,h=bb.lines.length*14+10,y=70;ctx.globalAlpha=0.82;R(0,y,256,h,PAL.K);ctx.globalAlpha=1;R(0,y,256,1,bb.col);R(0,y+h-1,256,1,bb.col);bb.lines.forEach((l,i)=>txt(l,128,y+6+i*14,i===0?bb.col:'#fff',8,'center'));}
   if(mode==='bossEnd'&&BS.won&&BS.cfg.crew&&BS.cfg.crew.length){ctx.globalAlpha=0.88;R(20,36,216,132,PAL.K);ctx.globalAlpha=1;R(20,36,216,1,PAL.Y);R(20,167,216,1,PAL.Y);
     txt(BS.cfg.final?'NEW CREW!':'NEW CREW FOR '+BS.cfg.state+'!',128,42,PAL.Y,8,'center');const cc=BS.cfg.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
     cc.forEach((c,k)=>{const x=40+k*104,dr=DRIVERS.includes(c);drawPortraitHi(x,56,c);txt(c.name,x+36,132,'#fff',8,'center',null);txt(dr?'DRIVER':'DJ',x+36,144,dr?PAL.O:'#ff4fd8',8,'center',null);});}
   if(BS.intro>0){ctx.globalAlpha=0.9;R(14,40,228,150,PAL.K);ctx.globalAlpha=1;R(14,40,228,1,PAL.O);R(14,189,228,1,PAL.O);
     txt('BOSS: '+BS.cfg.name,128,48,'#ff6b6b',8,'center');txt(BS.cfg.place,128,60,'#c9b8ff',8,'center',null);
-    txt(coarse?'TAP SCREEN: LASERS':'CLICK: LASERS',128,82,'#5fe8ff',8,'center');txt('BASS: SMASH WHAT IT THROWS',128,98,'#ff4fd8',8,'center');
+    txt(coarse?'TAP SCREEN OR LASER':'CLICK OR L: LASERS',128,82,'#5fe8ff',8,'center');txt('BASS: SMASH WHAT IT THROWS',128,98,'#ff4fd8',8,'center');
     txt(BS.cfg.dodge||'DODGE THE SPIN ATTACK',128,114,'#fff',8,'center');txt('DIZZY = DOUBLE DAMAGE',128,130,PAL.Y,8,'center');txt('MOVE WITH THE STICK/ARROWS',128,146,'#a596c4',8,'center',null);
     if(Math.floor(now/400)%2)txt('TAP TO FIGHT',128,170,PAL.Y,8,'center');}
+  ctx.restore();
 }
 
 // ---------- trail-map worlds (simplified from each resort's real lift and run layout) ----------
 // d: g green circle, b blue square, k black diamond, c cat track / traverse. Summit at the top, base at the bottom.
 const WORLDS={
+
+ // ---- downtown parades: real street grids, simplified spacing. Streets are {v:x or h:y, a..b extent, w width}. ----
+ missoula:{city:true,ww:700,wh:1160,night:false,start:[410,156],gold:[262,814],goldMsg:'AT CARAS PARK!',goldTo:'TO CARAS PARK!',carrots:8,crowd:14,
+  streets:[
+   {h:120,a:0,b:700,w:32,n:'RAILROAD ST'},{h:230,a:0,b:700,w:28,n:'ALDER ST'},{h:330,a:0,b:700,w:28,n:'SPRUCE ST'},{h:430,a:0,b:700,w:28,n:'PINE ST'},
+   {h:540,a:0,b:700,w:40,n:'BROADWAY'},{h:650,a:0,b:700,w:30,n:'MAIN ST'},{h:760,a:0,b:700,w:30,n:'FRONT ST'},{h:1060,a:0,b:700,w:30,n:'S 3RD ST'},
+   {v:60,a:120,b:1160,w:34,n:'ORANGE ST'},{v:175,a:120,b:760,w:28,n:'WOODY ST'},{v:290,a:120,b:760,w:28,n:'RYMAN ST'},
+   {v:410,a:104,b:1160,w:44,n:'HIGGINS AVE'},{v:530,a:120,b:760,w:28,n:'PATTEE ST'},{v:640,a:120,b:760,w:28,n:''}],
+  water:[{x:0,y:852,w:700,h:106,n:'CLARK FORK RIVER'}],
+  parks:[{x:196,y:777,w:142,h:72,n:'CARAS PARK',pav:true,carousel:true},{x:340,y:812,w:46,h:37},{x:434,y:777,w:266,h:72,n:'RIVERFRONT TRAIL'}],
+  landmarks:[{x:338,y:28,w:144,h:74,kind:'depot',n:'NP DEPOT'},{x:190,y:446,w:86,h:78,kind:'court',n:'COURTHOUSE'},{x:306,y:666,w:82,h:78,kind:'florence',n:'FLORENCE'},
+   {x:434,y:666,w:82,h:78,kind:'merc',n:'MERCANTILE'},{x:340,y:777,w:46,h:34,kind:'wilma',n:'WILMA'}],
+  route:[[410,138],[410,540],[530,540],[530,760],[290,760],[268,806]],
+  checks:[{x:410,y:330,n:'HIGGINS & SPRUCE'},{x:410,y:540,n:'HIGGINS & BROADWAY'},{x:530,y:650,n:'PATTEE & MAIN'},{x:410,y:760,n:'FRONT & HIGGINS'}],
+  lodges:[{x:474,y:198,roof:'#c0392b',name:'THE WORKSHOP'}],
+  labels:[{t:'HIP STRIP',x:410,y:1000,c:'#ffd23f'},{t:'HIGGINS AVE BRIDGE',x:410,y:902,c:'#fff'},{t:'ORANGE ST BRIDGE',x:60,y:886,c:'#fff'}]},
+ bozeman:{city:true,ww:1200,wh:640,night:false,start:[120,330],gold:[1065,518],goldMsg:'AT BOGERT PARK!',goldTo:'TO BOGERT PARK!',carrots:9,crowd:16,
+  streets:[
+   {h:90,a:0,b:1200,w:28,n:'LAMME ST'},{h:205,a:0,b:1200,w:30,n:'MENDENHALL ST'},{h:330,a:0,b:1200,w:48,n:'MAIN ST'},{h:455,a:0,b:1200,w:30,n:'BABCOCK ST'},{h:580,a:0,b:1200,w:28,n:'OLIVE ST'},
+   {v:90,a:76,b:640,w:28,n:'GRAND AVE'},{v:240,a:76,b:640,w:28,n:'WILLSON AVE'},{v:390,a:76,b:640,w:28,n:'TRACY AVE'},{v:540,a:76,b:640,w:28,n:'BLACK AVE'},
+   {v:690,a:76,b:640,w:28,n:'BOZEMAN AVE'},{v:840,a:76,b:640,w:34,n:'ROUSE AVE'},{v:990,a:76,b:640,w:28,n:'CHURCH AVE'},{v:1140,a:76,b:640,w:28,n:'WALLACE AVE'}],
+  water:[],
+  parks:[{x:1004,y:470,w:122,h:96,n:'BOGERT PARK',pav:true}],
+  landmarks:[{x:256,y:220,w:64,h:86,kind:'baxter',n:'BAXTER'},{x:322,y:240,w:54,h:66,kind:'ellen',n:'ELLEN'},{x:322,y:354,w:54,h:50,kind:'rialto',n:'RIALTO'},
+   {x:106,y:470,w:118,h:96,kind:'emerson',n:'EMERSON'},{x:0,y:354,w:76,h:88,kind:'court',n:'COURTHOUSE'}],
+  route:[[100,330],[990,330],[990,455],[1060,505]],
+  checks:[{x:240,y:330,n:'MAIN & WILLSON'},{x:540,y:330,n:'MAIN & BLACK'},{x:840,y:330,n:'MAIN & ROUSE'},{x:990,y:455,n:'CHURCH & BABCOCK'}],
+  lodges:[{x:170,y:160,roof:'#2563c9',name:'THE WORKSHOP'}],
+  labels:[]},
  marshall:{ww:560,wh:1120,night:true,start:[226,1004],gold:[300,112],goldMsg:'AT THE SUMMIT!',goldTo:'TO THE SUMMIT!',carrots:6,crowd:8,
   snow:'#a3aed3',run:'#e6ecfb',cord:'#d3dbf3',plaza:'#dbe1f5',
   clear:[{x:300,y:112,rx:62,ry:44},{x:280,y:1046,rx:160,ry:66}],
@@ -2406,7 +2627,113 @@ function drawNightSky(ww,ch){for(let i=0;i<14;i++)R(0,i*ch/14,ww,Math.ceil(ch/14
   ctx.globalAlpha=0.12;ctx.fillStyle='#fff6d0';ctx.beginPath();ctx.arc(mx,my,20,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
   for(let x=0;x<ww;x++){const u=x*0.031,hgt=Math.round(14+10*Math.sin(u)+6*Math.sin(u*2.7+1)+3*Math.sin(u*6.1));R(x,ch-hgt,1,hgt,'#1a2244');if(hgt>18)R(x,ch-hgt,1,Math.min(4,hgt-18),'#c8d4f0');}
   R(0,ch-3,ww,3,'#2a3050');}
+// ---------- downtown parade levels: street grid, storefronts, river and parks, pre-rendered once ----------
+function inStreetRect(s,x,y,pad=0){const hw=s.w/2+pad;return s.v!==undefined?(Math.abs(x-s.v)<=hw&&y>=s.a-hw&&y<=s.b+hw):(Math.abs(y-s.h)<=hw&&x>=s.a-hw&&x<=s.b+hw);}
+const inBox=(k,x,y)=>x>=k.x&&x<k.x+k.w&&y>=k.y&&y<k.y+k.h;
+function cityHash(a,b){return (((a*73856093)^(b*19349663))>>>0);}
+const ROOFS=['#8a4a3a','#a0583e','#6a5a6e','#7a6a5a','#94785a','#5a4e62','#9a6a4a','#6e5040','#7e8494','#a06a5a'];
+function drawStorefronts(x0,y0,x1,y1,seed){x0=Math.round(x0);y0=Math.round(y0);x1=Math.round(x1);y1=Math.round(y1);if(x1-x0<10||y1-y0<12)return;
+  let x=x0,k=0;while(x<x1-6){const h=cityHash(seed+k,x0+y0);let w=26+(h%32);if(x1-x-w<18)w=x1-x;const col=ROOFS[(h>>>3)%ROOFS.length],face=Math.min(16,Math.max(10,Math.round((y1-y0)*0.28)));
+    const ry=y0+((h>>>6)%3===0?4:0),fy=y1-face;
+    R(x,ry,w,fy-ry,PAL.K);R(x+1,ry+1,w-2,fy-ry-1,col);R(x+1,ry+1,w-2,2,mix(col,'#ffffff',0.25));R(x+1,fy-2,w-2,2,mix(col,'#000000',0.25));
+    if(h%3===0)R(x+3+(h%5),ry+5,Math.min(10,w-8),6,'#4a4a58'),R(x+4+(h%5),ry+5,Math.min(8,w-10),2,'#f4f8ff');
+    if(h%4===1)R(x+w-8,ry+3,4,6,'#5a3a2a');
+    for(let s=0;s<3;s++)if(((h>>>(9+s))&1)&&w>14)R(x+3+s*((w-10)/3),ry+4+((h>>>(12+s))%Math.max(1,fy-ry-10)),6,2,'#f4f8ff');
+    const fc=mix(col,'#000000',0.12);R(x,fy,w,face,PAL.K);R(x+1,fy,w-2,face-1,fc);
+    for(let wx=x+3;wx<x+w-5;wx+=7){R(wx,fy+2,4,4,'#9fd8ff');R(wx,fy+2,4,1,'#e8f6ff');}
+    const dx=x+Math.floor(w/2)-2;R(dx,y1-6,5,5,'#2a1a14');
+    if(h%2===0){const ac=['#e0262f','#2f8f6f','#2563c9','#ff9f1c','#7a3cff'][(h>>>4)%5];for(let a=0;a<w-2;a+=4)R(x+1+a,fy+face-9,2,2,ac),R(x+3+a,fy+face-9,2,2,'#fff');}
+    x+=w;k++;}}
+function drawLandmark(L){const {x,y,w,h,kind}=L,K=PAL.K,face=16,fy=y+h-face;
+  const body=(roof,front)=>{R(x,y,w,fy-y,K);R(x+1,y+1,w-2,fy-y-1,roof);R(x+1,y+1,w-2,2,mix(roof,'#fff',0.3));R(x,fy,w,face,K);R(x+1,fy,w-2,face-1,front);};
+  const wins=(c)=>{for(let wx=x+4;wx<x+w-6;wx+=8)R(wx,fy+3,4,6,c);};
+  const sign=(t,c,bg)=>{const tw=t.length*8+6,sx=Math.round(x+w/2-tw/2),sy=fy-12;R(sx-1,sy-1,tw+2,12,K);R(sx,sy,tw,10,bg);txt(t,x+w/2,sy+1,c,8,'center',null);};
+  if(kind==='depot'){body('#8a3a2a','#a0503a');for(const tx of [x+8,x+w-30]){R(tx,y-14,22,24,K);R(tx+1,y-13,20,22,'#9a4430');for(let r=0;r<9;r++)R(tx+11-r,y-24+r,r*2+1,1,r===0?'#fff':'#5a2a20');}
+    for(let wx=x+6;wx<x+w-8;wx+=12){R(wx,fy+3,7,9,'#ffd76a');R(wx,fy+3,7,2,'#a0503a');}sign('NP DEPOT','#fff','#1f6b45');}
+  else if(kind==='court'){body('#b8a47a','#cdbb8e');R(x+w/2-10,y-18,20,30,K);R(x+w/2-9,y-17,18,28,'#cdbb8e');R(x+w/2-7,y-26,14,10,'#3a9a7a');R(x+w/2-4,y-30,8,5,'#3a9a7a');R(x+w/2-4,y-10,8,8,'#fff');R(x+w/2,y-8,1,4,K);R(x+w/2,y-5,3,1,K);
+    for(let cx=x+5;cx<x+w-4;cx+=7)R(cx,fy+1,3,face-3,'#efe4c8');sign('COURTHOUSE','#3a2a10','#efe4c8');}
+  else if(kind==='florence'){body('#d8ccb0','#e8dcc0');for(let r=0;r<4;r++)for(let wx=x+5;wx<x+w-6;wx+=9)R(wx,y+8+r*12,5,6,'#6a7a9a');wins('#9fd8ff');sign('FLORENCE','#fff','#7a2a2a');}
+  else if(kind==='merc'){body('#9a4a32','#b05a3a');for(let r=0;r<4;r++)for(let wx=x+5;wx<x+w-6;wx+=9)R(wx,y+8+r*12,5,6,'#e8d8b0');wins('#9fd8ff');sign('MERCANTILE','#fff','#3a2a5a');}
+  else if(kind==='wilma'){R(x,y,w,h,K);R(x+1,y+1,w-2,h-2,'#e0cfa0');for(let r=0;r<3;r++)for(let wx=x+4;wx<x+w-5;wx+=8)R(wx,y+4+r*7,4,4,'#6a7a9a');
+    R(x+2,y+h-12,w-4,10,'#2a1030');txt('WILMA',x+w/2,y+h-11,'#ffd23f',8,'center',null);}
+  else if(kind==='baxter'){body('#7a3a2e','#8a4a3a');for(let r=0;r<5;r++)for(let wx=x+5;wx<x+w-6;wx+=9)R(wx,y+6+r*11,5,6,'#e8d8b0');R(x+w-10,y-20,8,40,K);R(x+w-9,y-19,6,38,'#ff3b3b');
+    for(let k2=0;k2<6;k2++)txt('BAXTER'[k2],x+w-6,y-17+k2*6,'#fff',6,'center',null);sign('BAXTER','#fff','#7a1a1a');}
+  else if(kind==='ellen'){body('#b06a4a','#c07a5a');R(x+3,fy-14,w-6,12,K);R(x+4,fy-13,w-8,10,'#2a1030');txt('ELLEN',x+w/2,fy-12,'#ffd23f',8,'center',null);wins('#ffd76a');}
+  else if(kind==='rialto'){body('#6a3a5a','#7a4a6a');R(x+3,fy-14,w-6,12,K);R(x+4,fy-13,w-8,10,'#2a1030');txt('RIALTO',x+w/2,fy-12,'#5fe8ff',8,'center',null);wins('#ffd76a');}
+  else if(kind==='emerson'){body('#9a5a3a','#aa6a4a');for(let r=0;r<4;r++)for(let wx=x+6;wx<x+w-8;wx+=10)R(wx,y+8+r*14,6,8,'#e8f0ff');R(x+w/2-6,y-12,12,14,K);R(x+w/2-5,y-11,10,12,'#aa6a4a');R(x+w/2-2,y-8,4,4,'#fff');wins('#9fd8ff');sign('EMERSON','#fff','#3a2a5a');}
+  else{body('#7a6a5a','#8a7a6a');wins('#9fd8ff');}}
+function drawCityPark(k){R(k.x,k.y,k.w,k.h,'#eef2fa');for(let i=0;i<k.w*k.h/90;i++){const h=cityHash(k.x+i,k.y);R(k.x+h%k.w,k.y+(h>>>8)%k.h,3,1,'#d8e0f0');}
+  for(let tx=k.x+6;tx<k.x+k.w-10;tx+=26)drawTree(tx-6,k.y-12);
+  if(k.pav){const cx=k.x+Math.round(k.w*0.55),cy=k.y+Math.round(k.h*0.55);R(cx-20,cy-4,40,12,PAL.K);R(cx-19,cy-3,38,10,'#f4f4f8');for(let r=0;r<10;r++)R(cx-20+r*2,cy-14+r,40-r*4,1,r%2?'#e0262f':'#fff');R(cx-1,cy-20,2,6,PAL.K);R(cx+1,cy-20,5,3,'#ff4fd8');}
+  if(k.carousel){const cx=k.x+26,cy=k.y+38;for(let y=-9;y<=9;y++){const w=Math.round(Math.sqrt(81-y*y)*1.5);R(cx-w-1,cy+y,w*2+2,1,PAL.K);R(cx-w,cy+y,w*2,1,y<0?(((y+9)>>1)%2?'#e0262f':'#ffd23f'):'#c9a36b');}for(let k2=-2;k2<=2;k2++)R(cx+k2*5,cy+2,2,6,'#fff');R(cx-1,cy-14,2,6,PAL.K);R(cx+1,cy-14,4,3,'#ff4fd8');txt('CAROUSEL',cx,cy+12,'#fff',6,'center');}
+  for(let bx=k.x+10;bx<k.x+k.w-14;bx+=40){R(bx,k.y+k.h-10,12,2,'#6a4a2a');R(bx+1,k.y+k.h-8,1,3,'#3a2a1a');R(bx+10,k.y+k.h-8,1,3,'#3a2a1a');}
+  if(k.n)txt(k.n,k.x+k.w/2,k.y+3,'#1f6b45',8,'center','#fff');}
+function drawRiver(k,seed){R(k.x,k.y,k.w,k.h,'#2c5a8a');R(k.x,k.y,k.w,5,'#e8eefc');R(k.x,k.y+k.h-5,k.w,5,'#e8eefc');R(k.x,k.y+5,k.w,2,'#5a7aa8');
+  for(let i=0;i<k.w*k.h/120;i++){const h=cityHash(i,seed),x=k.x+h%k.w,y=k.y+8+(h>>>9)%Math.max(1,k.h-16);if(h%4===0)R(x,y,6+(h>>>4)%10,2,'#f4f8ff'),R(x+1,y+2,4,1,'#c8d8f0');else R(x,y,5,1,'#4a7ab0');}
+  for(let x=k.x;x<k.x+k.w;x+=11){const h=cityHash(x,seed+7);R(x,k.y+4+(h%3),6,3,'#7a8094');R(x+3,k.y+k.h-6-(h%3),6,3,'#7a8094');}
+  if(k.n)txt(k.n,k.x+k.w/2-150,k.y+k.h/2-4,'#c8e0ff',8,'center',null);}
+function buildCity(id){
+  const D=WORLDS[id],cols=Math.ceil(D.ww/CELL),rows=Math.ceil(D.wh/CELL),grid=new Uint8Array(cols*rows),steep=new Uint8Array(cols*rows);
+  const walkAt=(x,y)=>{for(const k of D.landmarks)if(inBox(k,x,y))return 0;for(const s of D.streets)if(inStreetRect(s,x,y))return 1;for(const k of D.parks)if(inBox(k,x,y))return 3;return 0;};
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){if(c===0||r===0||c===cols-1||r===rows-1)continue;grid[r*cols+c]=walkAt(c*CELL+4,r*CELL+4);}
+  const seen=new Uint8Array(cols*rows),q=[Math.floor(D.start[1]/CELL)*cols+Math.floor(D.start[0]/CELL)];seen[q[0]]=1;
+  for(let h=0;h<q.length;h++){const i=q[h],c=i%cols,r=(i-c)/cols;for(const [dc,dr] of [[1,0],[-1,0],[0,1],[0,-1]]){const nc=c+dc,nr=r+dr;if(nc<0||nr<0||nc>=cols||nr>=rows)continue;const ni=nr*cols+nc;if(!seen[ni]&&grid[ni]){seen[ni]=1;q.push(ni);}}}
+  const open=[],side=[];for(let i=0;i<grid.length;i++)if(grid[i]&&seen[i]){const p={x:(i%cols)*CELL+4,y:Math.floor(i/cols)*CELL+4};open.push(p);
+    if(grid[i]===1&&D.streets.some(s=>{const d=s.v!==undefined?Math.abs(p.x-s.v):Math.abs(p.y-s.h);return d>s.w/2-10&&d<=s.w/2;})&&D.route.some((a,k)=>k<D.route.length-1&&segDist(p.x,p.y,a[0],a[1],D.route[k+1][0],D.route[k+1][1])<60))side.push(p);}
+  const goldOK=!!seen[Math.floor(D.gold[1]/CELL)*cols+Math.floor(D.gold[0]/CELL)];
+  // which way the parade travels through each checkpoint (for the finish-line stripes)
+  for(const ch of D.checks){ch.vert=true;for(let k=0;k<D.route.length-1;k++){const [ax,ay]=D.route[k],[bx,by]=D.route[k+1];if(segDist(ch.x,ch.y,ax,ay,bx,by)<4){ch.vert=Math.abs(by-ay)>Math.abs(bx-ax);break;}}}
+  const bg=document.createElement('canvas');bg.width=D.ww;bg.height=D.wh;
+  const saved=ctx;ctx=bg.getContext('2d');ctx.imageSmoothingEnabled=false;
+  try{
+    R(0,0,D.ww,D.wh,'#c9d0e2');for(let i=0;i<D.ww*D.wh/400;i++){const h=cityHash(i,id.length);R(h%D.ww,(h>>>11)%D.wh,2,1,'#dfe5f2');}
+    for(const k of D.water)drawRiver(k,id.length);
+    // blocks: every gap between streets gets a row of storefronts facing the street below
+    const xs=[0,D.ww],ys=[0,D.wh];for(const s of D.streets){if(s.v!==undefined)xs.push(s.v-s.w/2,s.v+s.w/2);else ys.push(s.h-s.w/2,s.h+s.w/2);}
+    xs.sort((a,b)=>a-b);ys.sort((a,b)=>a-b);
+    for(let i=0;i<xs.length-1;i++)for(let k=0;k<ys.length-1;k++){const x0=xs[i],x1=xs[i+1],y0=ys[k],y1=ys[k+1];if(x1-x0<12||y1-y0<12)continue;const cx=(x0+x1)/2,cy=(y0+y1)/2;
+      if(D.streets.some(s=>inStreetRect(s,cx,cy)))continue;
+      // carve out the river and the parks; build storefronts on whatever solid ground is left
+      let pieces=[{x:x0,y:y0,w:x1-x0,h:y1-y0}];
+      for(const cut of [...D.water,...D.parks]){const nx=[];for(const p of pieces){const ix0=Math.max(p.x,cut.x),iy0=Math.max(p.y,cut.y),ix1=Math.min(p.x+p.w,cut.x+cut.w),iy1=Math.min(p.y+p.h,cut.y+cut.h);
+          if(ix0>=ix1||iy0>=iy1){nx.push(p);continue;}
+          if(iy0>p.y)nx.push({x:p.x,y:p.y,w:p.w,h:iy0-p.y});if(iy1<p.y+p.h)nx.push({x:p.x,y:iy1,w:p.w,h:p.y+p.h-iy1});
+          if(ix0>p.x)nx.push({x:p.x,y:iy0,w:ix0-p.x,h:iy1-iy0});if(ix1<p.x+p.w)nx.push({x:ix1,y:iy0,w:p.x+p.w-ix1,h:iy1-iy0});}pieces=nx;}
+      pieces.forEach((p,n)=>{if(p.w>=24&&p.h>=24)drawStorefronts(p.x+3,p.y+3,p.x+p.w-3,p.y+p.h-3,i*31+k*7+n*3);});}
+    for(const k of D.parks)drawCityPark(k);
+    // streets: sidewalks, asphalt, slush, snowbanks, center lines
+    for(const s of D.streets){const hw=s.w/2;if(s.v!==undefined)R(s.v-hw,s.a-hw,s.w,s.b-s.a+s.w,'#b9c0d2');else R(s.a-hw,s.h-hw,s.b-s.a+s.w,s.w,'#b9c0d2');}
+    for(const s of D.streets){const hw=s.w/2-5;if(s.v!==undefined)R(s.v-hw,s.a-hw,hw*2,s.b-s.a+hw*2,'#55566a');else R(s.a-hw,s.h-hw,s.b-s.a+hw*2,hw*2,'#55566a');}
+    for(const s of D.streets){const hw=s.w/2-5,len=s.b-s.a;for(let t=0;t<len;t+=9){const h=cityHash(t,s.a+(s.v||s.h));
+        if(s.v!==undefined){if(h%3===0)R(s.v-hw+(h%(hw*2)),s.a+t,4,1,'#6e7088');if(h%5===0)R(s.v-hw,s.a+t,3,4,'#f4f8ff'),R(s.v+hw-3,s.a+t+4,3,4,'#f4f8ff');}
+        else{if(h%3===0)R(s.a+t,s.h-hw+(h%(hw*2)),1,4,'#6e7088');if(h%5===0)R(s.a+t,s.h-hw,4,3,'#f4f8ff'),R(s.a+t+4,s.h+hw-3,4,3,'#f4f8ff');}}
+      if(s.w>=40){for(let t=0;t<len;t+=20){if(s.v!==undefined)R(s.v-1,s.a+t,2,10,PAL.Y);else R(s.a+t,s.h-1,10,2,PAL.Y);}}}
+    // crosswalks at every crossing of two streets
+    for(const a of D.streets)if(a.v!==undefined)for(const b of D.streets)if(b.h!==undefined&&b.h>=a.a-2&&b.h<=a.b+2&&a.v>=b.a-2&&a.v<=b.b+2){
+      for(let k=0;k<a.w-10;k+=5){R(a.v-a.w/2+5+k,b.h-b.w/2-5,3,5,'#e8eefc');R(a.v-a.w/2+5+k,b.h+b.w/2,3,5,'#e8eefc');}
+      for(let k=0;k<b.w-10;k+=5){R(a.v-a.w/2-5,b.h-b.w/2+5+k,5,3,'#e8eefc');R(a.v+a.w/2,b.h-b.w/2+5+k,5,3,'#e8eefc');}}
+    // the painted parade route
+    for(let k=0;k<D.route.length-1;k++){const [ax,ay]=D.route[k],[bx,by]=D.route[k+1],L=Math.hypot(bx-ax,by-ay);
+      for(let t=0;t<L;t+=10){const x=ax+(bx-ax)*t/L,y=ay+(by-ay)*t/L;R(x-2,y-2,5,5,(t/10)%2?'#ff4fd8':'#ff9f1c');}}
+    for(const L of D.landmarks)drawLandmark(L);
+    for(const L of D.lodges){R(L.x-26,L.y-14,52,26,PAL.K);R(L.x-25,L.y-6,50,17,'#8a5a3a');for(let k=0;k<12;k++)R(L.x-26+k,L.y-17+k,52-k*2,1,k===0?'#fff':L.roof);
+      for(let k=0;k<5;k++)R(L.x-21+k*9,L.y,5,5,'#5fe8ff');R(L.x-3,L.y+3,6,8,'#3a2416');drawDCSign(L.x+30,L.y-22);
+      R(L.x-18,L.y-31,36,11,PAL.K);R(L.x-17,L.y-30,34,9,'#3a1a40');txt('SHOP',L.x,L.y-29,PAL.Y,8,'center',null);}
+    // street names: horizontal streets along the road, cross streets on their own corner signs
+    for(const s of D.streets){if(!s.n)continue;
+      if(s.h!==undefined){for(let x=s.a+80;x<s.b-40;x+=300)txt(s.n,x,s.h-4,'#ffffff',8,'center','#140b22');}
+      else D.streets.filter(b=>b.h!==undefined&&b.h>s.a&&b.h<s.b).forEach((b,n)=>{if(n%2)return;const sx=s.v+s.w/2+2,sy=b.h-b.w/2-14,tw=s.n.length*6+4;R(sx,sy+10,1,6,'#3a3a48');R(sx-1,sy-1,tw+2,10,PAL.K);R(sx,sy,tw,8,'#1f7a44');txt(s.n,sx+tw/2,sy+1,'#fff',6,'center',null);});}
+    for(const lb of D.labels)txt(lb.t,lb.x,lb.y,lb.c,8,'center','#140b22');
+  }finally{ctx=saved;}
+  const mini=document.createElement('canvas');mini.width=Math.ceil(cols/2);mini.height=Math.ceil(rows/2);
+  const mc=mini.getContext('2d'),img=mc.createImageData(mini.width,mini.height);
+  for(let y=0;y<mini.height;y++)for(let x=0;x<mini.width;x++){const gx=Math.min(cols-1,x*2),gy=Math.min(rows-1,y*2),v=grid[gy*cols+gx],wx=gx*CELL+4,wy=gy*CELL+4,o=(y*mini.width+x)*4;
+    const col=v===1?[205,210,226]:v===3?[236,244,236]:D.water.some(w=>inBox(w,wx,wy))?[60,110,180]:[96,70,84];img.data[o]=col[0];img.data[o+1]=col[1];img.data[o+2]=col[2];img.data[o+3]=255;}
+  mc.putImageData(img,0,0);mc.strokeStyle='#ff4fd8';mc.lineWidth=1;mc.beginPath();D.route.forEach(([x,y],k)=>k?mc.lineTo(x/16,y/16):mc.moveTo(x/16,y/16));mc.stroke();
+  return {D,ww:D.ww,wh:D.wh,cols,rows,grid,steep,open,side,lifts:[],bg,mini,goldOK,reach:open.length,total:grid.reduce((a,v)=>a+(v?1:0),0)};
+}
 function buildWorld(id){
+  if(WORLDS[id].city)return buildCity(id);
   const D=WORLDS[id],cols=Math.ceil(D.ww/CELL),rows=Math.ceil(D.wh/CELL),grid=new Uint8Array(cols*rows),steep=new Uint8Array(cols*rows); // 0 trees, 1 run, 2 glade, 3 clearing, 4 cat track, 5 powder
   const bowls=D.bowls||(D.steep?[{x:D.gold[0],y:D.gold[1]+56,rx:110,ry:52}]:[]);
   const clears=[...D.clear];D.lifts.forEach(l=>{clears.push({x:l.a[0],y:l.a[1],rx:18,ry:18},{x:l.b[0],y:l.b[1],rx:18,ry:18});});
@@ -2534,7 +2861,9 @@ function freeSpot(minFromJak=70){
 }
 function inDark(x,y){const B=G.D&&G.D.blackout;if(!B)return false;for(const r of B)if(x>=r[0]&&x<r[2]&&y>=r[1]&&y<r[3])return true;return false;}
 function darkSpot(){for(let k=0;k<300;k++){const c=G.open[Math.floor(Math.random()*G.open.length)];if(inDark(c.x,c.y)&&walkable(c.x,c.y))return {x:c.x,y:c.y};}return freeSpot(90);}
-function newCrowd(){let p=freeSpot(90);for(let k=0;k<25&&inDark(p.x,p.y);k++)p=freeSpot(90);return {x:p.x,y:p.y,type:Math.random()<0.5?'skier':'dancer',col:CROWD_COLS[Math.floor(Math.random()*CROWD_COLS.length)],hair:['#222','#c84','#fd5','#ddd'][Math.floor(Math.random()*4)],vx:0,vy:0,t:0,noJoin:0,lured:false,ph:Math.random()*1000};}
+function newCrowd(){if(G.D&&G.D.city&&G.side&&G.side.length){let p=null;for(let k=0;k<40&&!p;k++){const c=G.side[Math.floor(Math.random()*G.side.length)];if(Math.hypot(c.x-G.jak.x,c.y-G.jak.y)>80)p=c;}if(!p)p=freeSpot(90);
+    return {x:p.x,y:p.y,type:'dancer',col:CROWD_COLS[Math.floor(Math.random()*CROWD_COLS.length)],hair:['#222','#c84','#fd5','#ddd','#a33'][Math.floor(Math.random()*5)],vx:0,vy:0,t:0,noJoin:0,lured:false,ph:Math.random()*1000,fan:true};}
+  let p=freeSpot(90);for(let k=0;k<25&&inDark(p.x,p.y);k++)p=freeSpot(90);return {x:p.x,y:p.y,type:Math.random()<0.5?'skier':'dancer',col:CROWD_COLS[Math.floor(Math.random()*CROWD_COLS.length)],hair:['#222','#c84','#fd5','#ddd'][Math.floor(Math.random()*4)],vx:0,vy:0,t:0,noJoin:0,lured:false,ph:Math.random()*1000};}
 function laserRange(){return (90+(P.up.laser||0)*25)*G.mods.laser*(G.D.night?1.35:1);}
 function laserChargeTime(){return [0,8,6,4.5][Math.min(3,P.up.laser||0)]*(G.D.night?0.8:1);}
 let laserShown='';
@@ -2562,7 +2891,7 @@ function startGame(ri){
   AudioK.setSong(null);AudioK.setSong(G.R.song);G.song=G.R.song;G.played=[G.R.song];G.genreIdx=(Math.max(0,GENRES.indexOf(G.R.song))+G.ri*2)%GENRES.length;
   const fuel=G.R.hazard==='fuel';
   hint.hidden=coarse;
-  {const W0=WORLDS[G.R.id];hint.innerHTML='<b>Arrow keys</b> or <b>WASD</b> to drive Jak. Orange <b>cat tracks</b> are the fast lane up the mountain. Park at the base lodge door to <b>shop</b>.'+(fuel?' Grab red <b>gas cans</b> to keep the generator running.':'')+
+  {const W0=WORLDS[G.R.id];hint.innerHTML='<b>Arrow keys</b> or <b>WASD</b> to drive Jak. Orange <b>cat tracks</b> are the fast lane up the mountain. Park at the base lodge door to <b>shop</b>.'+(fuel?' Grab red <b>gas cans</b> (or buy gas at the shop) to keep the generator running.':'')+
     (W0.powder?' <b>Deep powder</b> slows you down.':'')+(W0.steep?' <b>Black runs</b> pull you downhill.':'');}
   fitScreen();
   Object.assign(G,buildWorld(G.R.id));
@@ -2571,7 +2900,7 @@ function startGame(ri){
   G.jak={x:D.start[0],y:D.start[1],face:1,inv:0,roll:0,moving:false,ride:null,liftCool:0};
   G.maxHearts=3+(P.up.cage||0);
   Object.assign(G,{hearts:G.maxHearts,score:0,joy:0,level:1,parties:0,party:0,gold:null,goldCaught:false,won:false,over:false,trail:[],followers:[],crowd:[],grumps:[],carrots:[],cans:[],parts:[],floats:[],banner:null,shake:0,intro:4200,
-    fuel:100,dark:false,lowWarned:false,lowBeep:0,dropT:0,runCarrots:0,time:0,maxCrew:0,grooved:0,hits:0,cansGot:0,zaps:0,partyMax:7,
+    parade:null,fuel:100,dark:false,lowWarned:false,lowBeep:0,dropT:0,runCarrots:0,time:0,maxCrew:0,grooved:0,hits:0,cansGot:0,zaps:0,partyMax:7,
     laserCd:1,laserCharge:1,avT:rnd(80,140),av:null,avCount:0,snowpack:0,snowWarn:false,darkMsg:false,beam:null,patrol:null,patrolT:rnd(30,50)*G.mods.patrol,npcs:[],atShop:false,shopCool:0,yeti:null,yetiT:rnd(55,85),bear:null,bearT:rnd(45,75),snowballs:[],frozen:0,claw:0});shopBtn.hidden=true;
   {const sk=!!D.skiersOnly,tips=[["VISIT THE INFO","BOOTH FOR TIPS"],["CAT TRACKS ARE","THE FAST WAY UP"],["POCKET BACON","= ONE HEART"],["OPEN BOWLS ARE","FAST, NO TREES"],["YETI? DODGE","THE SNOWBALLS"],["POLAR BEAR!","WATCH FOR THE !"],["GRUMPS CAN'T","CUT THRU TREES"],["BIG CREW MEANS","LONGER PARTIES"],["SKI PATROL","HEALS HEARTS"],["EVERY 3 CREW","= 1 CARROT"]];
     const extra=[];if(fuel)extra.push(["WATCH THAT","GAS GAUGE!"]);if(D.powder)extra.push(["DEEP POWDER?","STAY GROOMED"]);if(D.steep)extra.push(["BLACK RUNS","PULL YOU DOWN"]);
@@ -2589,6 +2918,9 @@ function startGame(ri){
     for(let i=0;i<2;i++){const c=newCrowd();Object.assign(c,darkSpot());c.type='skier';c.lamp=true;G.crowd.push(c);}
     if(!G.buffs.grumps)for(let i=0;i<2;i++){const g=newGrump();Object.assign(g,darkSpot());g.flash=true;G.grumps.push(g);}}
   {const bl=buffList(G.buffs);if(bl.length)setBanner(['SLOTS BONUS',bl.join(' + ')],PAL.Y,6.5);}
+  if(D.city){G.parade={i:0};G.yetiT=G.bearT=G.patrolT=1e9;
+    G.tips=[["FOLLOW THE PINK","PARADE ROUTE"],["HIT EVERY","CHECKPOINT"],["THE SIDEWALKS","ARE PACKED!"],["NEIGHBORS HATE","THE BASS. DODGE!"],["PARADE ENDS AT",D.goldMsg.replace('AT ','').replace('!','')],["EVERY 3 CREW","= 1 CARROT"]];
+    hint.innerHTML='<b>Arrow keys</b> or <b>WASD</b> to drive. Follow the <b>pink parade route</b>, hit every <b>checkpoint</b>, and pick up the crowd on the sidewalks. Park at the Workshop to <b>shop</b>.';}
   bassBtn.hidden=true;laserBtn.hidden=!(P.up.laser>0);
 }
 function burst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,s=rnd(30,90);G.parts.push({x,y,vx:Math.cos(a)*s,vy:Math.sin(a)*s-20,life:rnd(0.5,1),col:cols[i%cols.length]});}}
@@ -2608,7 +2940,7 @@ function startParty(){
 function endParty(){
   G.party=0;G.joy=0;G.parties++;G.level++;AudioK.setHype(false);
   if(!G.buffs.grumps)G.grumps.push(newGrump());
-  if(G.parties>=3&&!G.gold&&!G.goldCaught){G.gold={x:G.D.gold[0],y:G.D.gold[1]};setBanner(['THE GOLDEN','DISCO CARROT','IS '+G.D.goldMsg],PAL.Y,3.2);}
+  if(G.parties>=3&&!G.gold&&!G.goldCaught&&!G.D.city){G.gold={x:G.D.gold[0],y:G.D.gold[1]};setBanner(['THE GOLDEN','DISCO CARROT','IS '+G.D.goldMsg],PAL.Y,3.2);}
   else setBanner([`LEVEL ${G.level}`,'MORE GRUMPS!'],'#fff',1.8);
 }
 function recordBest(){const id=G.R.id;if(G.score>(P.best[id]||0))P.best[id]=G.score;saveP();}
@@ -2698,11 +3030,19 @@ function updateGame(dt,now){
     G.carrots[i]=freeSpot(140);
     if(G.joy>=100&&G.party<=0&&!G.dark)startParty();}}
   if(G.gold&&dist(G.gold,j)<18)winResort();
+  if(G.parade&&!G.gold&&!G.goldCaught){const D=G.D,c=D.checks[G.parade.i];
+    if(c&&Math.hypot(c.x-j.x,c.y-j.y)<(c.vert?30:30)+6){G.parade.i++;G.score+=300;P.bank+=2;G.runCarrots+=2;saveP();AudioK.sfx.recruit();AudioK.sfx.party();
+      burst(c.x,c.y-10,40,['#ff4fd8','#ffd23f','#5fe8ff','#3ad06a','#fff']);floatText(c.x,c.y-30,'+300 / +2 CARROTS','#ff4fd8');
+      for(let k=0;k<3;k++){const f=newCrowd();G.crowd.push(f);}
+      if(!G.dark&&G.party<=0){G.joy=Math.min(100,G.joy+34);if(G.joy>=100)startParty();}
+      if(G.parade.i>=D.checks.length){G.gold={x:D.gold[0],y:D.gold[1]};setBanner(['PARADE COMPLETE!','THE GOLDEN CARROT IS',D.goldMsg],PAL.Y,3.4);}
+      else setBanner([`CHECKPOINT ${G.parade.i} OF ${D.checks.length}`,c.n],'#ff4fd8',2.2);}}
   // crowd: skiers and dancers stay on the runs
   const lureR=G.dark?0:46+G.joy*0.7+Math.min(G.followers.length,15)*2+(G.party>0?60:0)+(P.up.subs||0)*14+G.mods.lure;
   for(let i=G.crowd.length-1;i>=0;i--){const c=G.crowd[i];c.noJoin-=dt;c.t-=dt;
     const d=dist(c,j);c.lured=d<lureR&&c.noJoin<=0&&!j.ride;
     if(c.lured){if(d>1)moveAgent(c,(j.x-c.x)/d*34,(j.y-c.y)/d*34,dt);}
+    else if(c.fan){if(c.t<=0){c.vx=rnd(-4,4);c.vy=rnd(-4,4);c.t=rnd(1,3);}moveAgent(c,c.vx,c.vy,dt);}
     else{if(c.t<=0){const a=Math.random()*Math.PI*2;c.vx=Math.cos(a)*14;c.vy=Math.sin(a)*14+(c.type==='skier'?8:0);c.t=rnd(1,2.5);}
       if(!moveAgent(c,c.vx,c.vy,dt))c.t=0;}
     if(d<16&&c.noJoin<=0&&!G.dark&&!j.ride){G.crowd.splice(i,1);G.followers.push(c);G.maxCrew=Math.max(G.maxCrew,G.followers.length);G.score+=50;AudioK.sfx.recruit();floatText(c.x,c.y-22,'+50','#ff4fd8');}}
@@ -2795,7 +3135,7 @@ function drawInfoBooth(x,y,now,at){const K=PAL.K;x=Math.round(x);y=Math.round(y)
   if(!at)txt('INFO',x,y+3,'#ffd23f',8,'center');}
 function drawGame(now){
   const j=G.jak,RS=G.R,fuel=RS.hazard==='fuel',D=G.D;
-  const camX=Math.round(Math.max(0,Math.min(G.ww-W,j.x-W/2))),camY=Math.round(Math.max(0,Math.min(G.wh-H,j.y-H/2-10)));
+  const camX=Math.round(Math.max(0,Math.min(G.ww-W,j.x-W/2))),camY=Math.round(Math.max(0,Math.min(G.wh-H+HUDB,j.y-(H-HUDB)/2-10)));
   const vis=(x,y)=>x>camX-30&&x<camX+W+30&&y>camY-30&&y<camY+H+40;
   ctx.save();
   if(G.shake>0&&!reduceMotion)ctx.translate(Math.round(rnd(-2,2)),Math.round(rnd(-2,2)));
@@ -2808,11 +3148,15 @@ function drawGame(now){
     for(let s=off;s<L.len;s+=gap){const f=s/L.len,x=L.a.x+(L.b.x-L.a.x)*f-camX,y=L.a.y+(L.b.y-L.a.y)*f-camY;if(x<-10||x>W+10||y<-10||y>H+10)continue;
       if(L.tbar){R(x+3,y-9,1,7,'#3a3a48');R(x+1,y-3,5,1,'#3a3a48');}else{R(x+3,y-9,1,4,'#3a3a48');R(x,y-5,7,2,'#3a3a48');R(x,y-7,1,2,'#3a3a48');}}}
   if(G.party>0){for(let i=0;i<8;i++){ctx.globalAlpha=0.16;ctx.fillStyle=hsl(i*45+now*0.2);const a=now/800+i*Math.PI/4,cx=j.x-camX,cy=j.y-camY-8;ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(a)*300,cy+Math.sin(a)*300);ctx.lineTo(cx+Math.cos(a+0.18)*300,cy+Math.sin(a+0.18)*300);ctx.fill();}ctx.globalAlpha=1;}
+  if(G.parade)D.checks.forEach((c,k)=>{if(!vis(c.x,c.y))return;const done=k<G.parade.i,next=k===G.parade.i,x=c.x-camX,y=c.y-camY,fl=Math.floor(now/200)%2;
+    const half=24,col=done?'#3ad06a':next?(fl?PAL.Y:'#ff4fd8'):'#8a7aa8';
+    for(let s=-half;s<half;s+=4){const on=((s/4)|0)%2===0;if(c.vert){R(x+s,y-2,4,2,on?'#fff':PAL.K);R(x+s,y,4,2,on?PAL.K:'#fff');}else{R(x-2,y+s,2,4,on?'#fff':PAL.K);R(x,y+s,2,4,on?PAL.K:'#fff');}}
+    const px=c.vert?x+half+2:x+6,py=c.vert?y:y-half-2;R(px,py-26,2,26,'#3a3a48');R(px+2,py-26,16,11,PAL.K);R(px+3,py-25,14,9,col);txt(String(k+1),px+10,py-24,done?'#fff':PAL.K,8,'center',null);});
   const list=[];
   for(const c of G.carrots)if(vis(c.x,c.y))list.push({y:c.y,d:()=>drawCarrot(c.x-camX-5,c.y-camY-16,now,false)});
   for(const c of G.cans)if(vis(c.x,c.y))list.push({y:c.y,d:()=>drawCan(c.x-camX-5,c.y-camY-12,now)});
   if(G.gold&&vis(G.gold.x,G.gold.y))list.push({y:G.gold.y,d:()=>{const gx=G.gold.x-camX,gy=G.gold.y-camY;ctx.globalAlpha=0.3+0.15*Math.sin(now/200);ctx.fillStyle=PAL.Y;ctx.beginPath();ctx.arc(gx,gy-8,16,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;drawCarrot(gx-5,gy-16,now,true);}});
-  const person=(c,party)=>()=>{const x=c.x-camX-5,y=c.y-camY-14,t=now*(party?1.8:1)+c.ph;if(c.type==='yeti')drawYeti(x-3,y-8,t,false,1);else if(c.type==='skier')drawSkier(x,y,t,c.col);else drawDancer(x,y,t,c.col,c.hair);if(c.lured)heart(x+1,y-9,'#ff4f8a');};
+  const person=(c,party)=>()=>{const x=c.x-camX-5,y=c.y-camY-14-(c.fan&&Math.floor((now+c.ph)/300)%2?1:0),t=now*(party?1.8:1)+c.ph;if(c.type==='yeti')drawYeti(x-3,y-8,t,false,1);else if(c.type==='skier')drawSkier(x,y,t,c.col);else drawDancer(x,y,t,c.col,c.hair);if(c.lured)heart(x+1,y-9,'#ff4f8a');};
   for(const c of G.crowd)if(vis(c.x,c.y))list.push({y:c.y,d:person(c,false)});
   for(const c of G.followers)if(vis(c.x,c.y))list.push({y:c.y,d:person(c,G.party>0)});
   for(const g of G.grumps)if(vis(g.x,g.y))list.push({y:g.y,d:()=>{drawGrump(g.x-camX-6,g.y-camY-18,now+g.ph,g.yell>0,g.face);if(g.stun>0)for(let k=0;k<3;k++){const a=now/150+k*2.1;R(g.x-camX+Math.cos(a)*7,g.y-camY-24+Math.sin(a)*2,2,2,PAL.Y);}}});
@@ -2857,11 +3201,12 @@ function drawGame(now){
   const nearest=arr=>{let best=1e9,t=null;for(const c of arr){const d=dist(c,j);if(d<best){best=d;t=c;}}return t;};
   if(fuel&&(G.dark||G.fuel<30)&&G.cans.length){target=nearest(G.cans);tcol='#ff3b3b';}
   else if(G.gold){target=G.gold;tcol=PAL.Y;}
+  else if(G.parade&&D.checks[G.parade.i]){target=D.checks[G.parade.i];tcol='#ff4fd8';}
   else target=nearest(G.carrots);
   const hudH=fuel?27:16;
   if(target){const sx=target.x-camX,sy=target.y-camY-8;
-    if(sx<4||sx>W-4||sy<hudH+4||sy>H-16){const cx=W/2,cy=H/2+8,a=Math.atan2(sy-cy,sx-cx),rr=Math.max(W,H);
-      const ex=Math.max(10,Math.min(W-10,cx+Math.cos(a)*rr)),ey=Math.max(hudH+12,Math.min(H-22,cy+Math.sin(a)*rr));
+    if(sx<4||sx>W-4||sy<hudH+4||sy>H-16-HUDB){const cx=W/2,cy=(H-HUDB)/2+8,a=Math.atan2(sy-cy,sx-cx),rr=Math.max(W,H);
+      const ex=Math.max(10,Math.min(W-10,cx+Math.cos(a)*rr)),ey=Math.max(hudH+12,Math.min(H-22-HUDB,cy+Math.sin(a)*rr));
       const bob=Math.sin(now/150)*2;ctx.fillStyle=tcol;ctx.strokeStyle=PAL.K;ctx.lineWidth=1;ctx.beginPath();
       ctx.moveTo(ex+Math.cos(a)*(7+bob),ey+Math.sin(a)*(7+bob));ctx.lineTo(ex+Math.cos(a+2.4)*6,ey+Math.sin(a+2.4)*6);ctx.lineTo(ex+Math.cos(a-2.4)*6,ey+Math.sin(a-2.4)*6);ctx.closePath();ctx.fill();ctx.stroke();}}
   if(!G.dark)snowfall(now,D.night?30:22,0.025);else snowfall(now,14,0.02);
@@ -2870,7 +3215,7 @@ function drawGame(now){
   {const mw=G.mini.width,mh2=G.mini.height,sc=Math.min(1,(H*0.36)/mh2),dw=Math.round(mw*sc),dh=Math.round(mh2*sc),mx=W-dw-4,my=hudH+5;
     ctx.globalAlpha=0.85;R(mx-2,my-2,dw+4,dh+4,PAL.K);ctx.drawImage(G.mini,mx,my,dw,dh);ctx.globalAlpha=1;
     const px=(x,y)=>[mx+x/16*sc,my+y/16*sc];
-    if(target&&target!==G.gold){const [tx,ty]=px(target.x,target.y);R(tx-1,ty-1,2,2,tcol);}
+    if(target&&target!==G.gold){const [tx,ty]=px(target.x,target.y);R(tx-1,ty-1,G.parade?3:2,G.parade?3:2,tcol);}
     if(G.patrol&&Math.floor(now/250)%2){const [qx,qy]=px(G.patrol.x,G.patrol.y);R(qx-1,qy-1,3,3,'#ff3b3b');}
     if(G.yeti){const [yx,yy]=px(G.yeti.x,G.yeti.y);R(yx-1,yy-1,3,3,'#9fd8ff');}
     {const [gx,gy]=px(D.gold[0],D.gold[1]);if(G.gold)R(gx-2,gy-2,4,4,Math.floor(now/200)%2?PAL.Y:'#fff');else if(!G.goldCaught){R(gx-1,gy-1,3,3,'#8a6a10');}}
@@ -2894,15 +3239,16 @@ function drawGame(now){
     for(let k=1;k<4;k++)R(31+k*25.5,18,1,6,PAL.K);
     if(G.dark){if(fl)txt('NO POWER!',140,17,'#ff3b3b',8,'left',null);}else if(low&&fl)txt('LOW FUEL',140,17,'#ff6b6b',8,'left',null);
   }
-  {const by=H-13;R(0,by-1,W,1,PAL.O);R(0,by,W,13,PAL.K);
+  {const by=H-13-HUDB;R(0,by-1,W,1,PAL.O);R(0,by,W,13,PAL.K);
     if(G.gold){const fl=Math.floor(now/300)%2;txt('GOLDEN CARROT',4,by+3,PAL.Y,8,'left',null);txt(D.goldTo,W-4,by+3,fl?PAL.Y:'#fff',8,'right',null);}
     else if(G.goldCaught)txt('LEVEL CLEARED!',W/2,by+3,PAL.Y,8,'center',null);
+    else if(G.parade){const n=D.checks.length;txt('PARADE',4,by+3,'#ff4fd8',8,'left',null);for(let k=0;k<n;k++){const x=56+k*10;R(x,by+3,7,7,k<G.parade.i?'#3ad06a':'#3a2a5a');}txt('FOLLOW THE PINK ROUTE',W-4,by+3,'#a596c4',8,'right',null);}
     else{txt('PARTIES',4,by+3,'#fff',8,'left',null);for(let k=0;k<3;k++){const x=62+k*10;R(x,by+3,7,7,k<G.parties?PAL.Y:'#3a2a5a');if(k<G.parties)R(x+1,by+4,2,2,'#fff');}
       if(D.snowing){const sp=G.snowpack,hot=sp>=80&&Math.floor(now/250)%2;txt('SNOWPACK',W-48,by+3,hot?'#ff6b6b':'#9fd8ff',8,'right',null);R(W-44,by+3,40,7,'#2a3a5a');R(W-43,by+4,38*sp/100,5,sp>=80?(hot?'#ff3b3b':'#ffffff'):'#9fd8ff');}
       else txt('5 CARROTS = PARTY',W-4,by+3,'#a596c4',8,'right',null);}}
   if(G.banner){const b=G.banner;const h=b.lines.length*14+10,y=Math.round(H*0.32);ctx.globalAlpha=0.82;R(0,y,W,h,PAL.K);ctx.globalAlpha=1;R(0,y,W,1,b.col);R(0,y+h-1,W,1,b.col);
     b.lines.forEach((l,i)=>txt(l,W/2,y+6+i*14,i===0?b.col:'#fff',8,'center'));}
-  if(G.intro>0){ctx.save();ctx.translate(Math.round((W-256)/2),Math.round((H-224)/2));
+  if(G.intro>0){ctx.save();ctx.translate(Math.round((W-256)/2),Math.round((H-HUDB-224)/2));
     ctx.globalAlpha=0.9;R(8,22,240,192,PAL.K);ctx.globalAlpha=1;R(8,22,240,1,PAL.O);R(8,213,240,1,PAL.O);
     txt(RS.name,128,30,PAL.Y,8,'center');txt(G.driver.name+' + '+G.dj.name,128,40,'#5fe8ff',8,'center',null);
     const nRows=3+(fuel?1:0)+(D.powder?1:0)+(D.steep?1:0),gap=nRows>4?16:nRows>3?19:22;let y=52;
@@ -2912,9 +3258,11 @@ function drawGame(now){
     if(fuel){drawCan(28,y+2,now);txt('GRAB GAS CANS',50,y+6,'#ff6b6b',8);y+=gap;}
     if(D.powder){R(26,y+8,14,5,'#fff');R(28,y+6,10,2,'#fff');R(30,y+9,2,1,'#9fd8ff');txt('DEEP POWDER SLOWS YOU',50,y+6,'#9fd8ff',8);y+=gap;}
     if(D.steep){for(let k=0;k<4;k++){R(33-k,y+4+k,1+k*2,1,'#111');R(33-k,y+10-k,1+k*2,1,'#111');}txt('BLACK RUNS PULL YOU DOWN',50,y+6,'#fff',8);y+=gap;}
-    txt('CAT TRACKS = FAST LANE',128,y+6,'#ff9a4d',8,'center');
+    if(D.city){txt('PARADE DAY! FOLLOW THE',128,y+6,'#ff4fd8',8,'center');txt('PINK ROUTE AND HIT ALL '+D.checks.length,128,y+18,'#ff4fd8',8,'center');
+      txt('CHECKPOINTS, THEN GRAB THE',128,y+32,PAL.Y,8,'center');txt('GOLDEN CARROT '+D.goldMsg,128,y+44,PAL.Y,8,'center');}
+    else{txt('CAT TRACKS = FAST LANE',128,y+6,'#ff9a4d',8,'center');
     txt('5 CARROTS = DANCE PARTY',128,y+18,'#fff',8,'center');
-    txt('GOAL: 3 PARTIES, THEN THE',128,y+32,PAL.Y,8,'center');txt('GOLDEN CARROT '+D.goldMsg,128,y+44,PAL.Y,8,'center');
+    txt('GOAL: 3 PARTIES, THEN THE',128,y+32,PAL.Y,8,'center');txt('GOLDEN CARROT '+D.goldMsg,128,y+44,PAL.Y,8,'center');}
     if(Math.floor(now/400)%2){R(46,198,164,13,PAL.O);txt(coarse?'TAP TO START':'PRESS SPACE TO START',128,201,'#fff',8,'center',null);}
     ctx.restore();}
 }
@@ -2940,6 +3288,16 @@ function frame(now){
 }
 
 // ---------- input ----------
+// The page must never scroll, zoom or select text under a thumb that is driving Jak.
+const playing=()=>mode==='game'||mode==='boss';
+const editable=t=>!!(t&&t.closest&&t.closest('input,textarea,select'));
+document.addEventListener('touchmove',e=>{if(editable(e.target))return;
+  if(playing()){e.preventDefault();return;}
+  if(document.body.classList.contains('fs')&&!(e.target.closest&&e.target.closest('.under,#devPanel')))e.preventDefault();},{passive:false});
+document.addEventListener('selectstart',e=>{if(!editable(e.target))e.preventDefault();});
+document.addEventListener('contextmenu',e=>{if(!editable(e.target))e.preventDefault();});
+document.addEventListener('gesturestart',e=>e.preventDefault());
+document.addEventListener('dblclick',e=>{if(!editable(e.target))e.preventDefault();},{passive:false});
 const KEYMAP={ArrowUp:'ArrowUp',ArrowDown:'ArrowDown',ArrowLeft:'ArrowLeft',ArrowRight:'ArrowRight',w:'w',a:'a',s:'s',d:'d',W:'w',A:'a',S:'s',D:'d'};
 window.addEventListener('keydown',e=>{
   if(e.target&&e.target.tagName==='INPUT')return;
@@ -2948,13 +3306,13 @@ window.addEventListener('keydown',e=>{
   if(paused){if(e.key==='Enter'||e.key===' '){e.preventDefault();resumePause();}return;}
   if(mode==='boss'){if(KEYMAP[e.key]){keys[KEYMAP[e.key]]=true;e.preventDefault();if(BS.intro>0)BS.intro=0;}
     if(e.key===' '||e.key==='b'||e.key==='B'){e.preventDefault();bossBass();}
-    if(e.key==='l'||e.key==='L'||e.key==='Enter'){e.preventDefault();if(BS.intro>0)BS.intro=0;else bossLaser(BS.b.x,BS.b.y-28);}
+    if(e.key==='l'||e.key==='L'||e.key==='Enter'){e.preventDefault();if(BS.intro>0)BS.intro=0;else bossAutoLaser();}
     if(e.key==='h'||e.key==='H'){e.preventDefault();eatBacon();}
     if(e.key==='m'||e.key==='M')muteBtn.click();return;}
   if(mode==='slots'){if(e.key===' '||e.key==='Enter'){if(e.target&&e.target.tagName==='BUTTON')return;e.preventDefault();slotSpin();}else if(e.key==='Escape')leaveSlots();return;}
   if(mode==='preview'||mode==='crew'||mode==='results'){const k=e.key;
     if(k==='m'||k==='M'){muteBtn.click();return;}if(e.repeat)return;
-    if(mode==='preview'&&(k===' '||k==='Enter')){e.preventDefault();openCrew(PV.ri);}
+    if(mode==='preview'&&(k===' '||k==='Enter')){if(e.target&&e.target.tagName==='BUTTON')return;e.preventDefault();quickStart(PV.ri);}
     else if(mode==='crew'){if(['ArrowUp','ArrowDown','w','W','s','S'].includes(k)){e.preventDefault();CS.focus=1-CS.focus;AudioK.sfx.blip();}
       else if(['ArrowLeft','a','A'].includes(k)){e.preventDefault();crewCycle(CS.focus?'j':'d',-1);}
       else if(['ArrowRight','d','D'].includes(k)){e.preventDefault();crewCycle(CS.focus?'j':'d',1);}
@@ -2985,7 +3343,7 @@ function stickDown(el,fixed){return e=>{
   if(paused){if(el===cv){resumePause();e.preventDefault();}return;}
   if(mode==='boss'&&el===cv){bossLaserAt(e);e.preventDefault();return;}
   if(mode==='boss'&&el===pad){joy.active=true;joy.id=e.pointerId;joy.fixed=true;try{el.setPointerCapture(e.pointerId);}catch(_){}const r=el.getBoundingClientRect();joy.ox=r.left+r.width/2;joy.oy=r.top+r.height/2;stickMove(e);e.preventDefault();return;}
-  if(mode!=='game'){if(el===cv){if(mode==='map')mapTap(e);else if(mode==='preview')openCrew(PV.ri);else if(mode==='crew'){const r=cv.getBoundingClientRect();const left=(e.clientX-r.left)<r.width/2;CS.focus=left?0:1;crewCycle(left?'d':'j',1);}else if(mode==='story'||mode==='splash')advance();}return;}
+  if(mode!=='game'){if(el===cv){if(mode==='map')mapTap(e);else if(mode==='preview')quickStart(PV.ri);else if(mode==='crew'){const r=cv.getBoundingClientRect();const left=(e.clientX-r.left)<r.width/2;CS.focus=left?0:1;crewCycle(left?'d':'j',1);}else if(mode==='story'||mode==='splash')advance();}return;}
   if(G.intro>0){G.intro=0;}
   joy.active=true;joy.id=e.pointerId;joy.fixed=fixed;try{el.setPointerCapture(e.pointerId);}catch(_){}
   const r=el.getBoundingClientRect();if(fixed){joy.ox=r.left+r.width/2;joy.oy=r.top+r.height/2;}else{joy.ox=e.clientX;joy.oy=e.clientY;}
@@ -2993,19 +3351,27 @@ function stickDown(el,fixed){return e=>{
 function stickMove(e){if(!joy.active||e.pointerId!==joy.id)return;let dx=e.clientX-joy.ox,dy=e.clientY-joy.oy;const m=Math.hypot(dx,dy),RR=40;if(m>RR){dx=dx/m*RR;dy=dy/m*RR;}joy.x=dx/RR;joy.y=dy/RR;if(joy.fixed)knob.style.transform=`translate(${dx}px,${dy}px)`;}
 function stickUp(e){if(e.pointerId!==joy.id)return;joy.active=false;joy.x=joy.y=0;knob.style.transform='';}
 [[cv,false],[pad,true]].forEach(([el,fixed])=>{el.addEventListener('pointerdown',stickDown(el,fixed));el.addEventListener('pointermove',stickMove);el.addEventListener('pointerup',stickUp);el.addEventListener('pointercancel',stickUp);});
+// a thumb that lands beside the pad (but not on a button) still steers, from wherever it lands
+controls.addEventListener('pointerdown',e=>{if(e.target.closest('button')||e.target.closest('.pad'))return;if(!playing()||paused)return;
+  if(mode==='game'&&G.intro>0)G.intro=0;if(mode==='boss'&&BS.intro>0){BS.intro=0;}
+  joy.active=true;joy.id=e.pointerId;joy.fixed=false;try{controls.setPointerCapture(e.pointerId);}catch(_){}joy.ox=e.clientX;joy.oy=e.clientY;stickMove(e);e.preventDefault();});
+controls.addEventListener('pointermove',stickMove);controls.addEventListener('pointerup',stickUp);controls.addEventListener('pointercancel',stickUp);
 skipBtn.addEventListener('click',()=>{openMap();});
 mapBtn.addEventListener('click',()=>{openMap(G.ri);});
 storyBtn.addEventListener('click',()=>{startStory();});
 shopBtn.addEventListener('click',e=>{e.stopPropagation();openShop();});
 bassBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();bossBass();});
-laserBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();if(mode==='game')fireLaser();});
+laserBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();if(mode==='game')fireLaser();
+  else if(mode==='boss'){if(BS.intro>0){BS.intro=0;return;}bossAutoLaser();clearInterval(laserBtn._hold);laserBtn._hold=setInterval(()=>{if(mode!=='boss')return clearInterval(laserBtn._hold);bossAutoLaser();},300);}});
+['pointerup','pointercancel','pointerleave'].forEach(ev=>laserBtn.addEventListener(ev,()=>clearInterval(laserBtn._hold)));
+function bossAutoLaser(){if(paused||BS.over)return;const b=BS.b;bossLaser(b.x,b.y-24);}
 baconBtn.addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();eatBacon();});
 pauseBtn.addEventListener('click',e=>{e.stopPropagation();paused?resumePause():pauseGame();});
 muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();muteBtn.textContent=m?'SOUND: OFF':'SOUND: ON';});
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261012205104';
+const GAME_VERSION='20261013153705';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
@@ -3017,9 +3383,10 @@ const fsBtn=$('fsBtn');
 function fsOn(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
 function pseudoFS(on){document.body.classList.toggle('fs',on);fsBtn.textContent=on?'EXIT FULL':'FULL SCREEN';fitScreen();setTimeout(fitScreen,80);setTimeout(fitScreen,400);if(on)window.scrollTo(0,0);}
 const standalone=window.matchMedia&&window.matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches||navigator.standalone;
-function fsTip(){if(standalone||document.getElementById('fsTip'))return;let shown=false;try{shown=localStorage.getItem('jak-fs-tip')==='1';localStorage.setItem('jak-fs-tip','1');}catch(e){}if(shown)return;
-  const d=document.createElement('div');d.id='fsTip';d.textContent='iPhone tip: Safari keeps its bars on web pages. For TRUE full screen, tap Share, then Add to Home Screen, and launch Jak from your home screen.';
-  d.addEventListener('click',()=>d.remove());document.body.appendChild(d);setTimeout(()=>d.remove(),9000);}
+const iOS=/iP(hone|od|ad)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+function fsTip(){if(standalone||!iOS||document.getElementById('fsTip'))return;
+  const d=document.createElement('div');d.id='fsTip';d.innerHTML='<b style="color:#ffd23f">WHOLE SCREEN ON IPHONE</b><br>Safari never lets a web page hide its own address bar. For the entire screen: tap <b>Share</b>, then <b>Add to Home Screen</b>, and open Jak from your home screen. Sign in with your account there and your tour comes with you.<br><span style="color:#5fe8ff">TAP TO CLOSE</span>';
+  d.addEventListener('click',()=>d.remove());document.body.appendChild(d);setTimeout(()=>d.remove(),16000);}
 function toggleFS(){if(fsOn()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
   if(document.body.classList.contains('fs')){pseudoFS(false);return;}
   const el=document.documentElement,req=el.requestFullscreen||el.webkitRequestFullscreen;
@@ -3027,10 +3394,34 @@ function toggleFS(){if(fsOn()){(document.exitFullscreen||document.webkitExitFull
     try{if(window.top!==window.self&&window.top.location.origin===location.origin){window.top.location.href=location.pathname+'?fs=1';return;}}catch(e){}
     pseudoFS(true);fsTip();};
   if(req){try{const p=req.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('any').catch(()=>{});}catch(e){}}).catch(fallback);}catch(e){fallback();}}else fallback();}
-if(standalone||/[?&]fs=1/.test(location.search))pseudoFS(true);
+if(standalone||/[?&]fs=1/.test(location.search)){pseudoFS(true);if(/[?&]fs=1/.test(location.search))setTimeout(fsTip,600);}
 function fsChanged(){pseudoFS(fsOn());}
 document.addEventListener('fullscreenchange',fsChanged);document.addEventListener('webkitfullscreenchange',fsChanged);
 fsBtn.addEventListener('click',e=>{e.stopPropagation();toggleFS();});
+
+// ---------- developer cheats (testing only) ----------
+const devBtn=$('devBtn'),devPanel=$('devPanel');
+function devRefresh(){devBtn.hidden=!DEV.on;if(!DEV.on)devPanel.hidden=true;}
+function devSet(on){DEV.on=on;try{on?localStorage.setItem('jak-dev','1'):localStorage.removeItem('jak-dev');}catch(e){}devRefresh();if(mode==='map')mapInfo();}
+function devWin(){devPanel.hidden=true;if(paused)resumePause();
+  if(mode==='game'){if(G.won||G.over)return;G.intro=0;G.gold={x:G.jak.x,y:G.jak.y};winResort();}
+  else if(mode==='boss'){if(BS.over)return;BS.intro=0;BS.cfg.next=null;bossDamage(99999,'laser');}}
+function devSkip(){devPanel.hidden=true;if(paused)endPause();const ri=mode==='boss'?BS.ri:(mode==='game'||mode==='results'||mode==='shop')?G.ri:(M.sel>=0?M.sel:0);
+  P.cleared[RESORTS[ri].id]=true;saveP();openMap(Math.min(RESORTS.length-1,ri+1));}
+function devPanelOpen(){devPanel.innerHTML='';devPanel.appendChild(mk('div','','DEV CHEATS: every stop on the map is playable while this is on.'));
+  const a=mk('div','row'),b=mk('div','row');
+  if(playing())a.appendChild(btn('WIN THIS LEVEL','chip',devWin));
+  a.appendChild(btn('SKIP TO NEXT STOP','chip',devSkip));
+  a.appendChild(btn('UNLOCK WHOLE TOUR','chip',()=>{RESORTS.forEach(x=>P.cleared[x.id]=true);saveP();devPanel.hidden=true;openMap();}));
+  b.append(btn('+500 CARROTS','chip',()=>{P.bank+=500;saveP();refreshShopUI();devPanelOpen();}),
+    btn('MAX UPGRADES','chip',()=>{UPGRADES.forEach(u=>P.up[u.id]=u.costs.length);P.bacon=3;saveP();if(mode==='game')resumeGame();refreshShopUI();devPanelOpen();}),
+    btn('DEV OFF','chip',()=>devSet(false)),btn('CLOSE','chip',()=>{devPanel.hidden=true;}));
+  devPanel.append(a,b,mk('div','',`CARROTS ${P.bank} / MODE ${mode.toUpperCase()}`));devPanel.hidden=false;}
+devBtn.addEventListener('click',e=>{e.stopPropagation();devPanel.hidden?devPanelOpen():(devPanel.hidden=true);});
+{let taps=0,tt=0;document.querySelector('.brand').addEventListener('click',()=>{const n=performance.now();taps=n-tt<700?taps+1:1;tt=n;if(taps>=5){taps=0;devSet(!DEV.on);if(DEV.on)devPanelOpen();}});}
+devRefresh();
+if(DEV.on)window.__jak={get mode(){return mode;},P,G,BS,M,RESORTS,WORLDS,BOSSES,UPGRADES,openMap,openBoss,startGame,openPreview,openCrew,openShop,pickPlayer,addPlayer,fitScreen,devWin,unlocked,keys,joy,
+  set W(v){W=v;},get W(){return W;},get H(){return H;}};
 
 // splash state
 whoEl.textContent='';dtext.textContent='Sound on! Tap here or the screen to begin, then pick your player.';countEl.textContent='';
