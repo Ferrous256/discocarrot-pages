@@ -657,10 +657,16 @@ const AudioK=(()=>{
       w(0,'RIFF');dv.setUint32(4,36+n,true);w(8,'WAVE');w(12,'fmt ');dv.setUint32(16,16,true);dv.setUint16(20,1,true);dv.setUint16(22,1,true);
       dv.setUint32(24,8000,true);dv.setUint32(28,8000,true);dv.setUint16(32,1,true);dv.setUint16(34,8,true);w(36,'data');dv.setUint32(40,n,true);b.fill(128,44);
       let str='';for(const x of b)str+=String.fromCharCode(x);
-      const el=new Audio('data:audio/wav;base64,'+btoa(str));el.loop=true;el.setAttribute('playsinline','');const pr=el.play();if(pr&&pr.catch)pr.catch(()=>{});
+      const el=new Audio('data:audio/wav;base64,'+btoa(str));el.loop=true;el.setAttribute('playsinline','');silentEl=el;const pr=el.play();if(pr&&pr.catch)pr.catch(()=>{});
     }catch(e){}
   }
-  window.addEventListener('pointerdown',()=>{if(ac&&ac.state!=='running'&&!held)ac.resume();},true);
+  // Phones pause audio when you switch apps or lock the screen. Wake it on the next touch, click or key,
+  // and restart the silent loop that keeps iPhone music playing with the ring switch on silent.
+  let silentEl=null;
+  function wake(){if(!ac||held)return;try{if(ac.state!=='running')ac.resume();}catch(e){}try{if(silentEl&&silentEl.paused){const p=silentEl.play();if(p&&p.catch)p.catch(()=>{});}}catch(e){}}
+  ['pointerdown','touchend','click','keydown'].forEach(ev=>window.addEventListener(ev,wake,true));
+  document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(wake,60);});
+  window.addEventListener('pageshow',()=>setTimeout(wake,60));
   function tone(freq,t,dur,type='square',vol=0.3,slideTo){
     if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);
     if(slideTo)o.frequency.exponentialRampToValueAtTime(slideTo,t+dur);
@@ -3371,7 +3377,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261013153705';
+const GAME_VERSION='20261013170144';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
