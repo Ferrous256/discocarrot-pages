@@ -1648,15 +1648,15 @@ const BS={};
 const BOSSES={
  boss_mtut:{kind:'grump',special:'spin',name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,spread:3,spinGap:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],
   taunt:'HEY! TOO LOUD!',roar:'GRRRR!',mad:"HE'S REALLY MAD NOW",dodge:'DODGE THE CANE SPIN',winLine:'He put down the cane and started dancing.'},
- boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, US-89',sign:'SALT RIVER',sign2:'WYOMING>',hp:100,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:0.9,spread:1,spinGap:1.35,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
+ boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, US-89',sign:'SALT RIVER',sign2:'WYOMING>',hp:135,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.05,spread:3,spinGap:0.95,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
   taunt:'HOW RUDE!',roar:'OFF WITH YOUR BASS!',mad:'THE QUEEN IS NOT AMUSED',dodge:'DODGE THE ROYAL SPIN',winLine:'She dropped her snowballs and started voguing.'},
  boss_teton:{kind:'yeti',special:'roll',name:'YETI',place:'TETON PASS, WY-22',sign:'TETON PASS',sign2:'JACKSON>',hp:150,proj:'bigball',spd:1.1,spread:2,spinGap:1,mid:true,pass:'Teton Pass',crew:[],
   taunt:'RAAAWR!',roar:'ROLL OUT!',mad:'THE YETI IS FURIOUS',dodge:'DODGE THE ROLLING SNOWBALL',winLine:'The Yeti traded his snowballs for a glow stick.'},
  boss_wyco:{kind:'bear',special:'charge',name:'POLAR BEAR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:170,proj:'ice',spd:1.2,spread:3,spinGap:1,state:'COLORADO',pass:'The Colorado line',crew:['betty','raven'],
   taunt:'GRRRAAH!',roar:'CHAAARGE!',mad:'THE BEAR IS ENRAGED',dodge:'DODGE THE CLAW CHARGE',winLine:'The Polar Bear stopped swiping and started shuffling.'},
- boss_berthoud:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'BERTHOUD PASS, US-40',sign:'BERTHOUD PASS',sign2:'BRECK>',hp:160,proj:'coal',spd:1.2,spread:3,spinGap:1,mid:true,pass:'Berthoud Pass',crew:[],
+ boss_berthoud:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'BERTHOUD PASS, US-40',sign:'BERTHOUD PASS',sign2:'BRECK>',hp:185,proj:'coal',spd:1.25,spread:3,spinGap:1,mid:true,pass:'Berthoud Pass',crew:[],
   taunt:'TOO WARM!',roar:'BRRRR!',mad:'THE SNOWMAN IS MELTING MAD',dodge:'DODGE THE STICK-ARM SPIN',winLine:'The Snowman did the melt... on the dance floor.'},
- boss_final:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, US-6',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:190,proj:'cone',spd:1,spread:3,spinGap:1,final:true,pass:'Loveland Pass',crew:['annie','danny'],
+ boss_final:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, US-6',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:210,proj:'cone',spd:1.1,spread:3,spinGap:0.9,final:true,pass:'Loveland Pass',crew:['annie','danny'],
   taunt:'LEAF ME ALONE!',roar:'NEEDLES!',mad:'THE PINE IS BRISTLING',dodge:'DODGE THE NEEDLE STORM',winLine:'The Giant Pine shook off its needles and started swaying to the beat.'},
  // saved for a future state line
  emperor:{kind:'grump',special:'spin',name:'GRUMP EMPEROR',hp:180,cape:'#1a5a8a',crown:'emperor',proj:'pole',spd:1.3,spread:3,spinGap:1}};
@@ -3005,7 +3005,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261012204941';
+const GAME_VERSION='20261012205104';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
