@@ -48,7 +48,11 @@ export function makeHandler(getStore) {
     const route = url.pathname.replace(/^.*\/api\/jak/, "") || "/";
     const store = getStore();
     try {
-      if (route === "/health" && req.method === "GET") return json(200, { ok: true });
+      if (route === "/health" && req.method === "GET") {
+        let storeOk = false;
+        try { await store.get("health/ping", { type: "json" }); storeOk = true; } catch (e) { console.error("jak-api store", e && e.message); }
+        return json(storeOk ? 200 : 503, { ok: storeOk, store: storeOk });
+      }
 
       if (route === "/signup" && req.method === "POST") {
         const b = await readBody(req);
