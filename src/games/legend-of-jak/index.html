@@ -1249,12 +1249,14 @@ const RESORTS=[
   blurb:'Skiers only, always has been. Collins Gulch, Albion Basin, the Baldy Chutes and High Rustler. Deep and steep.'},
  {id:'snowbird',song:'dnb',name:'SNOWBIRD',label:'SNOWBIRD',x:150,y:378,lx:138,ly:374,la:'right',grumps:6,hazard:'fuel',
   blurb:"Utah's finale. The Tram to Hidden Peak, the Cirque, Gad Valley, and the Peruvian Tunnel to Mineral Basin. Everything at once."},
- {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN + YETI',label:'BOSS',x:200,y:490,lx:212,ly:486,la:'left',via:[[200,420]],
-  blurb:'Two rounds on Salt River Pass, US-89. First the Grump Queen and her royal spin, then the Yeti, who hurls giant snowballs and rolls up into one to flatten you. Win both to reach Wyoming.'},
+ {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN',label:'BOSS',x:200,y:490,lx:212,ly:486,la:'left',via:[[200,420]],
+  blurb:'The Grump Queen holds Salt River Pass on US-89. She lobs snowballs and does a slow royal spin. Beat her to reach Wyoming.'},
  {id:'snowking',song:'disco',name:'SNOW KING',label:'SNOW KING',x:190,y:560,lx:190,ly:570,la:'center',grumps:5,hazard:null,
   blurb:"Jackson's town hill: short, steep and lit at night. Exhibition drops right off the summit above the Town Square."},
  {id:'targhee',song:'liquid',name:'GRAND TARGHEE',label:'TARGHEE',x:50,y:530,lx:62,ly:526,la:'left',grumps:5,hazard:'fuel',via:[[120,560]],
   blurb:"The snowy west side of the Tetons. Dreamcatcher to Fred's Mountain, deep powder everywhere, and a thirsty generator."},
+ {id:'boss_teton',boss:true,song:'dubstep',name:'THE YETI',label:'BOSS',x:84,y:584,lx:96,ly:580,la:'left',
+  blurb:'The Yeti lives on Teton Pass, the road over to Jackson. He hurls giant snowballs and curls into a rolling snowball to flatten you.'},
  {id:'jackson',song:'peak',name:'JACKSON HOLE',label:'JACKSON HOLE',x:110,y:620,lx:110,ly:630,la:'center',grumps:6,hazard:null,
   blurb:"Big Red, the Aerial Tram, to Rendezvous Mountain. Corbet's Couloir, Rendezvous Bowl and 4,000 feet of steep. The snow is piling up."},
  {id:'boss_wyco',boss:true,song:'hardtechno',name:'THE POLAR BEAR',label:'BOSS',x:200,y:676,lx:212,ly:672,la:'left',via:[[200,640]],
@@ -1263,14 +1265,16 @@ const RESORTS=[
   blurb:'Champagne Powder under the lights. Mt Werner up top, Shadows and Closets in the trees, and the Sundown side goes dark after hours.'},
  {id:'winterpark',song:'electro',name:'WINTER PARK',label:'WINTER PARK',x:190,y:760,lx:190,ly:770,la:'center',grumps:6,hazard:null,
   blurb:"Mary Jane's bumps, Parsenn Bowl above treeline and a whole lot of snow. Watch the snowpack."},
+ {id:'boss_berthoud',boss:true,song:'hardtechno',name:'THE SNOWMAN',label:'BOSS',x:140,y:790,lx:152,ly:786,la:'left',
+  blurb:'A giant Snowman blocks Berthoud Pass on US-40. It throws coal and spins its stick arms. Melt its heart with bass.'},
  {id:'breck',song:'trance',name:'BRECKENRIDGE',label:'BRECK',x:70,y:810,lx:82,ly:806,la:'left',grumps:7,hazard:'fuel',
   blurb:'Peak 6 to Peak 10 and the Imperial Express, the highest chairlift in North America. Big bowls up top and a long way from gas.'},
  {id:'vail',song:'dnb',name:'VAIL',label:'VAIL',x:180,y:852,lx:192,ly:848,la:'left',grumps:7,hazard:null,
   blurb:'The legendary Back Bowls: miles of wide-open snow. Riva Ridge, Prima and Mid-Vail. Huge, open and fast.'},
  {id:'abasin',song:'breaks',name:'ARAPAHOE BASIN',label:'A-BASIN',x:100,y:888,lx:112,ly:884,la:'left',grumps:7,hazard:'fuel',
   blurb:"The Legend. Pallavicini, Montezuma Bowl and the East Wall towering over it all. Steep, deep and snowing. Colorado's last stop before Loveland Pass."},
- {id:'boss_final',boss:true,song:'hardtechno',name:'SNOWMAN + GIANT PINE',label:'FINAL BOSS',x:190,y:930,lx:178,ly:926,la:'right',via:[[180,920]],
-  blurb:'Two rounds on Loveland Pass, right on the Continental Divide. First a Snowman that throws coal and spins its stick arms, then a Giant Pine that fires pinecones and needle storms.'}
+ {id:'boss_final',boss:true,song:'hardtechno',name:'THE GIANT PINE',label:'FINAL BOSS',x:190,y:930,lx:178,ly:926,la:'right',via:[[180,920]],
+  blurb:'The final boss: a Giant Pine on Loveland Pass, right on the Continental Divide. It fires pinecones and needle storms in every direction.'}
 ];
 const HQ={x:100,y:104,label:'MISSOULA HQ',lx:100,ly:114};
 const PEAKS=[[40,500,7],[236,520,8],[150,600,9],[30,660,6],[236,620,7],[130,700,8],[236,760,7],[30,770,7],[130,800,8],[236,880,8],[30,900,6],[150,910,7],[176,38,9],[222,62,7],[36,36,6],[150,196,8],[96,200,7],[30,178,8],[236,206,6],[112,176,6],[60,124,5],[232,30,6],[60,330,8],[236,312,7],[30,400,7],[236,440,6],[160,452,7],[134,296,6],[40,262,6],[230,262,7]];
@@ -1294,7 +1298,7 @@ function applySave(s){const f=freshP();for(const k of Object.keys(f))P[k]=f[k];
   Object.assign(P.cleared,s.cleared||{});Object.assign(P.best,s.best||{});Object.assign(P.up,s.up||{});Object.assign(P.picks,s.picks||{});Object.assign(P.buffs,s.buffs||{});
   P.bank=+s.bank||0;P.at=+s.at||0;P.bacon=Math.min(3,+s.bacon||0);P.tipIdx=+s.tipIdx||0;P.seen=!!s.seen||P.at>0||Object.keys(P.cleared).length>0;
   if(!s.v){if(['snowbasin','brighton','sundance','alta','snowbird'].some(k=>P.cleared[k]))P.cleared.boss_mtut=true;if(P.at>=6)P.at++;}
-  if(['snowking','targhee','jackson'].some(k=>P.cleared[k]))P.cleared.boss_utwy=true;if(['steamboat','winterpark','breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_wyco=true;}
+  if(['snowking','targhee','jackson'].some(k=>P.cleared[k]))P.cleared.boss_utwy=true;if(P.cleared.jackson)P.cleared.boss_teton=true;if(['breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_berthoud=true;if(['steamboat','winterpark','breck','vail','abasin'].some(k=>P.cleared[k]))P.cleared.boss_wyco=true;}
 const PL=lsGet(PLAYERS_KEY)||{list:[],last:null};PL.cur=null;
 if(!Array.isArray(PL.list))PL.list=[];
 {const old=lsGet(LEGACY_KEY);if(!PL.list.length&&old){PL.list.push({id:'p1',name:'PLAYER 1'});lsSet(SAVE_PREFIX+'p1',old);PL.last='p1';savePlayers();}}
@@ -1497,7 +1501,7 @@ function drawMap(now){
 
 // ---------- level preview, crew select, results ----------
 const PV={ri:0},CS={ri:0,d:0,j:0,focus:0},RS={ri:0,st:null};
-const STATE_OF={boss_final:'LOVELAND PASS',boss_mtut:'MONIDA PASS',boss_utwy:'SALT RIVER PASS',boss_wyco:'BAGGS, WYOMING',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
+const STATE_OF={boss_teton:'TETON PASS',boss_berthoud:'BERTHOUD PASS',boss_final:'LOVELAND PASS',boss_mtut:'MONIDA PASS',boss_utwy:'SALT RIVER PASS',boss_wyco:'BAGGS, WYOMING',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
 function setScreen(m){mode=m;overlay.hidden=true;dialog.hidden=false;controls.hidden=true;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;fitScreen();}
 function hazardsText(id){const D=WORLDS[id],r=RESORTS.find(x=>x.id===id),h=[];if(D.night)h.push('NIGHT SKIING');if(r&&r.hazard==='fuel')h.push('GENERATOR');if(D.powder)h.push('DEEP POWDER');if(D.steep)h.push('STEEP RUNS');if(D.skiersOnly)h.push('SKIERS ONLY');return h.join(' / ')||'LEARN THE ROPES';}
 function openPreview(ri){if(RESORTS[ri].boss)return openBoss(ri);PV.ri=ri;PV.t0=performance.now();setScreen('preview');const r=RESORTS[ri];
@@ -1642,24 +1646,24 @@ function drawSlots(now){
 // ---------- Boss: the Grump King at Monida Pass (state line) ----------
 const BS={};
 const BOSSES={
- boss_mtut:{kind:'grump',special:'spin',name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],
+ boss_mtut:{kind:'grump',special:'spin',name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,spread:3,spinGap:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],
   taunt:'HEY! TOO LOUD!',roar:'GRRRR!',mad:"HE'S REALLY MAD NOW",dodge:'DODGE THE CANE SPIN',winLine:'He put down the cane and started dancing.'},
- boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, ROUND 1 OF 2',sign:'SALT RIVER',sign2:'WYOMING>',hp:130,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.1,next:'yeti',
-  taunt:'HOW RUDE!',roar:'OFF WITH YOUR BASS!',mad:'THE QUEEN IS FURIOUS',dodge:'DODGE THE ROYAL SPIN',state:'',pass:'',crew:[],winLine:''},
- yeti:{kind:'yeti',special:'roll',name:'YETI',place:'SALT RIVER PASS, ROUND 2 OF 2',sign:'SALT RIVER',sign2:'WYOMING>',hp:150,proj:'bigball',spd:1.15,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
+ boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, US-89',sign:'SALT RIVER',sign2:'WYOMING>',hp:100,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:0.9,spread:1,spinGap:1.35,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
+  taunt:'HOW RUDE!',roar:'OFF WITH YOUR BASS!',mad:'THE QUEEN IS NOT AMUSED',dodge:'DODGE THE ROYAL SPIN',winLine:'She dropped her snowballs and started voguing.'},
+ boss_teton:{kind:'yeti',special:'roll',name:'YETI',place:'TETON PASS, WY-22',sign:'TETON PASS',sign2:'JACKSON>',hp:150,proj:'bigball',spd:1.1,spread:2,spinGap:1,mid:true,pass:'Teton Pass',crew:[],
   taunt:'RAAAWR!',roar:'ROLL OUT!',mad:'THE YETI IS FURIOUS',dodge:'DODGE THE ROLLING SNOWBALL',winLine:'The Yeti traded his snowballs for a glow stick.'},
- boss_wyco:{kind:'bear',special:'charge',name:'POLAR BEAR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:170,proj:'ice',spd:1.25,state:'COLORADO',pass:'The Colorado line',crew:['betty','raven'],
+ boss_wyco:{kind:'bear',special:'charge',name:'POLAR BEAR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:170,proj:'ice',spd:1.2,spread:3,spinGap:1,state:'COLORADO',pass:'The Colorado line',crew:['betty','raven'],
   taunt:'GRRRAAH!',roar:'CHAAARGE!',mad:'THE BEAR IS ENRAGED',dodge:'DODGE THE CLAW CHARGE',winLine:'The Polar Bear stopped swiping and started shuffling.'},
- boss_final:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'LOVELAND PASS, ROUND 1 OF 2',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:140,proj:'coal',spd:1.2,next:'pine',
-  taunt:'TOO WARM!',roar:'BRRRR!',mad:'THE SNOWMAN IS MELTING MAD',dodge:'DODGE THE STICK-ARM SPIN',state:'',pass:'',crew:[],winLine:''},
- pine:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, ROUND 2 OF 2',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:180,proj:'cone',spd:0.9,final:true,state:'',pass:'',crew:['annie','danny'],
+ boss_berthoud:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'BERTHOUD PASS, US-40',sign:'BERTHOUD PASS',sign2:'BRECK>',hp:160,proj:'coal',spd:1.2,spread:3,spinGap:1,mid:true,pass:'Berthoud Pass',crew:[],
+  taunt:'TOO WARM!',roar:'BRRRR!',mad:'THE SNOWMAN IS MELTING MAD',dodge:'DODGE THE STICK-ARM SPIN',winLine:'The Snowman did the melt... on the dance floor.'},
+ boss_final:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, US-6',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:190,proj:'cone',spd:1,spread:3,spinGap:1,final:true,pass:'Loveland Pass',crew:['annie','danny'],
   taunt:'LEAF ME ALONE!',roar:'NEEDLES!',mad:'THE PINE IS BRISTLING',dodge:'DODGE THE NEEDLE STORM',winLine:'The Giant Pine shook off its needles and started swaying to the beat.'},
- // saved for future state lines
- emperor:{kind:'grump',special:'spin',name:'GRUMP EMPEROR',hp:180,cape:'#1a5a8a',crown:'emperor',proj:'pole',spd:1.3}};
+ // saved for a future state line
+ emperor:{kind:'grump',special:'spin',name:'GRUMP EMPEROR',hp:180,cape:'#1a5a8a',crown:'emperor',proj:'pole',spd:1.3,spread:3,spinGap:1}};
 const bossCfg=()=>BS.cfg||BOSSES[RESORTS[BS.ri].id]||BOSSES.boss_mtut;
 function openBoss(ri){const r=RESORTS[ri],cf=BOSSES[r.id]||BOSSES.boss_mtut;Object.assign(BS,{ri,cfg:cf,hp:cf.hp,maxHp:cf.hp,phase:1,t:0,intro:3.2,over:false,won:false,endT:0,
   jak:{x:50,y:170,face:1,inv:0},hearts:3+(P.up.cage||0),maxHearts:3+(P.up.cage||0),
-  b:{x:200,y:160,face:-1,state:'walk',tx:200,ty:160,throwT:2,spinT:5,stateT:0,yell:0,say:'',dizzy:0,spinA:0,flash:0,vx:0,vy:0,hitT:0},
+  b:{x:200,y:160,face:-1,state:'walk',tx:200,ty:160,throwT:2,spinT:5*(cf.spinGap||1),stateT:0,yell:0,say:'',dizzy:0,spinA:0,flash:0,vx:0,vy:0,hitT:0},
   canes:[],rings:[],beams:[],parts:[],floats:[],laserCd:0,bassCd:0,banner:null,shake:0});
   mode='boss';overlay.hidden=true;dialog.hidden=true;controls.hidden=false;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;shopBtn.hidden=true;bassBtn.hidden=false;laserBtn.hidden=true;
   hint.hidden=coarse;hint.innerHTML='<b>Arrow keys</b> move Jak. <b>Click</b> to fire lasers. <b>Space</b> (or BASS) blasts his canes away. Dodge the spin!';
@@ -1683,7 +1687,8 @@ function bossHitJak(){const j=BS.jak;if(j.inv>0||BS.over)return;BS.hearts--;j.in
 function bossEnd(){const won=BS.won;mode='bossEnd';dialog.hidden=false;controls.hidden=true;bassBtn.hidden=true;
   const cf=bossCfg(),cn=cf.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
   whoEl.textContent=won?cf.name+' DEFEATED!':'THE '+cf.name+' WON';dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
-  if(won&&cf.final)dtext.appendChild(mk('div','',`${cf.winLine} You beat the final boss of the tour so far! +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} join the party. More states are on the way.`));
+  if(won&&cf.mid)dtext.appendChild(mk('div','',`${cf.winLine} ${cf.pass} is open. +30 Workshop carrots.`));
+  else if(won&&cf.final)dtext.appendChild(mk('div','',`${cf.winLine} You beat the final boss of the tour so far! +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} join the party. More states are on the way.`));
   else dtext.appendChild(mk('div','',won?`${cf.winLine} ${cf.pass} is open: ${cf.state[0]+cf.state.slice(1).toLowerCase()} unlocked. +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} hop on the truck!`:'That boss is tough. Upgrade Jak in the Workshop (a Roll Cage adds a heart, Pocket Bacon heals) and try again.'));
   const row=mk('div','maprow'),ni=BS.ri+1;
   if(won&&RESORTS[ni])row.appendChild(btn('NEXT STOP','start',()=>openMap(ni)));else row.appendChild(btn('RETRY','start',()=>openBoss(BS.ri)));
@@ -1711,7 +1716,7 @@ function updateBoss(dt,now){
   if(b.state==='walk'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy);if(d<4){b.tx=rnd(120,232);b.ty=rnd(130,204);}else{const sp=(mad?62:42)*BS.cfg.spd;b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;}
     b.face=j.x>b.x?1:-1;b.throwT-=dt;b.spinT-=dt;
     if(b.throwT<=0){b.throwT=mad?rnd(0.9,1.3):rnd(1.4,2);const sx=b.x+b.face*10,sy=b.y-40,a=Math.atan2(j.y-16-sy,j.x-sx);
-      for(const off of mad?[-0.28,0,0.28]:[0]){const sp=(mad?135:115)*BS.cfg.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}AudioK.sfx.toss();if(Math.random()<0.3){b.yell=1;b.say=BS.cfg.taunt||'HEY!';}}
+      {const n=mad?(BS.cfg.spread||3):1,offs=n===1?[0]:n===2?[-0.16,0.16]:[-0.28,0,0.28];for(const off of offs){const sp=(mad?135:115)*BS.cfg.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}}AudioK.sfx.toss();if(Math.random()<0.3){b.yell=1;b.say=BS.cfg.taunt||'HEY!';}}
     if(b.spinT<=0){b.state='wind';b.stateT=mad?0.6:0.85;b.yell=1;b.say=BS.cfg.roar||'GRRRR!';AudioK.sfx.growl();}}
   else if(b.state==='wind'&&BS.cfg.special==='burst'){b.stateT-=dt;if(b.stateT<=0){const n=mad?16:12;
       for(let k=0;k<n;k++){const an=k/n*Math.PI*2+(mad?0.2:0),sp=125;BS.canes.push({x:b.x,y:b.y-30,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,a:an,needle:true});}
@@ -1721,7 +1726,7 @@ function updateBoss(dt,now){
     if(Math.hypot(b.x-j.x,b.y-j.y)<34){bossHitJak();}
     if(BS.cfg.special==='charge'&&Math.random()<dt*8)AudioK.sfx.swipe();
     if(b.stateT<=0||b.x<26||b.x>230||b.y<132||b.y>204){b.state='dizzy';b.stateT=1.5;bossBanner([BS.cfg.kind==='bear'?'WINDED!':'DIZZY!','DOUBLE DAMAGE'],PAL.Y,1.2);}}
-  else if(b.state==='dizzy'){b.stateT-=dt;if(b.stateT<=0){b.state='walk';b.spinT=mad?rnd(3.5,5):rnd(5,7);b.tx=rnd(150,232);b.ty=rnd(130,204);}}
+  else if(b.state==='dizzy'){b.stateT-=dt;if(b.stateT<=0){b.state='walk';b.spinT=(mad?rnd(3.5,5):rnd(5,7))*(BS.cfg.spinGap||1);b.tx=rnd(150,232);b.ty=rnd(130,204);}}
   if(b.state!=='spin'&&Math.hypot(b.x-j.x,b.y-j.y)<20)bossHitJak();
   for(let i=BS.canes.length-1;i>=0;i--){const c=BS.canes[i];c.x+=c.vx*dt;c.y+=c.vy*dt;c.a+=dt*14;
     if(c.x<-10||c.x>266||c.y<40||c.y>230){BS.canes.splice(i,1);continue;}
@@ -1811,7 +1816,7 @@ function drawBoss(now){
   for(let i=0;i<BS.maxHearts;i++)heart(250-(BS.maxHearts-i)*9,5,i<BS.hearts?'#ff3b6b':'#4a3a5a');
   const bc=BS.bassCd>0?'#5a4a6a':'#5fe8ff';txt('BASS',250,17,bc,8,'right',null);
   if(BS.banner){const bb=BS.banner,h=bb.lines.length*14+10,y=70;ctx.globalAlpha=0.82;R(0,y,256,h,PAL.K);ctx.globalAlpha=1;R(0,y,256,1,bb.col);R(0,y+h-1,256,1,bb.col);bb.lines.forEach((l,i)=>txt(l,128,y+6+i*14,i===0?bb.col:'#fff',8,'center'));}
-  if(mode==='bossEnd'&&BS.won){ctx.globalAlpha=0.88;R(20,36,216,132,PAL.K);ctx.globalAlpha=1;R(20,36,216,1,PAL.Y);R(20,167,216,1,PAL.Y);
+  if(mode==='bossEnd'&&BS.won&&BS.cfg.crew&&BS.cfg.crew.length){ctx.globalAlpha=0.88;R(20,36,216,132,PAL.K);ctx.globalAlpha=1;R(20,36,216,1,PAL.Y);R(20,167,216,1,PAL.Y);
     txt(BS.cfg.final?'NEW CREW!':'NEW CREW FOR '+BS.cfg.state+'!',128,42,PAL.Y,8,'center');const cc=BS.cfg.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
     cc.forEach((c,k)=>{const x=40+k*104,dr=DRIVERS.includes(c);drawPortraitHi(x,56,c);txt(c.name,x+36,132,'#fff',8,'center',null);txt(dr?'DRIVER':'DJ',x+36,144,dr?PAL.O:'#ff4fd8',8,'center',null);});}
   if(BS.intro>0){ctx.globalAlpha=0.9;R(14,40,228,150,PAL.K);ctx.globalAlpha=1;R(14,40,228,1,PAL.O);R(14,189,228,1,PAL.O);
@@ -3000,7 +3005,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261012195332';
+const GAME_VERSION='20261012204941';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
