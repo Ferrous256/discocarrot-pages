@@ -1,0 +1,22 @@
+{
+ "name": "The Legend of Jak",
+ "short_name": "Jak",
+ "start_url": "/games/legend-of-jak/?fs=1",
+ "scope": "/games/legend-of-jak/",
+ "display": "fullscreen",
+ "orientation": "any",
+ "background_color": "#0d0718",
+ "theme_color": "#0d0718",
+ "icons": [
+  {
+   "src": "icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  }
+ ]
+}

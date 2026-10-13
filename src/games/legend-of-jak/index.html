@@ -12,6 +12,12 @@
 <meta property="og:image" content="https://res.cloudinary.com/dctaixj2i/image/upload/v1775022711/og-default.jpg">
 <link rel="canonical" href="https://www.discocarrot.com/game/">
 <link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<link rel="manifest" href="/games/legend-of-jak/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/games/legend-of-jak/icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Jak">
 <style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
 <title>The Legend of Jak | Disco Carrot</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -69,7 +75,22 @@ canvas{width:100%;height:100%;display:block;image-rendering:pixelated;image-rend
 footer{font-family:var(--font-pixel);font-size:7px;color:var(--dim);text-align:center;letter-spacing:.1em;line-height:1.8}
 .chip:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:0 3px 0 #000}
 .status{color:var(--dim);margin-top:4px}
-body.fs footer,body.fs .brand small{display:none}body.fs #app{max-width:none;padding-top:4px}body.fs .topbar{gap:4px}
+/* immersive full screen: no page chrome, game fills the display */
+body.fs{overflow:hidden;background:#000}
+body.fs #app{position:fixed;inset:0;max-width:none!important;min-height:0;margin:0;gap:4px;padding:calc(env(safe-area-inset-top,0px) + 2px) calc(env(safe-area-inset-right,0px) + 4px) calc(env(safe-area-inset-bottom,0px) + 4px) calc(env(safe-area-inset-left,0px) + 4px);display:flex;flex-direction:column}
+body.fs footer,body.fs .brand,body.fs .hint{display:none!important}
+body.fs .topbar{justify-content:flex-end;flex-wrap:nowrap;flex:none}
+body.fs .topbar .btns{gap:4px;flex-wrap:nowrap}
+body.fs .topbar .chip{padding:5px 7px;font-size:7px;box-shadow:none;opacity:.85}
+body.fs .screen{border-width:2px;box-shadow:none;min-width:0;max-width:none;flex:none}
+body.fs .under{width:auto!important;max-width:none;min-width:0;flex:1 1 auto;min-height:0;overflow:auto}
+body.fs .dialog{font-size:clamp(16px,3.8vw,22px);min-height:0}
+body.fs.land #app{display:grid;grid-template-columns:auto minmax(220px,1fr);grid-template-rows:auto 1fr;align-items:start}
+body.fs.land .topbar{grid-column:1 / span 2}
+body.fs.land .screen{grid-column:1;grid-row:2;margin:0}
+body.fs.land .under{grid-column:2;grid-row:2;height:100%}
+body.fs.land .controls{flex-direction:column;justify-content:flex-end;height:100%}
+#fsTip{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:60;font-family:var(--font-pixel);font-size:9px;line-height:1.6;background:var(--panel);border:3px solid var(--gold);padding:10px;color:var(--ink)}
 #updBar{display:block;width:100%;margin:0 0 8px;font-size:10px;padding:10px 8px;background:#1d8fb8}
 #laserBtn{background:#1d8fb8;margin-top:0}#laserBtn.charging{background:#2a3a4a;color:#8ab;animation:none}
 #baconBtn{background:#8a2a1a;color:#ffe0c8;border-color:#e0806a}
@@ -679,6 +700,16 @@ const screenEl=$('screen'),underEl=document.querySelector('.under'),topbarEl=doc
 function fitScreen(){
   document.body.dataset.mode=mode;
   let w=256,h=224;
+  const fs=document.body.classList.contains('fs');
+  if(fs){const land=window.innerWidth>window.innerHeight;document.body.classList.toggle('land',land);
+    const top=topbarEl.offsetHeight+8,side=land?Math.min(340,Math.max(220,window.innerWidth*0.3)):0;
+    const below=land?0:(mode==='game'||mode==='boss'?(controls.hidden?0:controls.offsetHeight+6):Math.min(window.innerHeight*0.42,Math.max(120,underEl.scrollHeight))+6);
+    const availW=window.innerWidth-side-12,availH=window.innerHeight-top-below-8;
+    if(mode==='game'){const a=availW/availH;if(a<1){w=256;h=Math.max(224,Math.min(620,Math.round(256/a)));}else{h=224;w=Math.max(256,Math.min(560,Math.round(224*a)));}}
+    const sc=Math.min(availW/w,availH/h),px=Math.floor(w*sc)+'px';
+    screenEl.style.width=px;screenEl.style.aspectRatio=`${w}/${h}`;underEl.style.width='';
+    if(w!==W||h!==H){W=w;H=h;cv.width=w;cv.height=h;ctx.imageSmoothingEnabled=false;}return;}
+  document.body.classList.remove('land');
   if(mode==='game'){
     const cs=getComputedStyle(document.documentElement),pad=(parseFloat(cs.paddingTop)||0)+(parseFloat(cs.paddingBottom)||0);
     const availW=Math.min(window.innerWidth-32,1240),availH=Math.max(220,window.innerHeight-pad-topbarEl.offsetHeight-(controls.hidden?0:controls.offsetHeight)-44);
@@ -1082,7 +1113,7 @@ const DRIVERS=[
   look:{bg:'#2a2a3a',skin:'#c68642',hair:'#111',style:'short',hat:'cap',hatc:'#ff5c00',hatc2:'#ff5c00',fh:'mustache',beard:'#111',shirt:'#5a5a6a'}}
 ];
 const DJS=[
- {id:'ritz',name:'RITZ BITS',gname:'HUSKY PUP DJ',perk:'PUPPY POWER: GRUMPS MELT FASTER',unlock:0,stats:{PULL:5,PARTY:3,CALM:4,LIGHTS:2},
+ {id:'ritz',name:'RITZ BITZ',gname:'HUSKY PUP DJ',perk:'PUPPY POWER: GRUMPS MELT FASTER',unlock:0,stats:{PULL:5,PARTY:3,CALM:4,LIGHTS:2},
   look:{kind:'husky',bg:'#3a1450',acc:'#ff9f1c'}},
  {id:'bk',name:'BK LOVE',genre:'disco',gname:'HOUSE DJ',perk:'THE LONGEST DANCE PARTIES',unlock:0,stats:{PULL:3,PARTY:5,CALM:3,LIGHTS:2},
   look:{img:'bk',bg:'#2a1440',skin:'#d8a07a',hair:'#3a2418',style:'short',hat:'pombucket',eyes:'shades',fh:'goatee',beard:'#2a1a12',bigchain:true,shirt:'#1a1a22'}},
@@ -1094,11 +1125,11 @@ const DJS=[
   look:{bg:'#3a2a0a',skin:'#8d5524',hair:'#1a0f08',style:'puffs',hoops:true,phones:true,acc:'#ff4fd8',shirt:'#ffd23f'}},
  {id:'wolf',state:'wyoming',name:'WOBBLE WOLF',genre:'dubstep',gname:'DUBSTEP',perk:'BASS CONVERTS GRUMPS FROM FARTHER',unlock:0,stats:{PULL:2,PARTY:3,CALM:5,LIGHTS:3},
   look:{bg:'#0a2a1a',skin:'#d9a07a',hair:'#333',style:'short',hat:'wolfhood',hatc:'#7a7a8a',eyes:'shades',chain:true,shirt:'#222'}},
- {id:'annie',hidden:true,name:'ACID ANNIE',genre:'peak',gname:'ACID HOUSE',perk:'+2 WORKSHOP CARROTS EVERY PARTY',unlock:4,stats:{PULL:4,PARTY:3,CALM:3,LIGHTS:2},
+ {id:'annie',state:'finale',name:'ACID ANNIE',genre:'peak',gname:'ACID HOUSE',perk:'+2 WORKSHOP CARROTS EVERY PARTY',unlock:0,stats:{PULL:4,PARTY:3,CALM:3,LIGHTS:2},
   look:{bg:'#2a3a0a',skin:'#f2c29b',hair:'#ff9f1c',style:'long',hat:'bucket',hatc:'#3ad06a',smiley:true,shirt:'#111'}},
  {id:'raven',state:'colorado',name:'RIDDIM RAVEN',genre:'dnb',gname:'DRUM & BASS',perk:'JAK DRIVES FASTER IN PARTIES',unlock:0,stats:{PULL:3,PARTY:2,CALM:3,LIGHTS:3},
   look:{bg:'#0a0a2a',skin:'#c68642',hair:'#111',hair2:'#3a7bd5',style:'mohawk',nosering:true,phones:true,acc:'#3a7bd5',shirt:'#3a3a5a'}},
- {id:'danny',hidden:true,name:'DEEP DANNY',genre:'map',gname:'DEEP HOUSE',perk:'MELLOW: GRUMPS CHASE SLOWER',unlock:6,stats:{PULL:3,PARTY:4,CALM:4,LIGHTS:1},
+ {id:'danny',state:'finale',name:'DEEP DANNY',genre:'map',gname:'DEEP HOUSE',perk:'MELLOW: GRUMPS CHASE SLOWER',unlock:0,stats:{PULL:3,PARTY:4,CALM:4,LIGHTS:1},
   look:{bg:'#2a1a2a',skin:'#e0ac69',hair:'#4a2a1a',style:'short',hat:'cap',hatc:'#5a3a8a',hatc2:'#5a3a8a',fh:'beard',beard:'#4a2a1a',phones:true,acc:'#c58cff',shirt:'#8a5a3a'}}
 ];
 function crewMods(dr,dj){const a=dr.stats,b=dj.stats;return {
@@ -1218,16 +1249,16 @@ const RESORTS=[
   blurb:'Skiers only, always has been. Collins Gulch, Albion Basin, the Baldy Chutes and High Rustler. Deep and steep.'},
  {id:'snowbird',song:'dnb',name:'SNOWBIRD',label:'SNOWBIRD',x:150,y:378,lx:138,ly:374,la:'right',grumps:6,hazard:'fuel',
   blurb:"Utah's finale. The Tram to Hidden Peak, the Cirque, Gad Valley, and the Peruvian Tunnel to Mineral Basin. Everything at once."},
- {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN',label:'BOSS',x:200,y:490,lx:212,ly:486,la:'left',via:[[200,420]],
-  blurb:'The Grump Queen holds Salt River Pass on US-89. She throws snowballs fast and spins harder than the King. Beat her to reach Wyoming.'},
+ {id:'boss_utwy',boss:true,song:'dubstep',name:'GRUMP QUEEN + YETI',label:'BOSS',x:200,y:490,lx:212,ly:486,la:'left',via:[[200,420]],
+  blurb:'Two rounds on Salt River Pass, US-89. First the Grump Queen and her royal spin, then the Yeti, who hurls giant snowballs and rolls up into one to flatten you. Win both to reach Wyoming.'},
  {id:'snowking',song:'disco',name:'SNOW KING',label:'SNOW KING',x:190,y:560,lx:190,ly:570,la:'center',grumps:5,hazard:null,
   blurb:"Jackson's town hill: short, steep and lit at night. Exhibition drops right off the summit above the Town Square."},
  {id:'targhee',song:'liquid',name:'GRAND TARGHEE',label:'TARGHEE',x:50,y:530,lx:62,ly:526,la:'left',grumps:5,hazard:'fuel',via:[[120,560]],
   blurb:"The snowy west side of the Tetons. Dreamcatcher to Fred's Mountain, deep powder everywhere, and a thirsty generator."},
  {id:'jackson',song:'peak',name:'JACKSON HOLE',label:'JACKSON HOLE',x:110,y:620,lx:110,ly:630,la:'center',grumps:6,hazard:null,
   blurb:"Big Red, the Aerial Tram, to Rendezvous Mountain. Corbet's Couloir, Rendezvous Bowl and 4,000 feet of steep. The snow is piling up."},
- {id:'boss_wyco',boss:true,song:'hardtechno',name:'GRUMP EMPEROR',label:'BOSS',x:200,y:676,lx:212,ly:672,la:'left',via:[[200,640]],
-  blurb:'The Grump Emperor guards the Colorado line at Baggs. He hurls ski poles and is the fastest Grump yet. Beat him to reach Colorado.'},
+ {id:'boss_wyco',boss:true,song:'hardtechno',name:'THE POLAR BEAR',label:'BOSS',x:200,y:676,lx:212,ly:672,la:'left',via:[[200,640]],
+  blurb:'The Polar Bear guards the Colorado line at Baggs. He throws ice chunks and charges claws-first. Beat him to reach Colorado.'},
  {id:'steamboat',song:'house',name:'STEAMBOAT',label:'STEAMBOAT',x:60,y:716,lx:72,ly:712,la:'left',grumps:6,hazard:null,via:[[120,700]],
   blurb:'Champagne Powder under the lights. Mt Werner up top, Shadows and Closets in the trees, and the Sundown side goes dark after hours.'},
  {id:'winterpark',song:'electro',name:'WINTER PARK',label:'WINTER PARK',x:190,y:760,lx:190,ly:770,la:'center',grumps:6,hazard:null,
@@ -1237,11 +1268,13 @@ const RESORTS=[
  {id:'vail',song:'dnb',name:'VAIL',label:'VAIL',x:180,y:852,lx:192,ly:848,la:'left',grumps:7,hazard:null,
   blurb:'The legendary Back Bowls: miles of wide-open snow. Riva Ridge, Prima and Mid-Vail. Huge, open and fast.'},
  {id:'abasin',song:'breaks',name:'ARAPAHOE BASIN',label:'A-BASIN',x:100,y:888,lx:112,ly:884,la:'left',grumps:7,hazard:'fuel',
-  blurb:'The Legend. Pallavicini, Montezuma Bowl and the East Wall towering over it all. Steep, deep and snowing. The finale... for now.'}
+  blurb:"The Legend. Pallavicini, Montezuma Bowl and the East Wall towering over it all. Steep, deep and snowing. Colorado's last stop before Loveland Pass."},
+ {id:'boss_final',boss:true,song:'hardtechno',name:'SNOWMAN + GIANT PINE',label:'FINAL BOSS',x:190,y:930,lx:178,ly:926,la:'right',via:[[180,920]],
+  blurb:'Two rounds on Loveland Pass, right on the Continental Divide. First a Snowman that throws coal and spins its stick arms, then a Giant Pine that fires pinecones and needle storms.'}
 ];
 const HQ={x:100,y:104,label:'MISSOULA HQ',lx:100,ly:114};
 const PEAKS=[[40,500,7],[236,520,8],[150,600,9],[30,660,6],[236,620,7],[130,700,8],[236,760,7],[30,770,7],[130,800,8],[236,880,8],[30,900,6],[150,910,7],[176,38,9],[222,62,7],[36,36,6],[150,196,8],[96,200,7],[30,178,8],[236,206,6],[112,176,6],[60,124,5],[232,30,6],[60,330,8],[236,312,7],[30,400,7],[236,440,6],[160,452,7],[134,296,6],[40,262,6],[230,262,7]];
-const MAP_H=930;
+const MAP_H=970;
 const UPGRADES=[
  {id:'tracks',name:'TRACKS',desc:'Jak drives faster.',costs:[8,16,28]},
  {id:'subs',name:'SUBWOOFERS',desc:'Bass pulls skiers from farther.',costs:[8,16,28]},
@@ -1464,7 +1497,7 @@ function drawMap(now){
 
 // ---------- level preview, crew select, results ----------
 const PV={ri:0},CS={ri:0,d:0,j:0,focus:0},RS={ri:0,st:null};
-const STATE_OF={boss_mtut:'MONIDA PASS',boss_utwy:'SALT RIVER PASS',boss_wyco:'BAGGS, WYOMING',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
+const STATE_OF={boss_final:'LOVELAND PASS',boss_mtut:'MONIDA PASS',boss_utwy:'SALT RIVER PASS',boss_wyco:'BAGGS, WYOMING',snowking:'WYOMING',targhee:'WYOMING',jackson:'WYOMING',steamboat:'COLORADO',winterpark:'COLORADO',breck:'COLORADO',vail:'COLORADO',abasin:'COLORADO',marshall:'MONTANA',bridger:'MONTANA',lookout:'IDAHO / MONTANA',snowbowl:'MONTANA',bigsky:'MONTANA',snowbasin:'UTAH',brighton:'UTAH',sundance:'UTAH',alta:'UTAH',snowbird:'UTAH'};
 function setScreen(m){mode=m;overlay.hidden=true;dialog.hidden=false;controls.hidden=true;skipBtn.hidden=true;storyBtn.hidden=true;mapBtn.hidden=false;fitScreen();}
 function hazardsText(id){const D=WORLDS[id],r=RESORTS.find(x=>x.id===id),h=[];if(D.night)h.push('NIGHT SKIING');if(r&&r.hazard==='fuel')h.push('GENERATOR');if(D.powder)h.push('DEEP POWDER');if(D.steep)h.push('STEEP RUNS');if(D.skiersOnly)h.push('SKIERS ONLY');return h.join(' / ')||'LEARN THE ROPES';}
 function openPreview(ri){if(RESORTS[ri].boss)return openBoss(ri);PV.ri=ri;PV.t0=performance.now();setScreen('preview');const r=RESORTS[ri];
@@ -1473,7 +1506,8 @@ function openPreview(ri){if(RESORTS[ri].boss)return openBoss(ri);PV.ri=ri;PV.t0=
   const row=mk('div','maprow');row.append(btn('CREW SELECT','start',()=>openCrew(ri)),btn('SLOTS','chip',()=>openSlots(()=>openPreview(ri))),btn('TOUR MAP','chip',()=>openMap(ri)));
   {const bl=buffList(P.buffs);if(bl.length){dtext.appendChild(mk('div','status','BONUS READY:'));bl.forEach(n=>dtext.appendChild(mk('div','status','+ '+n)));}}dtext.appendChild(row);
   row.querySelector('.start').focus({preventScroll:true});}
-const STATE_GATE={utah:'boss_mtut',wyoming:'boss_utwy',colorado:'boss_wyco'};
+const STATE_GATE={utah:'boss_mtut',wyoming:'boss_utwy',colorado:'boss_wyco',finale:'boss_final'};
+const STATE_LABEL={utah:'in Utah',wyoming:'in Wyoming',colorado:'in Colorado',finale:'after the Loveland Pass bosses'};
 function stateOpen(st){return !st||!!P.cleared[STATE_GATE[st]];}
 function unlockedList(arr){const g=goldCount();return arr.map((c,i)=>i).filter(i=>!arr[i].hidden&&arr[i].unlock<=g&&stateOpen(arr[i].state));}
 function openCrew(ri){CS.ri=ri;const id=RESORTS[ri].id,pk=P.picks[id];
@@ -1490,7 +1524,7 @@ function crewInfo(){whoEl.textContent='CREW SELECT';dtext.innerHTML='';nextEl.hi
   r2.append(btn('◀','chip',()=>crewCycle('j',-1)),mk('span','',' DJ '),btn('▶','chip',()=>crewCycle('j',1)));
   const go=btn("LET'S ROLL",'start',crewStart);r3.append(go,btn('BACK','chip',()=>openPreview(CS.ri)));
   dtext.append(r1,r2,r3);if(nd)dtext.appendChild(mk('div','status',`${nd} more crew unlock with golden carrots.`));
-  {const nx=[...DRIVERS,...DJS].find(c=>!c.hidden&&!stateOpen(c.state));if(nx)dtext.appendChild(mk('div','status',`More crew join in ${nx.state[0].toUpperCase()+nx.state.slice(1)}. Beat the boss at the state line!`));}go.focus({preventScroll:true});}
+  {const nx=[...DRIVERS,...DJS].find(c=>!c.hidden&&!stateOpen(c.state));if(nx)dtext.appendChild(mk('div','status',`More crew join ${STATE_LABEL[nx.state]||'later'}. Beat the boss at the state line!`));}go.focus({preventScroll:true});}
 function crewStart(){const id=RESORTS[CS.ri].id;P.picks[id]={d:CS.d,j:CS.j};saveP();startGame(CS.ri);}
 function drawCrewCard(x,kind,c,focus,now){
   const y=28,w=120;R(x,y,w,190,'#140b22');R(x,y,w,2,focus?PAL.Y:'#3b2a63');R(x,y+188,w,2,focus?PAL.Y:'#3b2a63');R(x,y,2,190,focus?PAL.Y:'#3b2a63');R(x+w-2,y,2,190,focus?PAL.Y:'#3b2a63');
@@ -1608,10 +1642,21 @@ function drawSlots(now){
 // ---------- Boss: the Grump King at Monida Pass (state line) ----------
 const BS={};
 const BOSSES={
- boss_mtut:{name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],winLine:'He put down the cane and started dancing.'},
- boss_utwy:{name:'GRUMP QUEEN',place:'SALT RIVER PASS, US-89',sign:'SALT RIVER',sign2:'WYOMING>',hp:150,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.15,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],winLine:'She dropped her snowballs and started voguing.'},
- boss_wyco:{name:'GRUMP EMPEROR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:180,cape:'#1a5a8a',crown:'emperor',proj:'pole',spd:1.3,state:'COLORADO',pass:'the Colorado line',crew:['betty','raven'],winLine:'He snapped his ski poles over his knee and hit the dance floor.'}};
-const bossCfg=()=>BOSSES[RESORTS[BS.ri].id]||BOSSES.boss_mtut;
+ boss_mtut:{kind:'grump',special:'spin',name:'GRUMP KING',place:'MONIDA PASS, I-15',sign:'MONIDA',sign2:'IDAHO>',hp:120,cape:'#a0102a',crown:'king',proj:'cane',spd:1,state:'UTAH',pass:'Monida Pass',crew:['nell','sol'],
+  taunt:'HEY! TOO LOUD!',roar:'GRRRR!',mad:"HE'S REALLY MAD NOW",dodge:'DODGE THE CANE SPIN',winLine:'He put down the cane and started dancing.'},
+ boss_utwy:{kind:'grump',special:'spin',name:'GRUMP QUEEN',place:'SALT RIVER PASS, ROUND 1 OF 2',sign:'SALT RIVER',sign2:'WYOMING>',hp:130,cape:'#7a2a9a',crown:'queen',proj:'snowball',spd:1.1,next:'yeti',
+  taunt:'HOW RUDE!',roar:'OFF WITH YOUR BASS!',mad:'THE QUEEN IS FURIOUS',dodge:'DODGE THE ROYAL SPIN',state:'',pass:'',crew:[],winLine:''},
+ yeti:{kind:'yeti',special:'roll',name:'YETI',place:'SALT RIVER PASS, ROUND 2 OF 2',sign:'SALT RIVER',sign2:'WYOMING>',hp:150,proj:'bigball',spd:1.15,state:'WYOMING',pass:'Salt River Pass',crew:['ray','wolf'],
+  taunt:'RAAAWR!',roar:'ROLL OUT!',mad:'THE YETI IS FURIOUS',dodge:'DODGE THE ROLLING SNOWBALL',winLine:'The Yeti traded his snowballs for a glow stick.'},
+ boss_wyco:{kind:'bear',special:'charge',name:'POLAR BEAR',place:'BAGGS, WY-789',sign:'BAGGS',sign2:'COLORADO>',hp:170,proj:'ice',spd:1.25,state:'COLORADO',pass:'The Colorado line',crew:['betty','raven'],
+  taunt:'GRRRAAH!',roar:'CHAAARGE!',mad:'THE BEAR IS ENRAGED',dodge:'DODGE THE CLAW CHARGE',winLine:'The Polar Bear stopped swiping and started shuffling.'},
+ boss_final:{kind:'snowman',special:'spin',name:'SNOWMAN',place:'LOVELAND PASS, ROUND 1 OF 2',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:140,proj:'coal',spd:1.2,next:'pine',
+  taunt:'TOO WARM!',roar:'BRRRR!',mad:'THE SNOWMAN IS MELTING MAD',dodge:'DODGE THE STICK-ARM SPIN',state:'',pass:'',crew:[],winLine:''},
+ pine:{kind:'tree',special:'burst',name:'GIANT PINE',place:'LOVELAND PASS, ROUND 2 OF 2',sign:'LOVELAND PASS',sign2:'CONT. DIVIDE',hp:180,proj:'cone',spd:0.9,final:true,state:'',pass:'',crew:['annie','danny'],
+  taunt:'LEAF ME ALONE!',roar:'NEEDLES!',mad:'THE PINE IS BRISTLING',dodge:'DODGE THE NEEDLE STORM',winLine:'The Giant Pine shook off its needles and started swaying to the beat.'},
+ // saved for future state lines
+ emperor:{kind:'grump',special:'spin',name:'GRUMP EMPEROR',hp:180,cape:'#1a5a8a',crown:'emperor',proj:'pole',spd:1.3}};
+const bossCfg=()=>BS.cfg||BOSSES[RESORTS[BS.ri].id]||BOSSES.boss_mtut;
 function openBoss(ri){const r=RESORTS[ri],cf=BOSSES[r.id]||BOSSES.boss_mtut;Object.assign(BS,{ri,cfg:cf,hp:cf.hp,maxHp:cf.hp,phase:1,t:0,intro:3.2,over:false,won:false,endT:0,
   jak:{x:50,y:170,face:1,inv:0},hearts:3+(P.up.cage||0),maxHearts:3+(P.up.cage||0),
   b:{x:200,y:160,face:-1,state:'walk',tx:200,ty:160,throwT:2,spinT:5,stateT:0,yell:0,say:'',dizzy:0,spinA:0,flash:0,vx:0,vy:0,hitT:0},
@@ -1624,7 +1669,9 @@ function bossFloat(x,y,s,col){BS.floats.push({x,y,s,col,life:1});}
 function bossBurst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,sp=rnd(30,100);BS.parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp-20,life:rnd(0.4,0.9),col:cols[i%cols.length]});}}
 function bossDamage(n,src){const b=BS.b;if(BS.over)return;const dmg=b.state==='dizzy'?n*2:n;BS.hp=Math.max(0,BS.hp-dmg);b.flash=0.12;b.hitT=0.2;bossFloat(b.x,b.y-60,'-'+dmg,b.state==='dizzy'?PAL.Y:'#fff');
   if(src==='laser'&&Math.random()<0.25){b.yell=1.2;b.say='TOO BRIGHT!';}if(src==='bass'){b.yell=1.2;b.say='TOO LOUD!!';}
-  if(BS.phase===1&&BS.hp<=BS.maxHp/2){BS.phase=2;bossBanner(["PHASE 2!","HE'S REALLY MAD NOW"],'#ff3b3b',2);AudioK.setHype(true);b.yell=2;b.say='GET OFF MY MOUNTAIN!';}
+  if(BS.phase===1&&BS.hp<=BS.maxHp/2){BS.phase=2;bossBanner(["PHASE 2!",BS.cfg.mad||'IT IS REALLY MAD NOW'],'#ff3b3b',2);AudioK.setHype(true);b.yell=2;b.say='GET OFF MY MOUNTAIN!';}
+  if(BS.hp<=0&&BS.cfg.next){const nx=BOSSES[BS.cfg.next];bossBurst(b.x,b.y-30,40,['#fff','#cfe0ff',PAL.Y]);BS.cfg=nx;BS.hp=BS.maxHp=nx.hp;BS.phase=1;BS.canes.length=0;
+    Object.assign(b,{x:200,y:160,state:'walk',tx:200,ty:160,throwT:2.2,spinT:5,stateT:0,yell:1.5,say:nx.taunt});AudioK.sfx.thunder();bossBanner(['ROUND 2!','THE '+nx.name],PAL.Y,2.4);return;}
   if(BS.hp<=0){BS.over=true;BS.won=true;BS.endT=2.6;b.state='groove';AudioK.sfx.gold();bossBanner(['THE '+bossCfg().name,'GROOVES!'],PAL.Y,2.6);P.cleared[RESORTS[BS.ri].id]=true;P.bank+=30;saveP();}}
 function bossLaserAt(e){if(mode!=='boss'||BS.over)return;if(BS.intro>0){BS.intro=0;return;}const r=cv.getBoundingClientRect();bossLaser((e.clientX-r.left)/r.width*W,(e.clientY-r.top)/r.height*H);}
 function bossLaser(tx,ty){if(BS.laserCd>0||BS.over)return;const j=BS.jak,sx=j.x+j.face*14,sy=j.y-26;BS.laserCd=0.28;
@@ -1636,7 +1683,8 @@ function bossHitJak(){const j=BS.jak;if(j.inv>0||BS.over)return;BS.hearts--;j.in
 function bossEnd(){const won=BS.won;mode='bossEnd';dialog.hidden=false;controls.hidden=true;bassBtn.hidden=true;
   const cf=bossCfg(),cn=cf.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
   whoEl.textContent=won?cf.name+' DEFEATED!':'THE '+cf.name+' WON';dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
-  dtext.appendChild(mk('div','',won?`${cf.winLine} ${cf.pass} is open: ${cf.state[0]+cf.state.slice(1).toLowerCase()} unlocked. +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} hop on the truck!`:'That boss is tough. Upgrade Jak in the Workshop (a Roll Cage adds a heart, Pocket Bacon heals) and try again.'));
+  if(won&&cf.final)dtext.appendChild(mk('div','',`${cf.winLine} You beat the final boss of the tour so far! +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} join the party. More states are on the way.`));
+  else dtext.appendChild(mk('div','',won?`${cf.winLine} ${cf.pass} is open: ${cf.state[0]+cf.state.slice(1).toLowerCase()} unlocked. +30 Workshop carrots. NEW CREW: ${cn.map(c=>c.name+(DRIVERS.includes(c)?' (driver)':' (DJ)')).join(' and ')} hop on the truck!`:'That boss is tough. Upgrade Jak in the Workshop (a Roll Cage adds a heart, Pocket Bacon heals) and try again.'));
   const row=mk('div','maprow'),ni=BS.ri+1;
   if(won&&RESORTS[ni])row.appendChild(btn('NEXT STOP','start',()=>openMap(ni)));else row.appendChild(btn('RETRY','start',()=>openBoss(BS.ri)));
   row.appendChild(btn('TOUR MAP','chip',()=>openMap(BS.ri)));dtext.appendChild(row);row.querySelector('.start').focus({preventScroll:true});}
@@ -1663,17 +1711,21 @@ function updateBoss(dt,now){
   if(b.state==='walk'){const dx=b.tx-b.x,dy=b.ty-b.y,d=Math.hypot(dx,dy);if(d<4){b.tx=rnd(120,232);b.ty=rnd(130,204);}else{const sp=(mad?62:42)*BS.cfg.spd;b.x+=dx/d*sp*dt;b.y+=dy/d*sp*dt;}
     b.face=j.x>b.x?1:-1;b.throwT-=dt;b.spinT-=dt;
     if(b.throwT<=0){b.throwT=mad?rnd(0.9,1.3):rnd(1.4,2);const sx=b.x+b.face*10,sy=b.y-40,a=Math.atan2(j.y-16-sy,j.x-sx);
-      for(const off of mad?[-0.28,0,0.28]:[0]){const sp=(mad?135:115)*BS.cfg.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}AudioK.sfx.toss();if(Math.random()<0.3){b.yell=1;b.say='HEY! TOO LOUD!';}}
-    if(b.spinT<=0){b.state='wind';b.stateT=mad?0.6:0.85;b.yell=1;b.say='GRRRR!';AudioK.sfx.growl();}}
+      for(const off of mad?[-0.28,0,0.28]:[0]){const sp=(mad?135:115)*BS.cfg.spd;BS.canes.push({x:sx,y:sy,vx:Math.cos(a+off)*sp,vy:Math.sin(a+off)*sp,a:0});}AudioK.sfx.toss();if(Math.random()<0.3){b.yell=1;b.say=BS.cfg.taunt||'HEY!';}}
+    if(b.spinT<=0){b.state='wind';b.stateT=mad?0.6:0.85;b.yell=1;b.say=BS.cfg.roar||'GRRRR!';AudioK.sfx.growl();}}
+  else if(b.state==='wind'&&BS.cfg.special==='burst'){b.stateT-=dt;if(b.stateT<=0){const n=mad?16:12;
+      for(let k=0;k<n;k++){const an=k/n*Math.PI*2+(mad?0.2:0),sp=125;BS.canes.push({x:b.x,y:b.y-30,vx:Math.cos(an)*sp,vy:Math.sin(an)*sp,a:an,needle:true});}
+      AudioK.sfx.swipe();BS.shake=0.25;b.state='dizzy';b.stateT=1.7;bossBanner(['NEEDLE STORM!','NOW HIT IT!'],'#3ad06a',1.2);}}
   else if(b.state==='wind'){b.stateT-=dt;if(b.stateT<=0){const d=Math.hypot(j.x-b.x,j.y-b.y)||1,sp=(mad?215:175)*BS.cfg.spd;b.vx=(j.x-b.x)/d*sp;b.vy=(j.y-b.y)/d*sp;b.state='spin';b.stateT=1.3;}}
   else if(b.state==='spin'){b.stateT-=dt;b.spinA+=dt*28;b.x+=b.vx*dt;b.y+=b.vy*dt;if(Math.random()<dt*30)BS.parts.push({x:b.x+rnd(-20,20),y:b.y,vx:rnd(-30,30),vy:-20,life:0.4,col:'#fff'});
     if(Math.hypot(b.x-j.x,b.y-j.y)<34){bossHitJak();}
-    if(b.stateT<=0||b.x<26||b.x>230||b.y<132||b.y>204){b.state='dizzy';b.stateT=1.5;bossBanner(['DIZZY!','DOUBLE DAMAGE'],PAL.Y,1.2);}}
+    if(BS.cfg.special==='charge'&&Math.random()<dt*8)AudioK.sfx.swipe();
+    if(b.stateT<=0||b.x<26||b.x>230||b.y<132||b.y>204){b.state='dizzy';b.stateT=1.5;bossBanner([BS.cfg.kind==='bear'?'WINDED!':'DIZZY!','DOUBLE DAMAGE'],PAL.Y,1.2);}}
   else if(b.state==='dizzy'){b.stateT-=dt;if(b.stateT<=0){b.state='walk';b.spinT=mad?rnd(3.5,5):rnd(5,7);b.tx=rnd(150,232);b.ty=rnd(130,204);}}
   if(b.state!=='spin'&&Math.hypot(b.x-j.x,b.y-j.y)<20)bossHitJak();
   for(let i=BS.canes.length-1;i>=0;i--){const c=BS.canes[i];c.x+=c.vx*dt;c.y+=c.vy*dt;c.a+=dt*14;
     if(c.x<-10||c.x>266||c.y<40||c.y>230){BS.canes.splice(i,1);continue;}
-    if(Math.hypot(c.x-j.x,c.y-(j.y-16))<14){BS.canes.splice(i,1);bossHitJak();}}
+    if(Math.hypot(c.x-j.x,c.y-(j.y-16))<(BS.cfg.proj==='bigball'&&!c.needle?18:14)){BS.canes.splice(i,1);bossHitJak();}}
 }
 function drawCane(x,y,a,scale=1){const L=10*scale,dx=Math.cos(a)*L,dy=Math.sin(a)*L;pline(x-dx/2,y-dy/2,x+dx/2,y+dy/2,'#8a6142');pline(x-dx/2+1,y-dy/2,x+dx/2+1,y+dy/2,'#c9a36b');
   const hx=x+dx/2,hy=y+dy/2;R(hx-2*scale,hy-2*scale,3*scale,2*scale,'#c9a36b');}
@@ -1685,25 +1737,70 @@ function drawGrumpKing(x,y,t,o){const cf=BS.cfg||BOSSES.boss_mtut;ctx.save();ctx
   else{R(3,-4,6,3,PAL.Y);R(3,-5,1,1,PAL.Y);R(5,-6,2,2,PAL.Y);R(8,-5,1,1,PAL.Y);R(5,-3,2,1,'#e0262f');}
   ctx.restore();
   if(o.flash>0){ctx.globalAlpha=0.5;R(x-18,y-54,36,54,'#fff');ctx.globalAlpha=1;}}
+function drawSnowmanBoss(t,face){const b=Math.floor(t/300)%2,K=PAL.K,W2='#f4f8ff',S='#c8d4ec';
+  const ball=(cx,cy,r)=>{for(let y=-r;y<=r;y++){const w=Math.round(Math.sqrt(r*r-y*y));R(cx-w-1,cy+y,w*2+2,1,K);}for(let y=-r+1;y<r;y++){const w=Math.round(Math.sqrt((r-1)*(r-1)-y*y));R(cx-w,cy+y,w*2,1,y>r*0.3?S:W2);}};
+  ball(8,19,6);ball(8,10,5);ball(8,3,4);
+  R(5,1,2,2,K);R(10,1,2,2,K);R(face>0?9:4,3,face>0?5:-1,1,PAL.O);R(face>0?9:3,3,4,1,PAL.O);R(face>0?13:3,3,1,1,PAL.O);R(6,5,4,1,K);
+  R(3,6,10,2,'#e0262f');R(face>0?4:10,7,2,4,'#e0262f');R(4,-6,8,6,K);R(2,0,12,1,K);R(4,-2,8,1,'#7a3cff');
+  R(8,9,1,1,K);R(8,12,1,1,K);R(8,15,1,1,K);
+  if(b){R(-4,8,5,1,'#5a3a2a');R(-5,7,1,1,'#5a3a2a');R(12,7,5,1,'#5a3a2a');R(17,6,1,1,'#5a3a2a');}else{R(-3,10,4,1,'#5a3a2a');R(-4,11,1,1,'#5a3a2a');R(13,9,4,1,'#5a3a2a');R(17,10,1,1,'#5a3a2a');}}
+function drawPineBoss(t,yell){const K=PAL.K,G1='#1f6b45',G2='#2a8a58',SN='#f4f8ff',hop=Math.floor(t/350)%2;
+  R(8,22-hop,4,6,'#5a3a2a');R(5,27,3,1,'#5a3a2a');R(12,27,3,1,'#5a3a2a');
+  const tier=(y,w,h)=>{for(let r=0;r<h;r++){const ww=Math.round(2+(w-2)*r/(h-1));R(10-ww/2-1,y+r-hop,ww+2,1,K);R(10-ww/2,y+r-hop,ww,1,r%3===0?G2:G1);}R(10-w/2,y+h-1-hop,w,1,SN);R(10-w/2+2,y+h-2-hop,3,1,SN);};
+  tier(0,8,7);tier(5,14,8);tier(11,20,11);
+  R(6,13-hop,3,2,'#fff');R(11,13-hop,3,2,'#fff');R(7,14-hop,1,1,K);R(12,14-hop,1,1,K);R(5,12-hop,4,1,K);R(11,12-hop,4,1,K);
+  R(7,18-hop,6,yell?3:1,yell?'#3a1212':K);if(yell)R(8,18-hop,1,1,'#fff'),R(11,18-hop,1,1,'#fff');
+  R(-3,15-hop,4,1,'#5a3a2a');R(19,15-hop,4,1,'#5a3a2a');R(-4,14-hop,1,1,G2);R(22,14-hop,1,1,G2);}
+// draw a small sprite once into its own canvas with a dark 1px outline, so white bosses stand out on snow
+const OUTLINE_CACHE={};
+function outlined(key,w,h,ox,oy,draw){let c=OUTLINE_CACHE[key];if(c)return c;
+  c=document.createElement('canvas');c.width=w+2;c.height=h+2;const saved=ctx;ctx=c.getContext('2d');try{ctx.translate(ox+1,oy+1);draw();}finally{ctx=saved;}
+  const x2=c.getContext('2d'),im=x2.getImageData(0,0,c.width,c.height),d=im.data,W2=c.width,H2=c.height,a=i=>d[i*4+3]>40,out=[];
+  for(let y=0;y<H2;y++)for(let x=0;x<W2;x++){const i=y*W2+x;if(a(i))continue;if((x>0&&a(i-1))||(x<W2-1&&a(i+1))||(y>0&&a(i-W2))||(y<H2-1&&a(i+W2)))out.push(i);}
+  for(const i of out){d[i*4]=20;d[i*4+1]=11;d[i*4+2]=34;d[i*4+3]=255;}x2.putImageData(im,0,0);
+  if(Object.keys(OUTLINE_CACHE).length>200)for(const k in OUTLINE_CACHE)delete OUTLINE_CACHE[k];OUTLINE_CACHE[key]=c;return c;}
+function drawBossSprite(x,y,t,o){const cf=BS.cfg||BOSSES.boss_mtut,k=cf.kind,face=o.face>0?1:-1;
+  if(k==='grump'){drawGrumpKing(x,y,t,o);return;}
+  let c,dx,dy;
+  if(k==='yeti'){const fr=Math.floor(t/260)%2;c=outlined('y'+fr+face+(o.yell?1:0),18,24,1,1,()=>drawYeti(0,0,t,!!o.yell,face));dx=x-27;dy=y-69;}
+  else if(k==='bear'){const fr=Math.floor(t/90)%2;c=outlined('b'+fr+face,30,17,1,1,()=>drawPolarBear(0,0,t,face));dx=x-45;dy=y-48;}
+  else if(k==='snowman'){const fr=Math.floor(t/300)%2;c=outlined('s'+fr+face,28,34,6,7,()=>drawSnowmanBoss(t,face));dx=x-42;dy=y-95;}
+  else if(k==='tree'){const fr=Math.floor(t/350)%2;c=outlined('t'+fr+(o.yell?1:0),30,30,5,1,()=>drawPineBoss(t,!!o.yell));dx=x-45;dy=y-87;}
+  ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(c,Math.round(dx),Math.round(dy),c.width*3,c.height*3);ctx.restore();
+  if(o.flash>0){ctx.globalAlpha=0.5;R(x-26,y-70,52,70,'#fff');ctx.globalAlpha=1;}}
+function drawBossSpin(b,now){const cf=BS.cfg,k=cf.kind,fr=Math.floor(now/50)%2;
+  if(k==='yeti'){const r=26;ctx.save();ctx.translate(b.x,b.y-24);ctx.rotate(b.spinA*0.4);for(let y=-r;y<=r;y++){const w=Math.round(Math.sqrt(r*r-y*y));R(-w-1,y,w*2+2,1,PAL.K);R(-w,y,w*2,1,y>8?'#c6d2ec':'#eef3ff');}
+    R(-10,-6,6,6,'#6f8fca');R(4,-12,5,5,'#6f8fca');R(-2,8,7,4,'#6f8fca');ctx.restore();return;}
+  if(k==='bear'){drawBossSprite(b.x,b.y,now*2,{face:b.vx>0?1:-1,flash:b.flash});const fx=b.x+(b.vx>0?40:-40);for(let s=0;s<3;s++)pline(fx-6+s*6,b.y-44,fx+s*6,b.y-14,s%2?'#fff':'#ff3b3b');return;}
+  drawBossSprite(b.x,b.y,now,{yell:true,face:fr?1:-1,flash:b.flash});
+  if(k==='grump')for(let n=0;n<2;n++){const a=b.spinA+n*Math.PI;drawCane(b.x+Math.cos(a)*22,b.y-28+Math.sin(a)*12,a+Math.PI/2,2);}
+  else for(let n=0;n<2;n++){const a=b.spinA+n*Math.PI,ex=b.x+Math.cos(a)*30,ey=b.y-40+Math.sin(a)*14;pline(b.x,b.y-40,ex,ey,'#5a3a2a');pline(b.x,b.y-39,ex,ey+1,'#5a3a2a');}
+  ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(b.x,b.y-28,30,16,0,0,Math.PI*2);ctx.stroke();}
+function drawBossProj(c,now){const pr=BS.cfg.proj;
+  if(c.needle){const dx=Math.cos(c.a)*5,dy=Math.sin(c.a)*5;pline(c.x-dx,c.y-dy,c.x+dx,c.y+dy,'#1f6b45');R(c.x+dx,c.y+dy,1,1,'#9aef8a');return;}
+  if(pr==='snowball'){R(c.x-4,c.y-4,8,8,PAL.K);R(c.x-3,c.y-3,6,6,'#fff');R(c.x-3,c.y-3,3,2,'#cfe0ff');}
+  else if(pr==='bigball'){for(let y=-7;y<=7;y++){const w=Math.round(Math.sqrt(49-y*y));R(c.x-w-1,c.y+y,w*2+2,1,PAL.K);R(c.x-w,c.y+y,w*2,1,y>2?'#cfe0ff':'#fff');}}
+  else if(pr==='ice'){R(c.x-1,c.y-6,3,12,'#2a6a9a');R(c.x-4,c.y-2,9,5,'#2a6a9a');R(c.x,c.y-5,1,10,'#bfefff');R(c.x-3,c.y-1,7,3,'#9fdcff');}
+  else if(pr==='coal'){R(c.x-4,c.y-3,8,7,PAL.K);R(c.x-3,c.y-4,6,1,PAL.K);R(c.x-2,c.y-2,2,1,'#5a5a6a');if(Math.floor(now/120)%2)R(c.x+1,c.y,1,1,'#ff6a1a');}
+  else if(pr==='cone'){R(c.x-3,c.y-5,7,10,PAL.K);R(c.x-2,c.y-4,5,8,'#8a5a2a');for(let k=0;k<4;k++)R(c.x-2+(k%2)*2,c.y-3+k*2,2,1,'#c9a36b');}
+  else if(pr==='pole'){const dx=Math.cos(c.a)*9,dy=Math.sin(c.a)*9;pline(c.x-dx,c.y-dy,c.x+dx,c.y+dy,'#c8c8d8');R(c.x+dx-1,c.y+dy-1,3,3,'#e0262f');R(c.x-dx-1,c.y-dy-1,2,2,'#222');}
+  else drawCane(c.x,c.y,c.a,1.4);}
 function drawBoss(now){
   const b=BS.b,j=BS.jak;ctx.save();if(BS.shake>0&&!reduceMotion)ctx.translate(Math.round(rnd(-2,2)),Math.round(rnd(-2,2)));
   sky('#3a5a9a','#c6d8f0');mountains(118,58,'#7f98c8','#eef4ff',23);mountains(126,36,'#5a6fa0','#dfe8fa',29);
   R(0,118,256,106,'#eef3ff');for(let i=0;i<40;i++)R((i*53)%256,124+(i*29)%80,6,1,'#d6e0f5');
   R(0,186,256,22,'#4a4a58');for(let x=(Math.floor(now/40))%24-24;x<256;x+=24)R(x,196,12,2,PAL.Y);R(0,184,256,2,'#e8eefc');R(0,208,256,2,'#e8eefc');
-  R(20,92,3,30,'#5a3a2a');R(-8,80,64,14,'#1f6b45');R(-7,81,62,12,'#2a8a58');txt(BS.cfg.sign,24,82,'#fff',8,'center',null);
-  R(222,94,3,28,'#5a3a2a');R(184,82,72,14,'#2563c9');txt(BS.cfg.sign2,220,85,'#fff',8,'center',null);
+  {const w=BS.cfg.sign.length*8+10;R(20,92,3,30,'#5a3a2a');R(0,80,w,14,'#1f6b45');R(1,81,w-2,12,'#2a8a58');txt(BS.cfg.sign,5,83,'#fff',8,'left',null);}
+  {const w=BS.cfg.sign2.length*8+10;R(232,94,3,28,'#5a3a2a');R(256-w,82,w,14,'#2563c9');txt(BS.cfg.sign2,251,85,'#fff',8,'right',null);}
   // bass rings, canes, actors
   for(const r of BS.rings){ctx.strokeStyle=hsl(now*0.4+r.r*3,100,65);ctx.lineWidth=3;ctx.globalAlpha=Math.max(0,r.life*2);ctx.beginPath();ctx.arc(r.x,r.y,r.r,0,Math.PI*2);ctx.stroke();ctx.globalAlpha=1;}
   const list=[{y:j.y,d:()=>{if(j.inv>0&&Math.floor(now/90)%2)return;drawJakPoly(j.x-22,j.y-40,0.5,{face:j.face,t:now,roll:now/40,eyes:true,lights:true,wiggle:true});}},
-    {y:b.y,d:()=>{if(b.state==='spin'){const fr=Math.floor(now/50)%2;drawGrumpKing(b.x,b.y,now,{yell:true,face:fr?1:-1,flash:b.flash});for(let k=0;k<2;k++){const a=b.spinA+k*Math.PI;drawCane(b.x+Math.cos(a)*22,b.y-28+Math.sin(a)*12,a+Math.PI/2,2);}
-        ctx.strokeStyle='rgba(255,255,255,0.6)';ctx.lineWidth=1;ctx.beginPath();ctx.ellipse(b.x,b.y-28,30,16,0,0,Math.PI*2);ctx.stroke();}
-      else{const shake=b.state==='wind'?rnd(-2,2):0;drawGrumpKing(b.x+shake,b.y,now*(b.state==='groove'?2:1),{yell:b.yell>0||b.state==='wind',face:b.state==='groove'?(Math.floor(now/200)%2?1:-1):b.face,flash:b.flash});
+    {y:b.y,d:()=>{if(b.state==='spin'){drawBossSpin(b,now);}
+      else{const shake=b.state==='wind'?rnd(-2,2):0;drawBossSprite(b.x+shake,b.y,now*(b.state==='groove'?2:1),{yell:b.yell>0||b.state==='wind',face:b.state==='groove'?(Math.floor(now/200)%2?1:-1):b.face,flash:b.flash});
         if(b.state==='wind'&&Math.floor(now/100)%2)txt('!',b.x,b.y-72,'#ff3b3b',16,'center');
         if(b.state==='dizzy')for(let k=0;k<4;k++){const a=now/150+k*1.57;R(b.x+Math.cos(a)*14,b.y-64+Math.sin(a)*4,3,3,PAL.Y);}}}}];
   list.sort((p,q)=>p.y-q.y).forEach(e=>e.d());
-  for(const c of BS.canes){const pr=BS.cfg.proj;if(pr==='snowball'){R(c.x-4,c.y-4,8,8,PAL.K);R(c.x-3,c.y-3,6,6,'#fff');R(c.x-3,c.y-3,3,2,'#cfe0ff');}
-    else if(pr==='pole'){const dx=Math.cos(c.a)*9,dy=Math.sin(c.a)*9;pline(c.x-dx,c.y-dy,c.x+dx,c.y+dy,'#c8c8d8');R(c.x+dx-1,c.y+dy-1,3,3,'#e0262f');R(c.x-dx-1,c.y-dy-1,2,2,'#222');}
-    else drawCane(c.x,c.y,c.a,1.4);}
+  for(const c of BS.canes)drawBossProj(c,now);
   for(const bm of BS.beams)for(let k=-1;k<=1;k++)pline(bm.sx,bm.sy+k,bm.ex,bm.ey+k,k?hsl(bm.h+now*0.6,100,65):'#fff');
   for(const p of BS.parts)R(p.x,p.y,2,2,p.col);
   if(b.yell>0&&b.state!=='groove')bubble(b.x,b.y-58,b.say.length>12?b.say.split(' ').reduce((a,w)=>{const l=a[a.length-1];if((l+' '+w).trim().length>12)a.push(w);else a[a.length-1]=(l+' '+w).trim();return a;},['']):[b.say]);
@@ -1715,12 +1812,12 @@ function drawBoss(now){
   const bc=BS.bassCd>0?'#5a4a6a':'#5fe8ff';txt('BASS',250,17,bc,8,'right',null);
   if(BS.banner){const bb=BS.banner,h=bb.lines.length*14+10,y=70;ctx.globalAlpha=0.82;R(0,y,256,h,PAL.K);ctx.globalAlpha=1;R(0,y,256,1,bb.col);R(0,y+h-1,256,1,bb.col);bb.lines.forEach((l,i)=>txt(l,128,y+6+i*14,i===0?bb.col:'#fff',8,'center'));}
   if(mode==='bossEnd'&&BS.won){ctx.globalAlpha=0.88;R(20,36,216,132,PAL.K);ctx.globalAlpha=1;R(20,36,216,1,PAL.Y);R(20,167,216,1,PAL.Y);
-    txt('NEW CREW FOR '+BS.cfg.state+'!',128,42,PAL.Y,8,'center');const cc=BS.cfg.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
+    txt(BS.cfg.final?'NEW CREW!':'NEW CREW FOR '+BS.cfg.state+'!',128,42,PAL.Y,8,'center');const cc=BS.cfg.crew.map(id=>[...DRIVERS,...DJS].find(c=>c.id===id));
     cc.forEach((c,k)=>{const x=40+k*104,dr=DRIVERS.includes(c);drawPortraitHi(x,56,c);txt(c.name,x+36,132,'#fff',8,'center',null);txt(dr?'DRIVER':'DJ',x+36,144,dr?PAL.O:'#ff4fd8',8,'center',null);});}
   if(BS.intro>0){ctx.globalAlpha=0.9;R(14,40,228,150,PAL.K);ctx.globalAlpha=1;R(14,40,228,1,PAL.O);R(14,189,228,1,PAL.O);
     txt('BOSS: '+BS.cfg.name,128,48,'#ff6b6b',8,'center');txt(BS.cfg.place,128,60,'#c9b8ff',8,'center',null);
-    txt(coarse?'TAP SCREEN: LASERS':'CLICK: LASERS',128,82,'#5fe8ff',8,'center');txt('BASS: SMASH HIS CANES',128,98,'#ff4fd8',8,'center');
-    txt('DODGE THE SPIN ATTACK',128,114,'#fff',8,'center');txt('DIZZY = DOUBLE DAMAGE',128,130,PAL.Y,8,'center');txt('MOVE WITH THE STICK/ARROWS',128,146,'#a596c4',8,'center',null);
+    txt(coarse?'TAP SCREEN: LASERS':'CLICK: LASERS',128,82,'#5fe8ff',8,'center');txt('BASS: SMASH WHAT IT THROWS',128,98,'#ff4fd8',8,'center');
+    txt(BS.cfg.dodge||'DODGE THE SPIN ATTACK',128,114,'#fff',8,'center');txt('DIZZY = DOUBLE DAMAGE',128,130,PAL.Y,8,'center');txt('MOVE WITH THE STICK/ARROWS',128,146,'#a596c4',8,'center',null);
     if(Math.floor(now/400)%2)txt('TAP TO FIGHT',128,170,PAL.Y,8,'center');}
 }
 
@@ -2903,7 +3000,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261012192617';
+const GAME_VERSION='20261012195332';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
@@ -2913,11 +3010,19 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdat
 // full screen: real fullscreen where the browser allows it, otherwise a page-filling mode (iPhone Safari)
 const fsBtn=$('fsBtn');
 function fsOn(){return !!(document.fullscreenElement||document.webkitFullscreenElement);}
-function pseudoFS(on){document.body.classList.toggle('fs',on);fsBtn.textContent=on?'EXIT FULL':'FULL SCREEN';setTimeout(fitScreen,60);if(on)window.scrollTo(0,0);}
+function pseudoFS(on){document.body.classList.toggle('fs',on);fsBtn.textContent=on?'EXIT FULL':'FULL SCREEN';fitScreen();setTimeout(fitScreen,80);setTimeout(fitScreen,400);if(on)window.scrollTo(0,0);}
+const standalone=window.matchMedia&&window.matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches||navigator.standalone;
+function fsTip(){if(standalone||document.getElementById('fsTip'))return;let shown=false;try{shown=localStorage.getItem('jak-fs-tip')==='1';localStorage.setItem('jak-fs-tip','1');}catch(e){}if(shown)return;
+  const d=document.createElement('div');d.id='fsTip';d.textContent='iPhone tip: Safari keeps its bars on web pages. For TRUE full screen, tap Share, then Add to Home Screen, and launch Jak from your home screen.';
+  d.addEventListener('click',()=>d.remove());document.body.appendChild(d);setTimeout(()=>d.remove(),9000);}
 function toggleFS(){if(fsOn()){(document.exitFullscreen||document.webkitExitFullscreen).call(document);return;}
   if(document.body.classList.contains('fs')){pseudoFS(false);return;}
   const el=document.documentElement,req=el.requestFullscreen||el.webkitRequestFullscreen;
-  if(req){try{const p=req.call(el);if(p&&p.catch)p.catch(()=>pseudoFS(true));}catch(e){pseudoFS(true);}}else pseudoFS(true);}
+  const fallback=()=>{ // inside the website's frame on iPhone: open the game on its own page first
+    try{if(window.top!==window.self&&window.top.location.origin===location.origin){window.top.location.href=location.pathname+'?fs=1';return;}}catch(e){}
+    pseudoFS(true);fsTip();};
+  if(req){try{const p=req.call(el,{navigationUI:'hide'});if(p&&p.then)p.then(()=>{try{screen.orientation&&screen.orientation.lock&&screen.orientation.lock('any').catch(()=>{});}catch(e){}}).catch(fallback);}catch(e){fallback();}}else fallback();}
+if(standalone||/[?&]fs=1/.test(location.search))pseudoFS(true);
 function fsChanged(){pseudoFS(fsOn());}
 document.addEventListener('fullscreenchange',fsChanged);document.addEventListener('webkitfullscreenchange',fsChanged);
 fsBtn.addEventListener('click',e=>{e.stopPropagation();toggleFS();});
