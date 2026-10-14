@@ -107,8 +107,14 @@ body.fs.over .controls{background:transparent}
 body.fs.over .pad{background:radial-gradient(circle,rgba(42,26,72,.55) 0 55%,rgba(27,16,48,.55) 56%);border-color:rgba(255,255,255,.35)}
 body.fs.over .controls .start,body.fs.over .controls .chip{opacity:.92}
 body.fs.over .topbar{padding:2px 4px}
-/* lift the floating stick and buttons off the bottom edge so the phone is easy to hold */
-body.fs.over .under{padding-bottom:calc(env(safe-area-inset-bottom,0px) + max(26px,6vh))}
+/* the floating controls sit with the stick about two thirds of the way down the screen (fitScreen sets the exact height) */
+body.fs.over .under{padding-bottom:0}
+body.fs.over .controls{display:grid;grid-template-columns:1fr auto 1fr;grid-auto-rows:min-content;align-content:center;row-gap:8px;column-gap:10px;pointer-events:none}
+body.fs.over .controls>*{pointer-events:auto;grid-column:3;justify-self:end;margin:0}
+body.fs.over .pad{grid-column:2;grid-row:1 / span 6;align-self:center;justify-self:center}
+body.fs.over[data-stick="left"] .pad{grid-column:1;justify-self:start}
+body.fs.over[data-stick="right"] .pad{grid-column:3;justify-self:end}
+body.fs.over[data-stick="right"] .controls>*:not(.pad){grid-column:1;justify-self:start}
 /* landscape play: game screen in the middle, stick under the left thumb, buttons under the right thumb */
 body.fs.land[data-mode="game"] #app,body.fs.land[data-mode="boss"] #app{display:flex;flex-direction:column;align-items:center}
 body.fs.land[data-mode="game"] .topbar,body.fs.land[data-mode="boss"] .topbar{align-self:stretch}
@@ -117,6 +123,9 @@ body.fs.land[data-mode="game"] .under,body.fs.land[data-mode="boss"] .under{posi
 body.fs.land[data-mode="game"] .controls,body.fs.land[data-mode="boss"] .controls{display:grid;grid-template-columns:auto 1fr auto;grid-auto-rows:min-content;align-content:center;row-gap:10px;height:100%;box-sizing:border-box;padding:0 calc(env(safe-area-inset-right,0px) + 16px) 4vh calc(env(safe-area-inset-left,0px) + 16px)}
 body.fs.land[data-mode="game"] .controls>*,body.fs.land[data-mode="boss"] .controls>*{pointer-events:auto;grid-column:3;justify-self:end;margin:0}
 body.fs.land[data-mode="game"] .pad,body.fs.land[data-mode="boss"] .pad{grid-column:1;grid-row:1 / span 6;align-self:center;justify-self:start}
+/* right-hand stick: swap the sides */
+body.fs.land[data-stick="right"][data-mode="game"] .pad,body.fs.land[data-stick="right"][data-mode="boss"] .pad{grid-column:3;justify-self:end}
+body.fs.land[data-stick="right"][data-mode="game"] .controls>*:not(.pad),body.fs.land[data-stick="right"][data-mode="boss"] .controls>*:not(.pad){grid-column:1;justify-self:start}
 #fsTip{position:fixed;left:8px;right:8px;bottom:calc(env(safe-area-inset-bottom,0px) + 8px);z-index:60;font-family:var(--font-pixel);font-size:9px;line-height:1.6;background:var(--panel);border:3px solid var(--gold);padding:10px;color:var(--ink)}
 #updBar{display:block;width:100%;margin:0 0 8px;font-size:10px;padding:10px 8px;background:#1d8fb8}
 #laserBtn{background:#1d8fb8;margin-top:0}#laserBtn.charging{background:#2a3a4a;color:#8ab;animation:none}
@@ -144,11 +153,16 @@ body[data-mode="game"] .screen{min-width:0}
 body[data-mode="game"] .controls,body[data-mode="boss"] .controls{justify-content:center}
 body[data-mode="game"] .pad{width:108px;height:108px}
 body[data-mode="game"] .knob{width:44px;height:44px;margin:-22px 0 0 -22px}
+/* not full screen: the stick sits on the chosen side of the row */
+body:not(.fs)[data-stick="left"] .pad{order:-1}
+.chip.on{border-color:var(--gold);color:var(--gold)}
+.stickrow{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.stickrow span{font-family:var(--font-pixel);font-size:8px;color:var(--dim);letter-spacing:.06em;margin-right:2px}
 @media (prefers-reduced-motion: reduce){.next,.start{animation:none}}
 </style>
-
 </head>
 <body>
+
 <div id="app">
   <button class="start" id="updBar" type="button" hidden>NEW VERSION READY: TAP TO UPDATE</button>
   <div class="topbar">
@@ -504,7 +518,7 @@ function makeJakMusic(ac,out){
 <script>
 (()=>{
 'use strict';
-let W=256,H=224,HUDB=0; // HUDB: canvas pixels hidden under the on-screen controls in full screen
+let W=256,H=224,HUDB=0,CTLB=0; // HUDB: canvas pixels under the phone's home bar in full screen; CTLB: canvas pixels from the top of the floating controls down
 const cv=document.getElementById('cv');
 let ctx=cv.getContext('2d');
 ctx.imageSmoothingEnabled=false;
@@ -514,6 +528,9 @@ const coarse=window.matchMedia&&matchMedia('(pointer: coarse)').matches;
 const DEV={on:false,god:false},DEV_HASH=654225489;
 function codeHash(v){let h=5381;for(const ch of String(v).toUpperCase().replace(/\s/g,''))h=((h*33)^ch.charCodeAt(0))>>>0;return h;}
 try{DEV.on=localStorage.getItem('jak-dev')==='1';}catch(e){}
+// which side the touch stick sits on: left, center or right. Saved on this device; picked on the player screen.
+let STICK='center';try{const v=localStorage.getItem('jak-stick');if(v==='left'||v==='right'||v==='center')STICK=v;}catch(e){}
+document.body.dataset.stick=STICK;
 
 const PAL={K:'#140b22',O:'#ff5c00',DO:'#b83a00',LO:'#ff9a4d',Y:'#ffd23f',W:'#ffffff',G:'#9a9ab0',DG:'#3b3b52',LG:'#c8c8dc',B:'#a06a3a',PK:'#ff8fc8',CY:'#5fe8ff',DCY:'#1d6f8f',N:'#3ad06a',DN:'#1f7a44',SK:'#f2c29b',SN:'#eef3ff',SN2:'#cfdcf5'};
 
@@ -766,11 +783,14 @@ function fitScreen(){
   document.body.dataset.mode=mode;
   let w=256,h=224;
   const fs=document.body.classList.contains('fs');
-  HUDB=0;
+  HUDB=0;CTLB=0;
   if(fs){const land=window.innerWidth>window.innerHeight,vh=(window.visualViewport&&window.visualViewport.height)||window.innerHeight;document.body.classList.toggle('land',land);
     const act=mode==='game'||mode==='boss',over=act&&!land;document.body.classList.toggle('over',over);
     // keep the floating controls above the browser's own toolbar
-    underEl.style.bottom=over&&window.visualViewport?Math.max(0,Math.round(window.innerHeight-vh-(window.visualViewport.offsetTop||0)))+'px':'';
+    // and centre the stick row about two thirds of the way down the visible screen
+    if(over){const tb=window.visualViewport?Math.max(0,Math.round(window.innerHeight-vh-(window.visualViewport.offsetTop||0))):0;
+      underEl.style.bottom=Math.round(tb+Math.max(10,vh*0.33-(controls.hidden?0:controls.offsetHeight)/2))+'px';}
+    else underEl.style.bottom='';
     const top=topbarEl.offsetHeight+6,side=land?(act?2*Math.round(Math.min(178,Math.max(134,window.innerWidth*0.17))):Math.min(340,Math.max(220,window.innerWidth*0.3))):0;
     const below=land||over?0:Math.min(vh*0.42,Math.max(120,TALL[mode]&&!dialog.hidden?dialog.scrollHeight+4:underEl.scrollHeight))+6;
     const availW=window.innerWidth-side-(over?0:12),availH=vh-top-below-(over?0:8);
@@ -778,7 +798,9 @@ function fitScreen(){
     else if(TALL[mode]&&!land){const a=availW/availH;if(a<1)h=Math.max(224,Math.min(TALL[mode],Math.round(256/a)));}
     const sc=Math.min(availW/w,availH/h),px=Math.floor(w*sc)+'px';
     screenEl.style.width=px;screenEl.style.aspectRatio=`${w}/${h}`;underEl.style.width='';
-    if(over&&!controls.hidden){const sr=screenEl.getBoundingClientRect(),cr=controls.getBoundingClientRect();HUDB=Math.max(0,Math.ceil((Math.min(sr.bottom,vh)-cr.top+8)/sc));}
+    // the stick floats over the slope now, so only keep the bottom HUD clear of the phone's home bar
+    if(over){const sr=screenEl.getBoundingClientRect(),sb=parseFloat(getComputedStyle(document.documentElement).paddingBottom)||0;HUDB=Math.max(0,Math.ceil((Math.min(sr.bottom,vh)-(vh-sb))/sc));
+      if(!controls.hidden){const cr=controls.getBoundingClientRect();CTLB=Math.max(0,Math.ceil((Math.min(sr.bottom,vh)-cr.top+8)/sc));}}
     if(w!==W||h!==H){W=w;H=h;cv.width=w;cv.height=h;ctx.imageSmoothingEnabled=false;}return;}
   document.body.classList.remove('land');underEl.style.bottom='';
   if(TALL[mode]&&window.innerHeight>window.innerWidth*1.15){
@@ -1018,6 +1040,11 @@ function cleanName(v){return String(v||'').toUpperCase().replace(/[^A-Z0-9 .!\-]
 function addPlayer(raw){let name=cleanName(raw)||`PLAYER ${PL.list.length+1}`;
   const taken=n=>PL.list.some(p=>p.name===n);if(taken(name)){let k=2;while(taken((name.slice(0,8)+' '+k).trim()))k++;name=(name.slice(0,8)+' '+k).trim();}
   const id='p'+Date.now().toString(36)+Math.floor(Math.random()*1e4).toString(36);PL.list.push({id,name});savePlayers();pickPlayer(id);}
+function setStick(v){STICK=v;document.body.dataset.stick=v;try{localStorage.setItem('jak-stick',v);}catch(e){}if(AudioK.sfx.blip)AudioK.sfx.blip();}
+function stickRow(){const row=mk('div','stickrow');row.appendChild(mk('span','','STICK:'));
+  [['left','LEFT'],['center','CENTER'],['right','RIGHT']].forEach(([v,l])=>{const b=btn(l,'chip'+(STICK===v?' on':''),()=>{setStick(v);row.querySelectorAll('.chip').forEach(c=>{const on=c.dataset.v===STICK;c.classList.toggle('on',on);c.setAttribute('aria-pressed',on);});});
+    b.dataset.v=v;b.setAttribute('aria-pressed',STICK===v);b.setAttribute('aria-label','Stick on the '+l.toLowerCase());row.appendChild(b);});
+  return row;}
 function playersUI(){dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='';
   if(PS.mode==='new'){whoEl.textContent='NEW PLAYER';
     dtext.appendChild(mk('div','','Type your name. Your tour, carrots and upgrades save under it.'));
@@ -1025,7 +1052,7 @@ function playersUI(){dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='
     inp.addEventListener('click',e=>e.stopPropagation());
     inp.addEventListener('keydown',e=>{e.stopPropagation();if(e.key==='Enter'){e.preventDefault();addPlayer(inp.value);}else if(e.key==='Escape'&&PL.list.length){PS.mode='list';playersUI();}});
     const row=mk('div','maprow');row.appendChild(btn("LET'S GO",'start',()=>addPlayer(inp.value)));if(API)row.appendChild(btn('SIGN IN','chip',()=>acctForm('login',null,()=>{PS.mode=PL.list.length?'list':'new';playersUI();})));if(!DEV.on)row.appendChild(btn('ENTER CODE','chip',()=>{PS.mode='code';PS.msg='';playersUI();}));if(PL.list.length)row.appendChild(btn('BACK','chip',()=>{PS.mode='list';playersUI();}));
-    dtext.append(inp,row);setTimeout(()=>inp.focus({preventScroll:true}),30);return;}
+    dtext.append(inp,row);if(coarse)dtext.appendChild(stickRow());setTimeout(()=>inp.focus({preventScroll:true}),30);return;}
   if(PS.mode==='code'){whoEl.textContent='ENTER CODE';
     dtext.appendChild(mk('div','','For developers. Type the passcode to turn on DEV mode on this device.'));
     const inp=mk('input','namein');inp.type='password';inp.maxLength=20;inp.placeholder='PASSCODE';inp.autocomplete='off';inp.spellcheck=false;inp.setAttribute('aria-label','Passcode');inp.setAttribute('autocapitalize','characters');
@@ -1048,7 +1075,7 @@ function playersUI(){dtext.innerHTML='';nextEl.hidden=true;countEl.textContent='
   if(del)row.appendChild(btn('DONE','chip',()=>{PS.mode='list';PS.confirm=null;playersUI();}));
   else{if(PL.list.length<8)row.appendChild(btn('+ NEW PLAYER','chip',()=>{PS.mode='new';playersUI();}));if(API)row.appendChild(btn('SIGN IN','chip',()=>acctForm('login',null,()=>{PS.mode=PL.list.length?'list':'new';playersUI();})));row.appendChild(btn('REMOVE','chip',()=>{PS.mode='delete';PS.confirm=null;playersUI();}));
     row.appendChild(DEV.on?btn('DEV OFF','chip',()=>{devSet(false);PS.msg='DEV mode is off.';playersUI();}):btn('ENTER CODE','chip',()=>{PS.mode='code';PS.msg='';playersUI();}));}
-  dtext.appendChild(row);if(!del&&(PS.msg||DEV.on)){dtext.appendChild(mk('div','status',PS.msg||'DEV MODE ON: tap DEV up top for cheats.'));PS.msg='';}
+  dtext.appendChild(row);if(!del&&coarse)dtext.appendChild(stickRow());if(!del&&(PS.msg||DEV.on)){dtext.appendChild(mk('div','status',PS.msg||'DEV MODE ON: tap DEV up top for cheats.'));PS.msg='';}
   const f=dtext.querySelector('.start')||dtext.querySelector('button');if(f)f.focus({preventScroll:true});}
 function drawPlayers(t){SCENES[0].draw(t);ctx.globalAlpha=0.7;R(0,140,W,40,'#000');ctx.globalAlpha=1;
   txt(PS.mode==='new'?'NEW PLAYER':PS.mode==='code'?'ENTER CODE':"WHO'S PLAYING?",128,146,PAL.Y,16,'center');if(DEV.on)txt('DEV MODE',4,4,'#ff8a8a',8,'left');txt('EVERY PLAYER GETS THEIR OWN SAVE',128,166,'#c9b8ff',8,'center',null);}
@@ -2069,7 +2096,7 @@ function drawBossProj(c,now){const pr=BS.cfg.proj;
   else if(pr==='pole'){const dx=Math.cos(c.a)*9,dy=Math.sin(c.a)*9;pline(c.x-dx,c.y-dy,c.x+dx,c.y+dy,'#c8c8d8');R(c.x+dx-1,c.y+dy-1,3,3,'#e0262f');R(c.x-dx-1,c.y-dy-1,2,2,'#222');}
   else drawCane(c.x,c.y,c.a,1.4);}
 function drawBoss(now){
-  const b=BS.b,j=BS.jak,oy=BS.oy=Math.max(0,Math.min(H-224,H-224-HUDB+Math.min(HUDB,30)));
+  const b=BS.b,j=BS.jak,oy=BS.oy=Math.max(0,Math.min(H-224,H-224-CTLB+Math.min(CTLB,30)));
   if(oy>0){const n=16,bh=Math.ceil(oy/n)+1;for(let i=0;i<n;i++)R(0,i*bh,W,bh,mix('#16264e','#3a5a9a',i/(n-1)));
     for(let i=0;i<30;i++){const sx=(i*97+13)%W,sy=(i*53+7)%Math.max(8,oy-20);if((Math.floor(now/400)+i)%4)R(sx,sy+30,1,1,'#c8d8ff');}
     for(let k=0;k<3;k++){ctx.globalAlpha=0.16+0.06*Math.sin(now/900+k);for(let x=0;x<W;x+=2){const y=36+k*18+Math.sin(x/34+now/1500+k)*10+Math.sin(x/13+k)*4;R(x,y,2,14+k*4,k===1?'#5fffb0':'#7ae0ff');}}ctx.globalAlpha=1;
@@ -3490,7 +3517,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261013183507';
+const GAME_VERSION='20261013185632';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
