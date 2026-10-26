@@ -1,0 +1,829 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" type="image/svg+xml" href="/assets/favicon.svg">
+<title>The Legend of Jak Field Guide | Disco Carrot</title>
+</head>
+<body>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@400;700&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&display=swap">
+<style>
+/* Layout: a cartridge instruction booklet laid over a midnight ski slope; pixel screenshots sit in bezel frames, rules read like a manual. */
+:root{
+  --night:#120a22; --panel:#1c1131; --panel2:#271944; --line:#3b2a5e;
+  --snow:#eef0fa; --muted:#aa9fc9; --carrot:#ff7a1a; --gold:#ffd23f; --disco:#ff4fd8; --ice:#5fe8ff; --grump:#ff5c6c; --pine:#3ad06a;
+  --display:'Silkscreen', 'Courier New', monospace;
+  --body:'Atkinson Hyperlegible', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--night);color:var(--snow);font-family:var(--body);font-size:16px;line-height:1.6;padding-inline:16px;padding-block:0 64px;
+  background-image:radial-gradient(1px 1px at 12% 8%,#ffffff55 50%,transparent 51%),radial-gradient(1px 1px at 68% 3%,#ffffff44 50%,transparent 51%),radial-gradient(1px 1px at 88% 14%,#ffffff55 50%,transparent 51%),radial-gradient(1px 1px at 34% 18%,#ffffff33 50%,transparent 51%);background-repeat:no-repeat}
+.wrap{max-width:1120px;margin:0 auto}
+img.px{image-rendering:pixelated;image-rendering:crisp-edges;display:block;width:100%;height:auto}
+h1,h2,h3,.disp{font-family:var(--display);font-weight:400;text-wrap:balance;letter-spacing:.02em}
+h2{font-size:clamp(1.6rem,4vw,2.3rem);line-height:1.1;margin:0 0 6px;color:var(--snow)}
+h3{font-size:1.05rem;margin:0;line-height:1.25}
+p{margin:0 0 12px;max-width:68ch}
+b,strong{color:#fff}
+.eyebrow{font-family:var(--display);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--carrot)}
+.lede{color:var(--muted);max-width:66ch;margin-bottom:22px}
+a{color:var(--ice)}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+/* nav */
+nav.toc{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--night) 92%,transparent);backdrop-filter:blur(6px);
+  margin-inline:-16px;padding:10px 16px;border-bottom:1px solid var(--line);overflow-x:auto;white-space:nowrap;scrollbar-width:none}
+nav.toc::-webkit-scrollbar{display:none}
+nav.toc a{font-family:var(--display);font-size:.78rem;color:var(--muted);text-decoration:none;padding:6px 10px;border:1px solid transparent;border-radius:2px;display:inline-block}
+nav.toc a:hover{color:var(--snow);border-color:var(--line)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.1fr 1fr;gap:32px;align-items:center;padding-block:40px 28px}
+.hero h1{font-size:clamp(2.4rem,7vw,4.6rem);line-height:.95;margin:6px 0 14px}
+.hero h1 span{color:var(--carrot);display:block}
+.hero p{color:var(--muted)}
+.bezel{background:#05030b;border:2px solid var(--line);border-radius:6px;padding:8px;box-shadow:0 0 0 4px var(--panel) inset}
+.cap{font-size:.85rem;color:var(--muted);margin-top:8px}
+.loop{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px;align-items:center;font-family:var(--display);font-size:.78rem}
+.loop span{background:var(--panel2);border:1px solid var(--line);padding:5px 9px;border-radius:2px}
+.loop i{color:var(--carrot);font-style:normal}
+
+section{padding-block:56px 8px;border-top:1px dashed var(--line);margin-top:40px;scroll-margin-top:60px}
+
+/* generic grids */
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+figure{margin:0}
+figure.shot button{all:unset;cursor:zoom-in;display:block;width:100%}
+figure.shot figcaption{margin-top:8px}
+figure.shot figcaption b{font-family:var(--display);font-weight:400;font-size:.9rem;display:block;color:var(--snow)}
+figure.shot figcaption span{font-size:.88rem;color:var(--muted)}
+
+/* tour */
+.tour{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:28px;align-items:start}
+.tourmap{position:sticky;top:70px}
+.tourmap .bezel{max-height:78vh;overflow-y:auto}
+ol.stops{list-style:none;margin:0;padding:0;display:grid;gap:0}
+ol.stops li{display:grid;grid-template-columns:2.4rem minmax(0,1fr) auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line)}
+ol.stops .n{font-family:var(--display);color:var(--muted);font-size:.8rem;font-variant-numeric:tabular-nums}
+ol.stops .nm{font-weight:700}
+ol.stops .st{font-size:.82rem;color:var(--muted)}
+ol.stops li.boss{background:linear-gradient(90deg,#ff5c6c22,transparent);padding-inline:8px;margin-inline:-8px}
+ol.stops li.boss .nm{color:var(--grump);font-family:var(--display);font-weight:400}
+ol.stops li.state{border-bottom:0;padding-top:20px}
+ol.stops li.state .nm{font-family:var(--display);font-weight:400;color:var(--carrot);font-size:.9rem;letter-spacing:.08em}
+
+/* mountains */
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.filters button{font-family:var(--display);font-size:.78rem;background:var(--panel);color:var(--muted);border:1px solid var(--line);padding:7px 11px;border-radius:2px;cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--carrot);color:var(--night);border-color:var(--carrot)}
+.mtns{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.mtn{background:var(--panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;display:flex;flex-direction:column}
+.mtn .open{all:unset;cursor:zoom-in;display:block;position:relative}
+.mtn .open .num{position:absolute;left:8px;top:8px;font-family:var(--display);font-size:.75rem;background:#000a;padding:2px 7px;color:var(--gold)}
+.mtn .body{padding:14px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:14px;flex:1}
+.mtn .thumb{all:unset;cursor:zoom-in;display:block;align-self:start;border:1px solid var(--line);background:#fff}
+.mtn .thumb img{display:block;width:72px;height:auto;image-rendering:pixelated}
+.mtn .st{font-size:.8rem;color:var(--muted);font-family:var(--display);letter-spacing:.06em}
+.mtn h3{margin:2px 0 8px;font-size:1.1rem}
+.mtn .hz{font-family:var(--display);font-size:.66rem;letter-spacing:.06em;color:var(--carrot);margin:-4px 0 8px}
+.mtn .blurb{font-size:.86rem;color:#ddd8ee;margin:0 0 10px}
+.new{font-family:var(--display);font-size:.62rem;letter-spacing:.08em;background:var(--disco);color:var(--night);padding:1px 6px;border-radius:2px;vertical-align:middle;margin-left:6px}
+.minis{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.mini{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:16px}
+.mini h3{color:var(--gold);margin-bottom:6px}
+.mini .tag{font-family:var(--display);font-size:.7rem;color:var(--muted);letter-spacing:.06em;margin-bottom:8px}
+.mini p{font-size:.92rem;color:#ddd8ee;margin:0 0 10px}
+.mini .mshots{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:-4px 0 12px}
+.mini .mshots button{all:unset;cursor:zoom-in;display:block;background:#05030b;border:1px solid var(--line);aspect-ratio:1/1;overflow:hidden}
+.mini .mshots img{width:100%;height:100%;object-fit:cover;object-position:top}
+.mini .mshots button+button img{object-position:center 70%}
+.minis{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+.badges{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.badge{font-family:var(--display);font-size:.66rem;letter-spacing:.06em;padding:2px 6px;border-radius:2px;border:1px solid currentColor;line-height:1.5}
+.b-parade{color:var(--disco)}.b-ocean{color:var(--ice)}.b-ship{color:#d8a870}.b-water{color:#7fc8ff}.b-glow{color:#9affd8}.b-sand{color:#e8b070}.b-lava{color:#ff7a3a}.b-space{color:#c8b8ff}.b-bonus{color:var(--gold)}
+.b-night{color:#b9a4ff}.b-snow{color:var(--ice)}.b-steep{color:var(--grump)}.b-powder{color:#cfe0ff}.b-blackout{color:#ffe9a0}.b-fuel{color:var(--carrot)}.b-cliff{color:#c9a36b}.b-bowls{color:var(--pine)}
+dl.facts{display:grid;grid-template-columns:auto minmax(0,1fr);gap:2px 10px;margin:0;font-size:.86rem}
+dl.facts dt{color:var(--muted)}
+dl.facts dd{margin:0;font-variant-numeric:tabular-nums}
+.mapbtn{margin-top:10px;font-family:var(--display);font-size:.72rem;background:none;border:1px solid var(--ice);color:var(--ice);padding:5px 9px;border-radius:2px;cursor:pointer}
+.mapbtn:hover{background:var(--ice);color:var(--night)}
+
+/* manual blocks */
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
+.rule{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:20px;min-width:0}
+.rule h3{color:var(--gold);margin-bottom:10px;display:flex;gap:10px;align-items:center}
+.rule h3 img{width:30px;height:auto;image-rendering:pixelated}
+.rule ul{margin:0;padding-left:18px}
+.rule li{margin-bottom:6px}
+.rule li::marker{color:var(--carrot)}
+.rule p{color:#ddd8ee}
+.wide{grid-column:1/-1}
+.meter{display:flex;height:16px;border:1px solid var(--line);border-radius:2px;overflow:hidden;margin:10px 0 4px;font-size:0}
+.meter span{display:block;height:100%}
+.meterlab{display:flex;justify-content:space-between;font-size:.78rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.keys{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px 14px;align-items:baseline}
+kbd{font-family:var(--display);font-size:.72rem;background:var(--panel2);border:1px solid var(--line);border-bottom-width:3px;padding:2px 7px;border-radius:3px;white-space:nowrap;color:var(--snow)}
+
+/* tables */
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:.92rem;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-weight:400;font-size:.74rem;letter-spacing:.06em;color:var(--muted);background:var(--panel2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+td .sym{display:inline-flex;gap:3px;font-family:var(--display);font-size:.8rem}
+.cost{font-family:var(--display);color:var(--carrot)}
+
+/* crew */
+.crew{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.cm{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px}
+.cm img{width:72px;height:72px;image-rendering:pixelated;border:1px solid var(--line)}
+.cm h3{font-size:.95rem}
+.cm .role{font-size:.74rem;font-family:var(--display);color:var(--muted);letter-spacing:.05em}
+.cm .perk{font-size:.86rem;color:var(--gold);margin:6px 0 8px;line-height:1.35}
+.stat{display:grid;grid-template-columns:58px repeat(5,1fr);gap:2px;align-items:center;font-family:var(--display);font-size:.62rem;color:var(--muted);margin-bottom:3px}
+.stat i{height:7px;background:var(--line)}
+.stat i.on{background:var(--carrot)}
+.dj .stat i.on{background:var(--disco)}
+.cm .unl{grid-column:1/-1;font-size:.78rem;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+
+/* bosses */
+.boss{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:18px;display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:22px;margin-bottom:20px}
+.boss .strip{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:auto auto;gap:6px}
+.boss .strip button{all:unset;cursor:zoom-in;display:block}
+.boss .strip button:first-child{grid-row:1/3}
+.boss .strip img{border:1px solid var(--line)}
+.boss h3{font-size:1.5rem;color:var(--grump)}
+.boss .where{font-family:var(--display);font-size:.78rem;color:var(--muted);letter-spacing:.05em;margin:4px 0 12px}
+.boss .quote{font-family:var(--display);font-size:.82rem;color:var(--gold);margin-bottom:10px}
+.hp{display:flex;align-items:center;gap:10px;font-family:var(--display);font-size:.78rem;margin-bottom:12px}
+.hp .bar{flex:1;height:10px;background:var(--panel2);border:1px solid var(--line)}
+.hp .bar span{display:block;height:100%;background:var(--grump)}
+.bstats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.bstats div{background:var(--panel2);padding:8px;border-radius:2px}
+.bstats b{display:block;font-family:var(--display);font-weight:400;font-size:1.05rem;font-variant-numeric:tabular-nums}
+.bstats span{font-size:.74rem;color:var(--muted)}
+.boss p{font-size:.94rem}
+.boss .reward{font-size:.86rem;color:var(--pine)}
+
+/* sprites */
+.sprites{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.sp{background:var(--panel);border:1px solid var(--line);border-radius:4px;padding:14px;text-align:left}
+.sp .pic{height:96px;display:flex;align-items:flex-end;justify-content:center;margin-bottom:10px;background:repeating-linear-gradient(0deg,#ffffff06 0 4px,transparent 4px 8px)}
+.sp .pic img{max-height:96px;width:auto;image-rendering:pixelated}
+.sp b{font-family:var(--display);font-weight:400;font-size:.85rem;display:block}
+.sp span{font-size:.82rem;color:var(--muted);line-height:1.35;display:block}
+
+/* lightbox */
+.lb{position:fixed;inset:0;z-index:50;background:#05030bf2;display:flex;flex-direction:column;padding:calc(env(safe-area-inset-top,0px) + 10px) 12px calc(env(safe-area-inset-bottom,0px) + 10px)}
+.lb .bar{display:flex;gap:10px;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap}
+.lb .bar b{font-family:var(--display);font-weight:400}
+.lb .bar span{color:var(--muted);font-size:.85rem}
+.lb .bar .acts{display:flex;gap:8px}
+.lb .bar button{font-family:var(--display);font-size:.75rem;background:var(--panel2);color:var(--snow);border:1px solid var(--line);padding:7px 12px;border-radius:2px;cursor:pointer}
+.lb .stage{flex:1;overflow:auto;display:flex;justify-content:center;align-items:flex-start;min-height:0}
+.lb .stage img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+.lb.fit .stage{align-items:center}
+.lb.fit .stage img{max-height:100%;width:auto}
+.lb.real .stage img{max-width:none;max-height:none;width:auto}
+.lb .loading{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-family:var(--display);color:var(--muted)}
+
+footer{margin-top:60px;color:var(--muted);font-size:.85rem;border-top:1px dashed var(--line);padding-top:20px}
+
+@media (max-width:860px){
+  .hero,.tour,.boss{grid-template-columns:minmax(0,1fr)}
+  .tourmap{position:static}
+  .tourmap .bezel{max-height:60vh}
+  .rules,.g2{grid-template-columns:minmax(0,1fr)}
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (max-width:480px){
+  .g3,.g4{grid-template-columns:minmax(0,1fr)}
+  .mtns{grid-template-columns:minmax(0,1fr)}
+  .bstats{grid-template-columns:repeat(3,minmax(0,1fr))}
+}
+@media (prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+html{scroll-behavior:smooth}
+</style>
+
+<div class="wrap">
+<nav class="toc" aria-label="Sections">
+  <a href="#tour">Tour map</a><a href="#mountains">Stops</a><a href="#whatsnew">What's new</a><a href="#minis">Mini games</a><a href="#screens">Screens</a><a href="#howto">How to play</a><a href="#crew">Crew</a><a href="#workshop">Workshop</a><a href="#slots">Disco Slots</a><a href="#bosses">Bosses</a><a href="#cast">Cast</a>
+</nav>
+
+<header class="hero">
+  <div>
+    <div class="eyebrow">Official field guide</div>
+    <h1>The Legend <span>of Jak</span></h1>
+    <p>Everything inside the game, laid out like the booklet that came in the box. All 56 stops from Missoula to the Alien DJ's mothership, every map zoomed all the way out, every opening screen, all 13 bosses, all six mini games, and the real numbers behind the shop, the slots, the fuel and the avalanche.</p>
+    <p>Tap any picture to see it full size. The maps open at full resolution so you can trace every run, lift, current and parade route.</p>
+    <div class="loop" aria-label="How a mountain plays out">
+      <span>Eat 5 carrots</span><i>&rarr;</i><span>Dance party</span><i>&rarr;</i><span>Repeat 3 times</span><i>&rarr;</i><span>Golden carrot</span>
+    </div>
+  </div>
+  <figure>
+    <div class="bezel"><img class="px" src="img/closeup_jak.png" alt="Jak the snowcat jackalope, close up in pixel art" width="768" height="672"></div>
+    <figcaption class="cap">Jak, the 1972 Thiokol Spryte that came to life as a snowcat jackalope.</figcaption>
+  </figure>
+</header>
+
+<section id="tour">
+  <div class="eyebrow">The road trip</div>
+  <h2>Tour map</h2>
+  <p class="lede">56 stops on one long road trip: Montana, Wyoming, Colorado, Utah, Idaho, Washington, Oregon and California, out across the Pacific and down into the abyss, Hawaii, and then a rocket ride past the Moon and Mars to every outer planet, the Record Cloud and the Alien DJ's mothership. 13 bosses guard the state lines and the big crossings. The Alien DJ stole the record collection and stashed one record at every stop, so every win brings one home. Beat a boss to open the road ahead, and the state-line bosses bring new crew. 3 bonus night stops open up once you clear their daytime version.</p>
+  <div class="tour">
+    <div class="tourmap">
+      <div class="bezel"><button class="zoom" data-src="img/tourmap.png" data-title="Tour map" data-sub="The whole road trip, top to bottom" style="all:unset;cursor:zoom-in;display:block"><img class="px" src="img/tourmap.png" alt="The full tour map, from Missoula to the Pacific, with Hawaii and outer space in inset panels" width="1488" height="1141"></button></div>
+      <p class="cap">The real map of the western states, with Hawaii and outer space in inset panels. Tap to open it big.</p>
+    </div>
+    <ol class="stops" id="stops"></ol>
+  </div>
+</section>
+
+<section id="mountains">
+  <div class="eyebrow">56 levels</div>
+  <h2>The stops</h2>
+  <p class="lede">Each card shows the opening screen you see before the level starts, plus the whole map zoomed out. Open the map to see where Jak starts and where the golden carrot hides. Mountains, two downtown parades, a desert, the surf, the sea floor, the inside of the Titanic, a volcano and four stops in space.</p>
+  <div class="filters" role="group" aria-label="Filter mountains">
+    <button type="button" data-f="all" aria-pressed="true">All 56</button>
+    <button type="button" data-f="g:Montana" aria-pressed="false">Montana</button>
+    <button type="button" data-f="g:Wyoming" aria-pressed="false">Wyoming</button>
+    <button type="button" data-f="g:Colorado" aria-pressed="false">Colorado</button>
+    <button type="button" data-f="g:Utah" aria-pressed="false">Utah</button>
+    <button type="button" data-f="g:Idaho" aria-pressed="false">Idaho</button>
+    <button type="button" data-f="g:Washington" aria-pressed="false">Washington</button>
+    <button type="button" data-f="g:Oregon" aria-pressed="false">Oregon</button>
+    <button type="button" data-f="g:California" aria-pressed="false">California</button>
+    <button type="button" data-f="g:Pacific" aria-pressed="false">Pacific and the deep</button>
+    <button type="button" data-f="g:Hawaii" aria-pressed="false">Hawaii</button>
+    <button type="button" data-f="g:Space" aria-pressed="false">Outer space</button>
+    <button type="button" data-f="bonus" aria-pressed="false">Bonus nights</button>
+    <button type="button" data-f="night" aria-pressed="false">Night</button>
+    <button type="button" data-f="snow" aria-pressed="false">Snowfall</button>
+    <button type="button" data-f="fuel" aria-pressed="false">Gas cans</button>
+  </div>
+  <div class="mtns" id="mtns"></div>
+  <div class="rule" style="margin-top:22px">
+    <h3>Reading the badges</h3>
+    <div class="badges" style="margin:0;gap:14px 18px">
+      <span><span class="badge b-night">Night</span> lit by lift lights, with a starry summit sky</span>
+      <span><span class="badge b-blackout">Lights out</span> a pitch-black zone, only the headlamp shows the way</span>
+      <span><span class="badge b-snow">Snowfall</span> snow piles up into avalanches</span>
+      <span><span class="badge b-steep">Steep</span> slopes push Jak back; one surprise avalanche</span>
+      <span><span class="badge b-powder">Powder</span> deep snow slows Jak down</span>
+      <span><span class="badge b-fuel">Gas cans</span> the party generator burns fuel</span>
+      <span><span class="badge b-cliff">Cliffs</span> rock bands you have to drive around</span>
+      <span><span class="badge b-bowls">Open bowls</span> wide-open terrain above the trees</span>
+      <span><span class="badge b-parade">Parade</span> downtown: follow the route and beat the clock</span>
+      <span><span class="badge b-water">On the water</span> Jak floats on pontoons and slides, so steer early</span>
+      <span><span class="badge b-ocean">Underwater</span> the sea floor: currents, coral and sharks</span>
+      <span><span class="badge b-ship">Inside the Titanic</span> corridors, bulkheads and wrecked rooms</span>
+      <span><span class="badge b-glow">Glowing sea</span> a bioluminescent night where the Grumps are jellyfish</span>
+      <span><span class="badge b-bonus">Bonus night</span> opens once you clear the daytime stop</span>
+      <span><span class="badge b-sand">Desert</span> dunes, slip faces and dust devils</span>
+      <span><span class="badge b-lava">Volcano</span> lava bombs land wherever a red ring shows up</span>
+      <span><span class="badge b-space">Zero gravity</span> the stick fires a thruster and Jak drifts</span>
+    </div>
+  </div>
+</section>
+
+<section id="whatsnew">
+  <div class="eyebrow">This update</div>
+  <h2>What's new</h2>
+  <p class="lede">The latest changes to the tour, and the rules that go with them.</p>
+  <div class="rules">
+    <div class="rule">
+      <h3>Mini games in the main game <span class="new">NEW</span></h3>
+      <p>All six mini games now live inside The Legend of Jak, but only in developer mode.</p>
+      <ul>
+        <li>Enter the developer code (<b>CARROT1972</b>) under <b>ENTER CODE</b> on the player screen. A gold <b>GAMES</b> button shows up in the top bar right away.</li>
+        <li>The Games menu lists every mini game before you pick one: Ski Down, Sky Launch, Snowcat Sessions, Send It DH, Surf Sesh and Vehicle Recovery. It links to this field guide too.</li>
+        <li>You can also open it from <b>Missoula HQ</b> on the tour map and from inside the HQ Workshop (MINI GAMES button).</li>
+        <li>A mini game runs full screen. <b>&#9664; GAMES</b> goes back to the list, <b>BACK TO JAK</b> goes back to where you were. Each one keeps its own best scores on the device.</li>
+        <li>Turn developer mode off (DEV OFF) and the menu disappears again.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>Tap a stop, go straight in <span class="new">NEW</span></h3>
+      <ul>
+        <li>On the tour map, one tap on any open stop jumps straight to its opening card. No more waiting for Jak to drive there.</li>
+        <li>The PLAY and FIGHT buttons, and Space or Enter, work the same way.</li>
+        <li>Jak still shows up parked at the last stop you played.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>Stick: left or right <span class="new">CHANGED</span></h3>
+      <ul>
+        <li>The CENTER stick spot is gone from the main game. Pick LEFT or RIGHT on the player screen.</li>
+        <li>Anyone who had CENTER picked is moved to LEFT automatically.</li>
+        <li>The mini games keep their own stick settings.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>The record heist <span class="new">NEW</span></h3>
+      <ul>
+        <li>After the origin story, the Alien DJ steals BK Love and Zootech's whole record collection and runs one state ahead of you, dropping a record at every stop.</li>
+        <li>Win a stop to get its record back. The spinning record on the map turns into that stop's own icon, and the track goes into the <b>Record Crate</b> and the map soundtrack.</li>
+        <li>New stops in Idaho, Washington and Oregon, two new state-line bosses (Sasquatch and the Giant Beaver), and a run past Jupiter, Saturn, Uranus, Neptune and Pluto to the Record Cloud, the mothership and a two-round fight with the Alien DJ.</li>
+        <li>Jupiter has storm winds, Saturn is zero gravity, Uranus and Pluto have low gravity, and Neptune has supersonic wind.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="screens">
+  <div class="eyebrow">What you see</div>
+  <h2>Game screens</h2>
+  <p class="lede">Every stop along the way, from the title card to the dance floor.</p>
+  <div class="grid g4" id="screens-grid"></div>
+</section>
+
+<section id="howto">
+  <div class="eyebrow">Instruction booklet</div>
+  <h2>How to play</h2>
+  <p class="lede">The rules of the mountain, with the exact numbers the game uses. Distances are in game pixels; Jak is about 24 pixels long.</p>
+  <div class="rules">
+    <div class="rule">
+      <h3>Controls</h3>
+      <div class="keys">
+        <kbd>Arrows / WASD</kbd><span>Drive Jak. On a phone, drag the stick or anywhere on the screen. The stick sits on the LEFT or the RIGHT (pick it on the player screen); the old CENTER spot is gone.</span>
+        <kbd>Tour map</kbd><span>Tap any open stop and you go straight to its opening card. Jak no longer drives there first. Tap Missoula HQ or a locked stop to read about it.</span>
+        <kbd>L</kbd><span>Fire the laser once it is charged (needs Lasers from the Workshop).</span>
+        <kbd>Space</kbd><span>Start the level from the opening card, or BASS blast in a boss fight.</span>
+        <kbd>Click / tap</kbd><span>In boss fights, fires a laser at the spot you tap.</span>
+        <kbd>Pause</kbd><span>Stops everything. Full screen fills the whole display.</span>
+        <kbd>Bacon</kbd><span>Eats a Pocket Bacon to get a heart back.</span>
+        <kbd>Juice</kbd><span>Drinks a Carrot Juice: 10 seconds of invincibility.</span>
+        <kbd>F / G</kbd><span>Flaming Antlers and the Fogger, once you have bought them.</span>
+      </div>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_carrot.png" alt="">Carrots, joy and parties</h3>
+      <ul>
+        <li>Each disco carrot is worth <b>+100 points</b>, <b>+1 Workshop carrot</b> and <b>+20 joy</b> (25 with Solstice on the decks).</li>
+        <li>At <b>100 joy</b> (5 carrots) a dance party starts. Skiers and dancers you have picked up become the crowd.</li>
+        <li>A party lasts <b>5.4 s + 0.7 s per DJ Party point</b>, plus up to 4 s more for a big crew (0.2 s per crew member).</li>
+        <li>When the party ends you get <b>100 points per crew member</b> and 1 Workshop carrot per 3 crew (Acid Annie adds 2 more).</li>
+        <li>Grumps caught near the party turn into dancers for <b>+200 points</b>. A Yeti that gets caught is worth +500.</li>
+        <li>Every party makes the mountain harder: one more Grump shows up, and Jak and the Grumps both get faster.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_gold.png" alt="">The golden carrot</h3>
+      <p>After your <b>third party</b>, the golden carrot appears at the top of the mountain, marked on every trail map in this guide. Grab it to clear the mountain.</p>
+      <ul>
+        <li>Worth <b>+2,500 points</b> and <b>+10 Workshop carrots</b>.</li>
+        <li>Clearing a mountain opens the next stop on the tour map.</li>
+        <li>You can keep partying after you clear it to farm more carrots.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_skier.png" alt="">Crew and pull</h3>
+      <p>Skiers, boarders and dancers near Jak hop on and follow him. How far the music reaches:</p>
+      <ul>
+        <li>Starts at <b>46 px</b>, plus 0.7 px per point of joy and 2 px per crew member (up to 15).</li>
+        <li><b>+60 px</b> during a party, <b>+14 px</b> per Subwoofer upgrade.</li>
+        <li>DJ Pull changes it by 14 px per point above or below 3.</li>
+        <li>In a lights-out zone the pull drops to zero. Nobody can hear you in the dark.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_grump.png" alt="">Grumps and hearts</h3>
+      <ul>
+        <li>You start with <b>3 hearts</b>, plus one per Roll Cage (up to 5).</li>
+        <li>A Grump that catches Jak takes <b>1 heart</b> and knocks <b>2 crew</b> off the truck (only 1 with Big Rig Ray driving). Jak then flashes safe for 1.8 s.</li>
+        <li>Grumps chase at <b>20 px/s plus 6 per level</b>, topping out at 56. Deep Danny slows them by 20%.</li>
+        <li>Lose every heart and the run is over. Pocket Bacon or a Ski Patrol visit puts a heart back.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>How fast Jak drives</h3>
+      <ul>
+        <li>Base speed is <b>80 px/s plus 4 per level</b> (up to level 6), then +10% for each Tracks upgrade, times the driver's Speed.</li>
+        <li><b>Currents</b> (pale chevrons in the Pacific and on the Titanic) are the fast lane: 2.1 times normal speed.</li>
+        <li><b>Powder</b> slows Jak to between 59% and 95% depending on the driver.</li>
+        <li><b>Steep</b> slopes pull Jak back downhill. A grippy driver barely notices.</li>
+        <li>Out of gas: 65% speed. Frozen by a Yeti snowball: 45%.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_gascan.png" alt="">Fuel</h3>
+      <p>Only on mountains with the <span class="badge b-fuel">Gas cans</span> badge. The party generator runs on a 100-point tank.</p>
+      <ul>
+        <li>Burns <b>1.5 per second</b>, or <b>2.4</b> during a party. A full tank lasts about 67 s on its own.</li>
+        <li>Each Fuel Tank upgrade burns 18% less. Diesel Dot burns 30% less; Nitro Nell burns 15% more.</li>
+        <li><b>6 gas cans</b> per mountain, each worth <b>+60</b>.</li>
+        <li>Run dry and the power cuts out: the music stops, Jak slows to 65%, and one crew member walks off every 1.3 s.</li>
+      </ul>
+      <div class="meter" aria-hidden="true"><span style="width:60%;background:var(--carrot)"></span><span style="width:40%;background:var(--panel2)"></span></div>
+      <div class="meterlab"><span>1 gas can = 60% of the tank</span><span>100</span></div>
+    </div>
+    <div class="rule">
+      <h3>Night and lights out</h3>
+      <ul>
+        <li>Night stops: Marshall Mountain, Snow King, Steamboat, Sundance, Brighton, Mt Shasta.</li>
+        <li>Glowing night sea stops: Huntington Beach at Night, Catalina Channel at Night, The Pacific at Night. These are bonus levels that open once you clear the daytime stop.</li>
+        <li>At night the laser charges 20% faster and reaches 35% farther.</li>
+        <li>Brighton, Sundance and Steamboat have <b>lights-out zones</b>. Only Jak's headlamp cuts the dark, a few headlamp skiers glow in the trees, and Grumps carry flashlights so you can spot them.</li>
+        <li>The summit of a night mountain shows a starry sky and the moon.</li>
+      </ul>
+    </div>
+    <div class="rule wide">
+      <h3>Avalanches</h3>
+      <div class="grid g2" style="gap:24px">
+        <div>
+          <p><b>Snowfall mountains</b> (Montana Snowbowl, Bridger Bowl, Grand Targhee, Jackson Hole, Winter Park, Arapahoe Basin, Snowbird, Brighton, Palisades Tahoe, Kirkwood, Mammoth Mountain) have a <b>Snowpack</b> meter at the bottom of the screen. It fills in 2.5 minutes. At 80% you get a warning: SNOWPACK UNSTABLE. At 100% the mountain lets go, the meter resets, and it starts filling again.</p>
+          <p><b>Steep mountains</b> without snowfall get one surprise slide somewhere between 80 and 140 seconds in.</p>
+        </div>
+        <div>
+          <p><b>What happens:</b></p>
+          <ul>
+            <li><b>3.6 s of rumble.</b> The screen shakes harder and harder and chunks of snow fall.</li>
+            <li><b>2.4 s for the wall</b> to sweep down the screen.</li>
+            <li>If Jak is <b>more than 360 px above the base</b>, the slide carries him all the way down in a 3.2 s ride. Your crew holds on. You keep your carrots and hearts, but you have to climb back up.</li>
+            <li>If Jak is near the bottom already, it misses: WHEW!</li>
+          </ul>
+        </div>
+      </div>
+      <div class="meter" aria-hidden="true"><span style="width:53.3%;background:#5b8fd8"></span><span style="width:13.3%;background:#9fd8ff"></span><span style="width:33.3%;background:var(--grump)"></span></div>
+      <div class="meterlab"><span>Rumble 3.6 s</span><span>Wall 2.4 s</span><span>Ride to the base 3.2 s</span></div>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_yeti.png" alt="">Wildlife and help</h3>
+      <ul>
+        <li><b>Yeti:</b> first shows up 55 to 85 s in, then every 70 to 110 s. A snowball hit freezes Jak to 45% speed for 1.3 s and knocks one crew member off. Catch him in a party and he grooves for +500.</li>
+        <li><b>Polar bear:</b> about once a minute, never during a party. POLAR BEAR! flashes, you get 1.3 s to move, then it charges at 215 px/s. A swipe counts as a Grump hit.</li>
+        <li><b>Ski Patrol:</b> first visit 30 to 50 s in, then every 45 to 75 s. Restores a heart, or +200 points if you are already full. Unk's radio calls them twice as often.</li>
+        <li><b>Off the mountain</b> the polar bear's job goes to a rogue wave in the surf, a shark underwater and on the Titanic, dust devils in the desert and on Mars, space junk in orbit, rogue asteroids in the belt and meteors on the Moon. Ski Patrol becomes a lifeguard, a park ranger, a repair drone or a mission medic.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3><img src="img/sprite_booth.png" alt="">Base and summit</h3>
+      <ul>
+        <li>The <b>Info booth</b> at the base gives a new tip every time you drive up to it.</li>
+        <li>Park at the <b>lodge door</b> to open the Workshop mid-run.</li>
+        <li>Tip-giving skiers only hang out at the base and the summit, so the slopes stay clear.</li>
+        <li>Each level opens on a title card and waits for you to press Start.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>Parade days</h3>
+      <ul>
+        <li>Downtown Missoula and Downtown Bozeman are downtown parades. Follow the pink route and hit every checkpoint in order before the clock runs out.</li>
+        <li>The clock starts at 28 s and 38 s. Each checkpoint adds time (5 s and 6 s), +300 points and +2 Workshop carrots.</li>
+        <li>Floats roll along the route, some the wrong way, and block the street. Bump one and a crew member falls off. Cut around the block instead.</li>
+        <li>No Yeti, bears or Ski Patrol downtown. The sidewalks are packed and the neighbors hate the bass.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>On and under the water</h3>
+      <ul>
+        <li><b>Huntington Beach:</b> sets of waves roll in and push Jak back toward the sand. Get past the break; the gold is off the end of the pier.</li>
+        <li><b>Catalina Channel:</b> Jak floats on pontoons and slides, so steer early. Grumps row dinghies and the conga line rides jet skis.</li>
+        <li><b>The Pacific:</b> coral blocks Jak and every Grump. Currents are the fast lane, and a shark charges after a red ! warning.</li>
+        <li><b>The Titanic:</b> the same rules inside the wreck, with bulkheads instead of coral.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>Hawaii and outer space</h3>
+      <ul>
+        <li><b>Kilauea:</b> lava bombs land wherever a red ring shows up. Carrot Juice makes Jak immune for a few seconds.</li>
+        <li><b>Low Earth Orbit</b> and the <b>Asteroid Belt:</b> zero gravity. The stick fires a little thruster and Jak keeps drifting until you thrust the other way.</li>
+        <li><b>The Moon:</b> low gravity, so Jak slides and floats but slows down on his own. Watch for meteors.</li>
+        <li><b>Mars:</b> craters, mesas and dust devils, and the gold at Jezero Crater.</li>
+        <li><b>The outer planets:</b> storm winds push Jak around Jupiter, Saturn's rings are zero gravity, Uranus and Pluto have low gravity, and Neptune blows a supersonic wind.</li>
+        <li><b>The Record Cloud</b> and <b>the mothership:</b> the last two stops before the Alien DJ. The records float free in the Kuiper Belt, and the mothership's generator needs gas cans.</li>
+      </ul>
+    </div>
+    <div class="rule wide">
+      <h3>Results and ranks</h3>
+      <p>When you clear a mountain you get a rank. Add up the points:</p>
+      <div class="tbl"><table>
+        <thead><tr><th>How you did</th><th class="num">Points</th></tr></thead>
+        <tbody>
+          <tr><td>No hits taken</td><td class="num">+2</td></tr>
+          <tr><td>Only 1 hit taken</td><td class="num">+1</td></tr>
+          <tr><td>Biggest crew was 12 or more</td><td class="num">+1</td></tr>
+          <tr><td>Finished under par (2 minutes plus a bit more for bigger mountains)</td><td class="num">+1</td></tr>
+        </tbody>
+      </table></div>
+      <p style="margin-top:12px"><b>4 points = S rank</b>, 3 = A, 2 = B, anything less = C. Par is 120 s plus the mountain's area divided by 12,000. Marshall's par is about 172 s; Vail's is about 391 s.</p>
+    </div>
+  </div>
+</section>
+
+<section id="crew">
+  <div class="eyebrow">Driver plus DJ</div>
+  <h2>The crew</h2>
+  <p class="lede">Before each stop you pick one driver for Jak and one DJ for the decks. Stats run from 1 to 5. New crew join when you win a state-line boss.</p>
+  <div class="grid g2" style="margin-bottom:22px">
+    <div class="rule">
+      <h3>Driver stats</h3>
+      <ul>
+        <li><b>Speed</b>: top speed, from 97% (2) to 115% (5).</li>
+        <li><b>Powder</b>: speed in deep snow, from 59% (2) to 95% (5).</li>
+        <li><b>Grip</b>: how hard steep slopes pull Jak back. Grip 2 slides back at 43 px/s, Grip 5 only 20.</li>
+        <li><b>Fuel</b>: how fast the generator burns gas. Fuel 5 burns 30% less than Fuel 3.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>DJ stats</h3>
+      <ul>
+        <li><b>Pull</b>: how far the music reaches. Each point above 3 adds 14 px.</li>
+        <li><b>Party</b>: party length. Party 5 gives 8.9 s before the crew bonus.</li>
+        <li><b>Calm</b>: how close a Grump has to be to get converted. 64 px plus 12 per point, so Calm 5 reaches 124 px.</li>
+        <li><b>Lights</b>: laser range, from 82% (1) to 130% (5).</li>
+      </ul>
+    </div>
+  </div>
+  <h3 class="disp" style="margin-bottom:12px;color:var(--carrot)">Drivers</h3>
+  <div class="crew" id="drivers"></div>
+  <h3 class="disp" style="margin:28px 0 12px;color:var(--disco)">DJs</h3>
+  <div class="crew" id="djs"></div>
+</section>
+
+<section id="workshop">
+  <div class="eyebrow">Spend your carrots</div>
+  <h2>The Workshop</h2>
+  <p class="lede">Workshop carrots come from every carrot you eat, every party, golden carrots (+10) and boss wins (+30). Upgrades are permanent for your player. Each level of an upgrade costs more than the last.</p>
+  <div class="tbl"><table>
+    <thead><tr><th>Upgrade</th><th>What it does</th><th class="num">Level 1</th><th class="num">Level 2</th><th class="num">Level 3</th><th class="num">All levels</th></tr></thead>
+    <tbody id="shop"></tbody>
+  </table></div>
+  <div class="rules" style="margin-top:20px">
+    <div class="rule">
+      <h3>Lasers in detail</h3>
+      <ul>
+        <li>The laser charges on its own. When the LZR bar is full, press <kbd>L</kbd> or tap LASER and it locks onto the nearest Grump in range.</li>
+        <li>Charge time: <b>8 s</b> at level 1, <b>6 s</b> at level 2, <b>4.5 s</b> at level 3. 20% faster at night.</li>
+        <li>Range: 115, 140 or 165 px, scaled by the DJ's Lights stat, and 35% longer at night.</li>
+        <li>A zapped Grump is stunned for <b>2.6 s</b>.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>Pocket Bacon</h3>
+      <ul>
+        <li>Costs <span class="cost">6</span> carrots each. You can carry up to <b>3</b>.</li>
+        <li>Tap the bacon button any time, including boss fights, to get one heart back.</li>
+        <li>It will not go over your max hearts, so save it for when you are hurt.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="slots">
+  <div class="eyebrow">Feeling lucky</div>
+  <h2>Disco Slots</h2>
+  <p class="lede">Open from the tour map, a mountain's opening card or the results screen. Bet 2, 5 or 10 Workshop carrots. Three of a kind pays out and some give a boost for your next mountain. The lounge music is an original spy-jazz tune.</p>
+  <div class="grid g2" style="align-items:start">
+    <div class="tbl"><table>
+      <thead><tr><th>Spin</th><th class="num">Pays</th><th>Bonus next level</th><th class="num">Odds</th></tr></thead>
+      <tbody id="slotpay"></tbody>
+    </table></div>
+    <figure class="shot"><button class="zoom" data-src="img/screen_slots.png" data-title="Disco Slots"><div class="bezel"><img class="px" src="img/screen_slots.png" alt="The Disco Slots machine" width="768" height="672" loading="lazy"></div></button>
+      <figcaption><span>Every reel stop is random. Carrots show up most (30%), gold the least (6%).</span></figcaption></figure>
+  </div>
+  <div class="rules" style="margin-top:20px">
+    <div class="rule"><h3>The boosts</h3><ul>
+      <li><b>Carrot Rain</b>: 60% more carrots on the next mountain.</li>
+      <li><b>No Grumps</b>: the next mountain has no Grumps at all.</li>
+      <li><b>Turbo Tracks</b>: Jak drives 20% faster on the next mountain.</li>
+      <li>Boosts last for one mountain, then they are used up.</li></ul></div>
+    <div class="rule"><h3>The house edge</h3><p>On average a spin pays back about 80% of the bet, so the slots slowly eat carrots over time. The boosts are the real prize. A pair always pays 1.5 times the bet, rounded down, so a 2-carrot pair gives back 3.</p></div>
+  </div>
+</section>
+
+<section id="bosses">
+  <div class="eyebrow">13 fights</div>
+  <h2>The bosses</h2>
+  <p class="lede">Bosses wait at the state lines and the big crossings, from the Montana-Wyoming line to the nightclub inside the mothership. Each one is a little tougher than the last. Jak fights on the road at the line, on the sea floor, on a lava road or out in space.</p>
+  <div class="rules" style="margin-bottom:24px">
+    <div class="rule">
+      <h3>Jak's weapons</h3>
+      <ul>
+        <li><b>Laser</b>: click or tap anywhere to fire at that spot. <b>2 damage</b>, up to about 3.5 shots a second.</li>
+        <li><b>BASS</b>: a sound ring that grows to 84 px around Jak. <b>9 damage</b>, smashes every projectile it touches and shoves the boss back. Recharges in 1.8 s.</li>
+        <li>Jak moves freely around the road. You get your normal hearts plus Roll Cages, and Pocket Bacon works here too.</li>
+      </ul>
+    </div>
+    <div class="rule">
+      <h3>How every boss fights</h3>
+      <ul>
+        <li>Walks around the right side of the road and throws something at Jak every 1.4 to 2 s.</li>
+        <li>Every 5 to 7 s it winds up (you see it yell) and does its special move.</li>
+        <li>After a spin or charge it is <b>DIZZY for 1.5 s</b>: all hits do <b>double damage</b>. This is the moment to unload.</li>
+        <li>At half health it hits <b>Phase 2</b>: walks 50% faster, throws every 0.9 to 1.3 s in a fan, and does its special more often.</li>
+        <li>Touching the boss or getting hit costs a heart, then Jak is safe for 1.3 s.</li>
+      </ul>
+    </div>
+  </div>
+  <div id="bosslist"></div>
+</section>
+
+<section id="cast">
+  <div class="eyebrow">Who's on the mountain</div>
+  <h2>Cast of characters</h2>
+  <p class="lede">The sprites, blown up so you can see every pixel.</p>
+  <div class="sprites" id="sprites"></div>
+</section>
+
+<section id="minis">
+  <div class="eyebrow">Side quests</div>
+  <h2>Mini games</h2>
+  <p class="lede">Six mini games, all playable inside the main game in developer mode. Enter the code on the player screen, then tap <b>GAMES</b> in the top bar, or open <b>MINI GAMES</b> at Missoula HQ or in the HQ Workshop. The menu lists them all before you pick one.</p>
+  <div class="rule" style="margin-bottom:20px">
+    <h3>Opening a mini game</h3>
+    <ul>
+      <li>Each one runs full screen over the main game with its own music, sound button and full screen button.</li>
+      <li><b>&#9664; GAMES</b> goes back to the list; <b>BACK TO JAK</b> goes back to the map, the HQ or the Workshop, wherever you came from. Esc does the same as &#9664; GAMES on a keyboard.</li>
+      <li>Best scores, the rider and the last run you picked are saved per mini game on that device.</li>
+    </ul>
+  </div>
+  <div class="minis">
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_skidown_menu.png" data-title="Ski Down" data-sub="Menu"><img class="px" src="img/mini_skidown_menu.png" alt="Ski Down menu" loading="lazy"></button><button class="zoom" data-src="img/mini_skidown_play.png" data-title="Ski Down" data-sub="Playing"><img class="px" src="img/mini_skidown_play.png" alt="Ski Down being played" loading="lazy"></button></div>
+      <h3>Ski Down</h3><div class="tag">SKIING</div><p>Hop off the back of Jak at the top and point it downhill. Steer with the stick or drag the screen, push down to tuck and up to slow down. Hold a direction in the air and hit TRICK. Every run has its own avalanche odds.</p>
+      <dl class="facts"><dt>Riders</dt><dd>BK Love, Zootech, UNK, Ritz Bitz</dd><dt>Runs</dt><dd>Marshall Mtn, Bridger Bowl, Snowbird, Secret Pillows (cliff and pillow drops), The Chutes (a narrow couloir), Mogul Land, Jump Park (kickers, rails and boxes)</dd><dt>Night runs</dt><dd>All seven runs again, under the lights</dd></dl>
+    </article>
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_skylaunch_menu.png" data-title="Sky Launch" data-sub="Menu"><img class="px" src="img/mini_skylaunch_menu.png" alt="Sky Launch menu" loading="lazy"></button><button class="zoom" data-src="img/mini_skylaunch_play.png" data-title="Sky Launch" data-sub="Playing"><img class="px" src="img/mini_skylaunch_play.png" alt="Sky Launch being played" loading="lazy"></button></div>
+      <h3>Sky Launch</h3><div class="tag">PARAGLIDING AND SPEED FLYING</div><p>Ski off the launch under a wing. Space inflates it, then SEND IT. Stick down-left brakes, straight down slows, down-right dives; pull out of a dive to swoop back up. Tap TRICK for a wingover, hold it for 360s, and hold plus dive to spiral.</p>
+      <dl class="facts"><dt>Pilots</dt><dd>BK Love, Zootech, UNK, Ritz Bitz</dd><dt>Wings</dt><dd>Paraglider (long and floaty) or Speed Wing (fast and low)</dd><dt>Sites</dt><dd>Training Hill, Marshall Mtn, Bridger Ridge, Snowbird</dd><dt>Night flights</dt><dd>Marshall Mtn, Bridger Ridge, Snowbird</dd></dl>
+    </article>
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_sessions_menu.png" data-title="Snowcat Sessions" data-sub="Menu"><img class="px" src="img/mini_sessions_menu.png" alt="Snowcat Sessions menu" loading="lazy"></button><button class="zoom" data-src="img/mini_sessions_play.png" data-title="Snowcat Sessions" data-sub="Playing"><img class="px" src="img/mini_sessions_play.png" alt="Snowcat Sessions being played" loading="lazy"></button></div>
+      <h3>Snowcat Sessions</h3><div class="tag">DJ GAME</div><p>Step inside the Disco Carrot booth and play a five-mix set. Pick the next track, keep it in time with the pitch fader and the jog wheel, read the crowd out the front window, and never let the music go to dead air.</p>
+      <dl class="facts"><dt>DJs</dt><dd>BK Love (house: tracks play 10 s longer), Zootech, Ritz Bitz</dd><dt>Gigs</dt><dd>Apres Set, Night Gig</dd></dl>
+    </article>
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_sendit_menu.png" data-title="Send It DH" data-sub="Menu"><img class="px" src="img/mini_sendit_menu.png" alt="Send It DH menu" loading="lazy"></button><button class="zoom" data-src="img/mini_sendit_play.png" data-title="Send It DH" data-sub="Playing"><img class="px" src="img/mini_sendit_play.png" alt="Send It DH being played" loading="lazy"></button></div>
+      <h3>Send It DH</h3><div class="tag">DOWNHILL MOUNTAIN BIKE</div><p>Four trails at a resort bike park. Pedal, pump, hop and send it: berms, tables, rock gardens and big drops. On the gnarlier trails the Grumps are out hiking.</p>
+      <dl class="facts"><dt>Riders</dt><dd>The whole tour crew: all the drivers and DJs, plus Party Robbins</dd><dt>Trails</dt><dd>Carrot Cruiser (green: flowy rollers and small tables), Berm Burner, Rock Garden, Jackalope Line (the pro line, huge gaps)</dd></dl>
+    </article>
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_surf_menu.png" data-title="Surf Sesh" data-sub="Menu"><img class="px" src="img/mini_surf_menu.png" alt="Surf Sesh menu" loading="lazy"></button><button class="zoom" data-src="img/mini_surf_play.png" data-title="Surf Sesh" data-sub="Playing"><img class="px" src="img/mini_surf_play.png" alt="Surf Sesh being played" loading="lazy"></button></div>
+      <h3>Surf Sesh</h3><div class="tag">SURFING, HUNTINGTON BEACH</div><p>Paddle out and ride sets. Stick up to climb the face, down to drop. TRICK pops you off the lip, throws snaps and cutbacks lower on the wave, and chains spins and flips in the air. Get barreled, shoot the pier, pick up paddlers and throw party waves.</p>
+      <dl class="facts"><dt>Surfers</dt><dd>The whole tour crew: all the drivers and DJs, plus Party Robbins</dd><dt>Spots</dt><dd>Bolsa Chica, HB Pier South, HB Pier North, Hurricane Swell</dd></dl>
+    </article>
+    <article class="mini">
+      <div class="mshots"><button class="zoom" data-src="img/mini_recovery_menu.png" data-title="Vehicle Recovery" data-sub="Menu"><img class="px" src="img/mini_recovery_menu.png" alt="Vehicle Recovery menu" loading="lazy"></button><button class="zoom" data-src="img/mini_recovery_play.png" data-title="Vehicle Recovery" data-sub="Playing"><img class="px" src="img/mini_recovery_play.png" alt="Vehicle Recovery being played" loading="lazy"></button></div>
+      <h3>Vehicle Recovery</h3><div class="tag">TOWING</div><p>Jak takes the tow calls. Roll out, park, anchor Jak, run the line and hook it to a point that takes the full force, rig the safety, then start the pull and move Jak to winch the rig back onto the road.</p>
+      <dl class="facts"><dt>Riggers</dt><dd>BK Love, Zootech, UNK (snowcat pilot: 4 hearts, more grip), Ritz Bitz</dd><dt>Calls</dt><dd>Sedan, Snowmobile, Jeep, Pickup, Shuttle Bus, Groomer</dd></dl>
+    </article>
+  </div>
+</section>
+
+<footer>The Legend of Jak is a Disco Carrot game, playable at discocarrot.com/game. Numbers in this guide come straight from the current version of the game and may change as the tour grows. Updated October 26, 2026: all six mini games in the main game (developer mode), tap-to-enter stops, left or right stick only, the record heist, Idaho, Washington, Oregon, the outer planets and the Alien DJ.</footer>
+</div>
+
+<div class="lb fit" id="lb" hidden role="dialog" aria-modal="true" aria-labelledby="lbTitle">
+  <div class="bar">
+    <div><b id="lbTitle"></b> <span id="lbSub"></span></div>
+    <div class="acts"><button type="button" id="lbSize">Actual size</button><button type="button" id="lbClose">Close</button></div>
+  </div>
+  <div class="stage" id="lbStage"><img id="lbImg" alt=""></div>
+</div>
+
+<script>
+const TOUR=[{"id":"marshall","song":"disco","grumps":2,"w":560,"h":1120,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"green","name":"Marshall Mountain","region":"Montana","group":"Montana","fuel":false,"bonus":false,"lodge":"Base Lodge","lifts":["TRIPLE CHAIR","T-BAR"],"hazards":"NIGHT SKIING","blurb":"The home hill outside Missoula, under the night-skiing lights. Work the runs off the triple chair and T-bar and find the summit.","gold":"At the Summit"},{"id":"missoula","song":"garage","grumps":2,"w":700,"h":1160,"night":false,"glow":false,"ocean":false,"ship":false,"city":true,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":7,"floats":5,"time":28,"rate":"green","name":"Downtown Missoula","region":"Montana","group":"Montana","fuel":false,"bonus":false,"lodge":"The Workshop","lifts":[],"hazards":"PARADE DAY / 7 CHECKPOINTS","blurb":"Parade day downtown! Lead the parade from the old Northern Pacific depot through all seven checkpoints before the clock runs out. Floats clog the route, so cut around the block when one is in the way. Finish at Caras Park on the Clark Fork.","gold":"At Caras Park","bonus_s":5},{"id":"snowbowl","song":"electro","grumps":3,"w":820,"h":2000,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"green","name":"Montana Snowbowl","region":"Montana","group":"Montana","fuel":false,"bonus":false,"lodge":"Base Lodge","lifts":["GRIZZLY CHAIR","LAVALLE CREEK","BEGINNER TOW"],"hazards":"STEEP RUNS","blurb":"One big steep bowl above Missoula. Black runs drag Jak downhill, so climb on the blues and greens beside Grizzly and LaValle Creek.","gold":"At the Summit"},{"id":"lookout","song":"dubstep","grumps":3,"w":760,"h":1800,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":true,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"blue","name":"Lookout Pass","region":"Idaho / Montana","group":"Montana","fuel":false,"bonus":false,"lodge":"The Lodges","lifts":["PEAK 1 QUAD","SUCCESS","TIMBERWOLF","NORTHSTAR","EAGLE PEAK QUAD"],"hazards":"DEEP POWDER","blurb":"Right off I-90 on the Idaho-Montana line, two time zones and buried in snow. Deep powder bogs Jak down, so stick to the groomers.","gold":"On Eagle Peak"},{"id":"bridger","song":"techno","grumps":4,"w":640,"h":1600,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"blue","name":"Bridger Bowl","region":"Montana","group":"Montana","fuel":true,"bonus":false,"lodge":"Jim Bridger Lodge","lifts":["BRIDGER","SCHLASMAN'S","PIERRE'S KNOB","POWDER PARK","ALPINE","VIRGINIA CITY","SUNNYSIDE","SNOWFLAKE"],"hazards":"LEARN THE ROPES","blurb":"Eight lifts, Deer Park to the Ridge. The generator drinks gas: grab red cans (or buy gas at the shop) or the music dies and your crew drifts off.","gold":"On the Ridge"},{"id":"bozeman","song":"house","grumps":4,"w":1200,"h":640,"night":false,"glow":false,"ocean":false,"ship":false,"city":true,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":9,"floats":6,"time":38,"rate":"blue","name":"Downtown Bozeman","region":"Montana","group":"Montana","fuel":false,"bonus":false,"lodge":"The Workshop","lifts":[],"hazards":"PARADE DAY / 9 CHECKPOINTS","blurb":"Parade on Main Street! Roll east from Grand Avenue past the Baxter and the Ellen Theatre, loop back on Mendenhall and Babcock, and beat the clock through nine checkpoints. Dodge the floats and finish at Bogert Park.","gold":"At Bogert Park","bonus_s":6},{"id":"bigsky","song":"peak","grumps":5,"w":1040,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"black","name":"Big Sky","region":"Montana","group":"Montana","fuel":true,"bonus":false,"lodge":"Mountain Village","lifts":["LONE PEAK TRAM","POWDER SEEKER","CHALLENGER","SWIFT CURRENT","EXPLORER","DAKOTA","SHEDHORN","RAMCHARGER 8","THUNDER WOLF","SOUTHERN COMFORT","SIX SHOOTER"],"hazards":"DEEP POWDER / STEEP RUNS","blurb":"The big one: Lone Peak, Andesite and Moonlight Basin. Steep, deep, and a long way from a gas can. The golden carrot waits on Lone Peak.","gold":"On Lone Peak"},{"id":"boss_mtut","boss":true,"name":"Grump King"},{"id":"targhee","song":"liquid","grumps":4,"w":900,"h":1800,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":false,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"blue","name":"Grand Targhee","region":"Wyoming","group":"Wyoming","fuel":true,"bonus":false,"lodge":"Targhee Base","lifts":["DREAMCATCHER","BLACKFOOT","SHOSHONE","SACAJAWEA","COLTER"],"hazards":"DEEP POWDER","blurb":"The snowy west side of the Tetons. Dreamcatcher to Fred's Mountain, deep powder everywhere, and a thirsty generator.","gold":"Atop Fred's Mountain"},{"id":"jackson","song":"peak","grumps":5,"w":1000,"h":2400,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"black","name":"Jackson Hole","region":"Wyoming","group":"Wyoming","fuel":false,"bonus":false,"lodge":"Teton Village","lifts":["AERIAL TRAM","BRIDGER GONDOLA","THUNDER","SUBLETTE","TETON","CASPER","APRES VOUS"],"hazards":"STEEP RUNS","blurb":"Big Red, the Aerial Tram, to Rendezvous Mountain. Corbet's Couloir, Rendezvous Bowl and 4,000 feet of steep. The snow is piling up.","gold":"Atop Rendezvous"},{"id":"snowking","song":"disco","grumps":5,"w":600,"h":1300,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"black","name":"Snow King","region":"Wyoming","group":"Wyoming","fuel":false,"bonus":false,"lodge":"Snow King Lodge","lifts":["SUMMIT","RAFFERTY","COUGAR"],"hazards":"NIGHT SKIING / STEEP RUNS","blurb":"Jackson's town hill: short, steep and lit at night. Exhibition drops right off the summit above the Town Square. Last stop in Wyoming.","gold":"Atop Snow King"},{"id":"boss_berthoud","boss":true,"name":"Snowman"},{"id":"boss_wyco","boss":true,"name":"Polar Bear"},{"id":"steamboat","song":"house","grumps":5,"w":1000,"h":2300,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":true,"blackout":true,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"black","name":"Steamboat","region":"Colorado","group":"Colorado","fuel":false,"bonus":false,"lodge":"Gondola Square","lifts":["STEAMBOAT GONDOLA","CHRISTIE PEAK","STORM PEAK","SUNDOWN","MORNINGSIDE","PONY EXPRESS"],"hazards":"NIGHT SKIING / DEEP POWDER","blurb":"Champagne Powder under the lights. Mt Werner up top, Shadows and Closets in the trees, and the Sundown side goes dark after hours.","gold":"Atop Mt Werner"},{"id":"winterpark","song":"electro","grumps":5,"w":1100,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"black","name":"Winter Park","region":"Colorado","group":"Colorado","fuel":false,"bonus":false,"lodge":"Winter Park Village","lifts":["ZEPHYR EXPRESS","SUNNYSIDE","PANORAMIC EXPRESS","SUPER GAUGE EXPRESS","ESKIMO EXPRESS"],"hazards":"STEEP RUNS","blurb":"Mary Jane's bumps, Parsenn Bowl above treeline and a whole lot of snow. Watch the snowpack.","gold":"Atop Parsenn Bowl"},{"id":"abasin","song":"breaks","grumps":6,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":true,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Arapahoe Basin","region":"Colorado","group":"Colorado","fuel":true,"bonus":false,"lodge":"A-Basin Base","lifts":["BLACK MOUNTAIN EXPRESS","LENAWEE MOUNTAIN","PALLAVICINI","ZUMA","BEAVERS"],"hazards":"STEEP RUNS","blurb":"The Legend, just over Loveland Pass. Pallavicini, Montezuma Bowl and the East Wall towering over it all. Steep, deep and snowing.","gold":"Atop the East Wall"},{"id":"breck","song":"trance","grumps":6,"w":1200,"h":2400,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Breckenridge","region":"Colorado","group":"Colorado","fuel":true,"bonus":false,"lodge":"Peak 8 Base","lifts":["IMPERIAL EXPRESS","T-BAR","COLORADO SUPERCHAIR","INDEPENDENCE","FALCON","KENSHO"],"hazards":"STEEP RUNS","blurb":"Peak 6 to Peak 10 and the Imperial Express, the highest chairlift in North America. Big bowls up top and a long way from gas.","gold":"On Imperial Bowl"},{"id":"vail","song":"dnb","grumps":7,"w":1300,"h":2500,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Vail","region":"Colorado","group":"Colorado","fuel":false,"bonus":false,"lodge":"Vail Village","lifts":["GONDOLA ONE","MOUNTAINTOP EXPRESS","HIGH NOON EXPRESS","ORIENT EXPRESS","NORTHWOODS EXPRESS","EAGLE BAHN GONDOLA"],"hazards":"LEARN THE ROPES","blurb":"The legendary Back Bowls: miles of wide-open snow. Riva Ridge, Prima and Mid-Vail. Huge, open and fast. Then it's south over Tennessee Pass to the dunes.","gold":"In the Back Bowls"},{"id":"boss_cactus","boss":true,"name":"Giant Cactus"},{"id":"dunes","song":"dubstep","grumps":7,"w":1000,"h":2000,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"sand","snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Great Sand Dunes","region":"Colorado","group":"Colorado","fuel":false,"bonus":false,"lodge":"Visitor Center","lifts":[],"hazards":"SAND DUNES / SLIP FACES / DUST DEVILS","blurb":"Great Sand Dunes National Park, at the foot of the Sangre de Cristo Mountains: the tallest dunes in North America, and one of the few places in the US where you can ski and sandboard on sand. Slip faces drag Jak downhill and dust devils spin across the dunefield. The golden carrot waits on Star Dune.","gold":"Atop Star Dune"},{"id":"boss_teton","boss":true,"name":"Yeti"},{"id":"sundance","song":"garage","grumps":6,"w":760,"h":1800,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":true,"cliff":true,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Sundance","region":"Utah","group":"Utah","fuel":false,"bonus":false,"lodge":"Sundance Base","lifts":["OUTLAW EXPRESS","JAKE'S","STAIRWAY","RED'S","HANDLE TOW"],"hazards":"NIGHT SKIING","blurb":"Night skiing below Mt Timpanogos. Outlaw and Jake's are lit, Bearclaw Cabin up top, Red's and Stairway on the dark back side.","gold":"Atop Red's"},{"id":"snowbird","song":"dnb","grumps":6,"w":1100,"h":2400,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Snowbird","region":"Utah","group":"Utah","fuel":true,"bonus":false,"lodge":"Snowbird Center","lifts":["AERIAL TRAM","PERUVIAN EXPRESS","PERUVIAN TUNNEL","MINERAL BASIN EXPRESS","BALDY EXPRESS","GADZOOM","LITTLE CLOUD","MID-GAD","GAD 2","WILBERE","BABY THUNDER"],"hazards":"DEEP POWDER / STEEP RUNS","blurb":"The Tram to Hidden Peak, the Cirque, Gad Valley, and the Peruvian Tunnel to Mineral Basin. Everything at once.","gold":"On Hidden Peak"},{"id":"alta","song":"breaks","grumps":7,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Alta","region":"Utah","group":"Utah","fuel":false,"bonus":false,"lodge":"Wildcat Base","lifts":["COLLINS","WILDCAT","SUNNYSIDE","ALBION","SUPREME","SUGARLOAF"],"hazards":"DEEP POWDER / STEEP RUNS / SKIERS ONLY","blurb":"Skiers only, always has been. Collins Gulch, Albion Basin, the Baldy Chutes and High Rustler. Deep and steep.","gold":"On Mt Baldy"},{"id":"brighton","song":"trance","grumps":7,"w":900,"h":1900,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":true,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Brighton","region":"Utah","group":"Utah","fuel":false,"bonus":false,"lodge":"Molly Green's","lifts":["CREST EXPRESS","GREAT WESTERN","MAJESTIC","SNAKE CREEK","MILLY EXPRESS","EXPLORER"],"hazards":"NIGHT SKIING / STEEP RUNS","blurb":"Big Cottonwood Canyon under the lights. Majestic trees, Millicent steeps, and 200+ lit acres of night skiing. Lasers help.","gold":"On Great Western"},{"id":"snowbasin","song":"house","grumps":7,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Snowbasin","region":"Utah","group":"Utah","fuel":true,"bonus":false,"lodge":"Earl's Lodge","lifts":["NEEDLES EXPRESS","STRAWBERRY EXPRESS","ALLEN PEAK TRAM","JOHN PAUL EXPRESS","WILDCAT EXPRESS","MIDDLE BOWL","DEMOISY EXPRESS","LITTLE CAT"],"hazards":"STEEP RUNS","blurb":"Mount Ogden, north of Salt Lake. Gondolas, the Allen Peak Tram and the John Paul downhill. The generator is thirsty again. Utah's last stop before Idaho.","gold":"On Mt Ogden"},{"id":"boss_utwy","boss":true,"name":"Grump Queen"},{"id":"sunvalley","song":"house","grumps":7,"w":1100,"h":2400,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Sun Valley","region":"Idaho","fuel":false,"bonus":false,"lodge":"River Run Lodge","lifts":["RIVER RUN","LOOKOUT EXPRESS","SEATTLE RIDGE","WARM SPRINGS"],"hazards":"LEARN THE ROPES","blurb":"Idaho! Bald Mountain above Ketchum, home of the first chairlifts in the world back in 1936. Long, fast groomers off Baldy, the Warm Springs side and the Seattle Ridge bowls.","gold":"Atop Bald Mountain","group":"Idaho"},{"id":"bogus","song":"garage","grumps":7,"w":900,"h":1900,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Bogus Basin","region":"Idaho","fuel":false,"bonus":false,"lodge":"Simplot Lodge","lifts":["DEER POINT","SUPERIOR","PINE CREEK"],"hazards":"NIGHT SKIING","blurb":"Boise's hill, up a twisty mountain road. Deer Point and Shafer Butte under the lights: one of the biggest night-skiing mountains in the country.","gold":"Atop Shafer Butte","group":"Idaho"},{"id":"brundage","song":"liquid","grumps":7,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":false,"powder":true,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Brundage Mountain","region":"Idaho","fuel":true,"bonus":false,"lodge":"Brundage Lodge","lifts":["BLUEBIRD EXPRESS","CENTENNIAL","LAKEVIEW"],"hazards":"DEEP POWDER","blurb":"High above McCall and Payette Lake, with views all the way to the Seven Devils. Known for some of the deepest snow in Idaho, and a long way from a gas can.","gold":"Atop Brundage","group":"Idaho"},{"id":"schweitzer","song":"trance","grumps":7,"w":1200,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Schweitzer","region":"Idaho","fuel":false,"bonus":false,"lodge":"Selkirk Lodge","lifts":["BASIN EXPRESS","GREAT ESCAPE","STELLA","LAKEVIEW"],"hazards":"LEARN THE ROPES","blurb":"Way up north above Sandpoint and Lake Pend Oreille: the biggest ski area in Idaho. Two huge bowls, front and back, and the Stella six-pack. Idaho's last stop before Washington.","gold":"Atop Schweitzer Peak","group":"Idaho"},{"id":"boss_idwa","boss":true,"name":"Sasquatch"},{"id":"missionridge","song":"electro","grumps":7,"w":1000,"h":2000,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mission Ridge","region":"Washington","fuel":false,"bonus":false,"lodge":"Mission Ridge Lodge","lifts":["CHAIR 1","CHAIR 2","CHAIR 3"],"hazards":"LEARN THE ROPES","blurb":"Washington! The sunny, dry side of the Cascades above Wenatchee, with views over the Columbia River. Look for the old B-24 bomber wreck on Bomber Bowl.","gold":"Atop Mission Ridge","group":"Washington"},{"id":"stevens","song":"peak","grumps":7,"w":1100,"h":2300,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Stevens Pass","region":"Washington","fuel":false,"bonus":false,"lodge":"Granite Peaks Lodge","lifts":["HOGSBACK","SKYLINE","SEVENTH HEAVEN","JUPITER"],"hazards":"NIGHT SKIING","blurb":"Right on the crest of the Cascades on US-2. Seventh Heaven up top, Mill Valley on the back side, and night skiing under the lights.","gold":"In Seventh Heaven","group":"Washington"},{"id":"baker","song":"dnb","grumps":7,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mt Baker","region":"Washington","fuel":false,"bonus":false,"lodge":"Heather Meadows","lifts":["CHAIR 8","CHAIR 7","CHAIR 6"],"hazards":"DEEP POWDER / STEEP RUNS","blurb":"Mt Baker once got 1,140 inches of snow in a single winter, a world record. Steep, deep and still snowing, with Mt Shuksan towering over the whole place.","gold":"Atop Panorama Dome","group":"Washington"},{"id":"crystal","song":"breaks","grumps":8,"w":1200,"h":2500,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Crystal Mountain","region":"Washington","fuel":true,"bonus":false,"lodge":"Crystal Lodge","lifts":["MT RAINIER GONDOLA","CHINOOK EXPRESS","GREEN VALLEY"],"hazards":"STEEP RUNS","blurb":"The biggest ski area in Washington, right next to Mt Rainier. Ride the gondola to the summit and drop into the Southback. Washington's last stop before Oregon.","gold":"Atop Crystal Summit","group":"Washington"},{"id":"boss_waor","boss":true,"name":"Giant Beaver"},{"id":"timberline","song":"disco","grumps":7,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Timberline","region":"Oregon","fuel":false,"bonus":false,"lodge":"Timberline Lodge","lifts":["MAGIC MILE","PALMER","STORMIN NORMAN","PUCCI"],"hazards":"LEARN THE ROPES","blurb":"Oregon! Timberline on the shoulder of Mt Hood, where you can ski almost all year on the Palmer Snowfield. The golden carrot waits up on Palmer.","gold":"On the Palmer Snowfield","group":"Oregon"},{"id":"bachelor","song":"techno","grumps":8,"w":1200,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mt Bachelor","region":"Oregon","fuel":true,"bonus":false,"lodge":"West Village","lifts":["PINE MARTEN","SKYLINER","SUMMIT EXPRESS"],"hazards":"STEEP RUNS","blurb":"An old volcano outside Bend with a lift right to the 9,065-foot summit. Ski off the top in any direction you like, and keep the generator fed.","gold":"Atop Mt Bachelor","group":"Oregon"},{"id":"ashland","song":"garage","grumps":8,"w":900,"h":1900,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mt Ashland","region":"Oregon","fuel":false,"bonus":false,"lodge":"Mt Ashland Lodge","lifts":["COMER","WINDSOR","ASHLANDER"],"hazards":"LEARN THE ROPES","blurb":"High in the Siskiyou Mountains, just above the California line. The Bowl, the Ashlander chair and tight trees. Oregon's last stop.","gold":"Atop Mt Ashland","group":"Oregon"},{"id":"boss_final","boss":true,"name":"Giant Pine"},{"id":"shasta","song":"trance","grumps":7,"w":860,"h":1800,"night":true,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mt Shasta","region":"California","group":"California","fuel":false,"bonus":false,"lodge":"Main Lodge","lifts":["DOUGLAS","MARMOT","COYOTE BUTTE"],"hazards":"NIGHT SKIING","blurb":"California! Mt Shasta Ski Park, right under a 14,000-foot volcano. Night skiing off Douglas, Marmot and Coyote Butte, with the big mountain glowing white above it all.","gold":"Atop Coyote Butte"},{"id":"palisades","song":"peak","grumps":8,"w":1100,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Palisades Tahoe","region":"California","group":"California","fuel":true,"bonus":false,"lodge":"The Village","lifts":["AERIAL TRAM","FUNITEL","KT-22","SIBERIA","HEADWALL","GRANITE CHIEF","SHIRLEY LAKE"],"hazards":"STEEP RUNS","blurb":"Olympic Valley above Lake Tahoe: the Aerial Tram to High Camp, KT-22, Siberia Bowl and the Headwall up to Granite Chief. Sierra cement is falling and the generator is thirsty.","gold":"Atop Granite Chief"},{"id":"kirkwood","song":"breaks","grumps":8,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":true,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Kirkwood","region":"California","group":"California","fuel":false,"bonus":false,"lodge":"Timber Creek","lifts":["CORNICE EXPRESS","THE WALL","SOLITUDE","SUNRISE","NORTH BOWL"],"hazards":"DEEP POWDER / STEEP RUNS","blurb":"Deep in the Sierra off CA-88: The Wall, Chair 10, Thimble Peak and more snow than anywhere around Tahoe. Steep, deep, and the snowpack keeps loading.","gold":"On Thimble Peak"},{"id":"mammoth","song":"peak","grumps":8,"w":1200,"h":2500,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":true,"steep":true,"powder":false,"blackout":false,"cliff":false,"bowls":true,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mammoth Mountain","region":"California","group":"California","fuel":true,"bonus":false,"lodge":"Main Lodge","lifts":["PANORAMA GONDOLA","PANORAMA II","BROADWAY","CANYON EXPRESS","CLIMAX"],"hazards":"STEEP RUNS","blurb":"The east side of the Sierra: the Panorama Gondola to the 11,053-foot summit, Cornice Bowl, Climax and Dave's Run. Huge, high and a long way from a gas can.","gold":"Atop Mammoth"},{"id":"bigbear","song":"house","grumps":8,"w":1000,"h":2000,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Big Bear Mountain","region":"California","group":"California","fuel":false,"bonus":false,"lodge":"Base Lodge","lifts":["SKYLINE","SUMMIT EXPRESS","BEAR PEAK"],"hazards":"LEARN THE ROPES","blurb":"Big Bear Mountain, above Big Bear Lake in Southern California. Sunshine, terrain parks and The Wall at Snow Summit. California's last stop before Jak rolls into the Pacific.","gold":"Atop Bear Peak"},{"id":"huntington","song":"breaks","grumps":8,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"surf","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":true,"checks":0,"floats":0,"time":0,"rate":"double","name":"Huntington Beach","region":"California","group":"California","fuel":false,"bonus":false,"lodge":"Surf Shop","lifts":[],"hazards":"SURF ZONE / SET WAVES / LIFE PRESERVER GRUMPS","blurb":"Surf City USA! Jak rolls down out of the mountains and straps on his pontoons at Huntington Beach. Surfers paddle out to join the party and ride along behind Jak on stand-up paddle boards, Grumps bob around in life preservers, and sets of waves roll in and push you back toward the sand. Get out past the break and find the golden carrot off the end of the pier.","gold":"Off the End of the Pier"},{"id":"huntington_night","song":"trance","grumps":8,"w":1000,"h":2200,"night":false,"glow":true,"ocean":false,"ship":false,"city":false,"theme":"surf","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":true,"checks":0,"floats":0,"time":0,"rate":"double","name":"Huntington Beach at Night","region":"California","group":"California","fuel":false,"bonus":true,"lodge":"Surf Shop","lifts":[],"hazards":"NIGHT SURF / GLOWING WAVES / LIFE PRESERVER GRUMPS","blurb":"Bonus night session at Huntington Beach. The red tide is in, so every breaking wave glows electric blue and Jak's wake sparkles behind him. The Grumps out here are grumpy glowing jellyfish drifting through the lineup, dolphins leave trails of light, and the surfers carry glow sticks so you can find them in the dark.","gold":"Off the End of the Pier"},{"id":"catalina","song":"disco","grumps":8,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"surf","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":true,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Catalina Channel","region":"Catalina Channel","group":"Pacific","fuel":false,"bonus":false,"lodge":"Boat Launch","lifts":[],"hazards":"OPEN WATER / DINGHY GRUMPS / ROGUE WAVES","blurb":"Jak straps on a pair of pontoons and floats out across the Catalina Channel. Grumps row around in dinghies, and every partier who joins the conga line rides a jet ski. Jak slides on the water, so steer early, and watch for rogue waves. The golden carrot waits at Avalon Harbor on Catalina Island.","gold":"At Avalon Harbor"},{"id":"catalina_night","song":"liquid","grumps":8,"w":1000,"h":2200,"night":false,"glow":true,"ocean":false,"ship":false,"city":false,"theme":"surf","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":true,"checks":0,"floats":0,"time":0,"rate":"double","name":"Catalina Channel at Night","region":"Catalina Channel","group":"Pacific","fuel":false,"bonus":true,"lodge":"Boat Launch","lifts":[],"hazards":"NIGHT WATER / DINGHY GRUMPS / ROGUE WAVES","blurb":"Bonus night crossing of the Catalina Channel. Plankton light up wherever Jak's pontoons cut the water, schools of lanternfish flicker underneath, and the Grumps out here are grumpy glowing jellyfish. Jak's headlights only reach so far, so watch for their glow.","gold":"At Avalon Harbor"},{"id":"pacific","song":"liquid","grumps":8,"w":1000,"h":2100,"night":false,"glow":false,"ocean":true,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Pacific","region":"Pacific Ocean","group":"Pacific","fuel":false,"bonus":false,"lodge":"Dive Shop","lifts":["WEST CURRENT","KELP CURRENT","EAST CURRENT"],"hazards":"UNDERWATER / CORAL REEF / SHARKS","blurb":"Jak dives off Catalina Island and down onto the sea floor. Coral reefs instead of pine trees, divers and mermaids to party with, sharks on patrol, and a sunken shipwreck hiding the golden carrot.","gold":"At the Shipwreck"},{"id":"pacific_night","song":"garage","grumps":8,"w":1000,"h":2100,"night":false,"glow":true,"ocean":true,"ship":false,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Pacific at Night","region":"Pacific Ocean","group":"Pacific","fuel":false,"bonus":true,"lodge":"Dive Shop","lifts":["WEST CURRENT","KELP CURRENT","EAST CURRENT"],"hazards":"NIGHT DIVE / CORAL REEF / SHARKS","blurb":"Bonus night dive. The reef goes dark and the deep-sea crowd comes out: anglerfish dangle glowing lures, squid drift by, long chains of siphonophores sway in the current, and the Grumps are grumpy glowing jellyfish. Follow your headlights to the shipwreck.","gold":"At the Shipwreck"},{"id":"titanic","song":"techno","grumps":8,"w":1000,"h":2200,"night":false,"glow":false,"ocean":true,"ship":true,"city":false,"theme":null,"snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Titanic","region":"The Abyss","group":"Pacific","fuel":false,"bonus":false,"lodge":"Sub Dock","lifts":["SCOTLAND ROAD","FLOODED STAIRWELL"],"hazards":"INSIDE THE TITANIC / BULKHEADS / SHARKS","blurb":"A deep-sea current pulls Jak down into the abyss, straight to the most famous shipwreck in the world. Drive inside the sunken RMS Titanic: up Scotland Road, past the boilers and the giant engines, through the cargo hold and the dining saloon, and up to the golden carrot on the Grand Staircase. Rusticles drip from every bulkhead, the Grumps dove in after you, and sharks still prowl the corridors.","gold":"On the Grand Staircase"},{"id":"boss_octo","boss":true,"name":"Giant Octopus"},{"id":"kilauea","song":"techno","grumps":8,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"lava","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Kilauea Volcano","region":"Hawaii","group":"Hawaii","fuel":true,"bonus":false,"lodge":"Volcano House","lifts":[],"hazards":"ACTIVE VOLCANO / LAVA BOMBS","blurb":"Hawaii Volcanoes National Park on the Big Island, and Kilauea is erupting! Drive the cooled lava flows, dodge the lava bombs raining down (watch for the red rings), and find the golden carrot on the rim of Halemaumau Crater.","gold":"At Halemaumau Crater"},{"id":"boss_lava","boss":true,"name":"Lava Monster"},{"id":"orbit","song":"trance","grumps":8,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"space","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Low Earth Orbit","region":"Low Earth Orbit","group":"Space","fuel":false,"bonus":false,"lodge":"Launch Capsule","lifts":[],"hazards":"ZERO GRAVITY / ROCKET THRUSTER / SPACE JUNK","blurb":"Jak rides an old-school rocket off the launch pad and into orbit. No gravity up here: push the stick to fire the little rocket thruster, and Jak keeps drifting until you thrust the other way. Dodge the space junk and find the golden carrot at the space station.","gold":"At the Space Station"},{"id":"moon","song":"liquid","grumps":8,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"moon","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Moon","region":"The Moon","group":"Space","fuel":true,"bonus":false,"lodge":"Moon Base","lifts":[],"hazards":"LOW GRAVITY / CRATERS / METEORS","blurb":"Low gravity: Jak slides and floats across the gray dust, so steer early. Weave between the craters, watch for meteors, and find the golden carrot at Tranquility Base, where Apollo 11 landed.","gold":"At Tranquility Base"},{"id":"boss_roadster","boss":true,"name":"Orbital Roadhog"},{"id":"mars","song":"electro","grumps":8,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"mars","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Mars","region":"Mars","group":"Space","fuel":true,"bonus":false,"lodge":"Mars Base","lifts":[],"hazards":"RED PLANET / CRATERS / DUST DEVILS","blurb":"The Red Planet. Rusty dust, mesas and craters, dust devils spinning across the plains, and the golden carrot at Jezero Crater, where the Perseverance rover landed.","gold":"At Jezero Crater"},{"id":"asteroids","song":"dnb","grumps":8,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"asteroid","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Asteroid Belt","region":"Asteroid Belt","group":"Space","fuel":false,"bonus":false,"lodge":"Mining Ship","lifts":[],"hazards":"ZERO GRAVITY / ASTEROIDS / ROGUE ROCKS","blurb":"Back to zero gravity, out past Mars through the asteroid belt on the way to Jupiter. Rocks everywhere, and some of them are coming right at you. Thrust carefully and land on Ceres.","gold":"On Ceres"},{"id":"jupiter","song":"dubstep","grumps":8,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"space","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Eye of the Storm","region":"Jupiter","fuel":false,"bonus":false,"lodge":"Cloud Station","lifts":[],"hazards":"ZERO GRAVITY / STORM WINDS / STORM CLOUDS","blurb":"Jupiter, the biggest planet in the solar system, and its Great Red Spot: a storm bigger than the whole Earth. The wind whips Jak around the storm in circles, so thrust against it and find the golden carrot in the eye.","gold":"In the Eye of the Storm","group":"Space"},{"id":"saturn","song":"trance","grumps":8,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"asteroid","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Rings of Saturn","region":"Saturn","fuel":false,"bonus":false,"lodge":"Ring Station","lifts":[],"hazards":"ZERO GRAVITY / ICY RINGS / ROGUE ROCKS","blurb":"Saturn's rings are billions of chunks of ice, from tiny grains to boulders as big as a house. Thrust carefully through the icy rings and find the golden carrot in the Cassini Division, the big gap between the rings.","gold":"In the Cassini Division","group":"Space"},{"id":"uranus","song":"liquid","grumps":9,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"moon","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Uranus","region":"Uranus","fuel":true,"bonus":false,"lodge":"Miranda Base","lifts":[],"hazards":"LOW GRAVITY / ICE CRATERS / METEORS","blurb":"The sideways planet: Uranus spins tipped over on its side. Jak lands on its icy moon Miranda and slides across the frozen ground with Uranus filling the sky. The golden carrot waits on Verona Rupes, the tallest cliff in the solar system.","gold":"Atop Verona Rupes","group":"Space"},{"id":"neptune","song":"electro","grumps":9,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"space","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Neptune","region":"Neptune","fuel":false,"bonus":false,"lodge":"Wind Station","lifts":[],"hazards":"ZERO GRAVITY / SUPERSONIC WIND / ICE","blurb":"The windiest planet in the solar system: the storms on Neptune blow faster than the speed of sound. The wind keeps shoving Jak sideways, so thrust into it. The golden carrot waits at the Great Dark Spot.","gold":"At the Great Dark Spot","group":"Space"},{"id":"pluto","song":"house","grumps":9,"w":1000,"h":2100,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"moon","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"Pluto","region":"Pluto","fuel":true,"bonus":false,"lodge":"New Horizons Base","lifts":[],"hazards":"LOW GRAVITY / ICE MOUNTAINS / METEORS","blurb":"Way out at the edge of the solar system, Pluto has a giant heart: a plain of frozen nitrogen called Sputnik Planitia, ringed by mountains of water ice. Slide across the ice and find the golden carrot in the middle of the heart.","gold":"In the Heart of Pluto","group":"Space"},{"id":"records","song":"disco","grumps":9,"w":1000,"h":2300,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"asteroid","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Record Cloud","region":"The Kuiper Belt","fuel":false,"bonus":false,"lodge":"Crate Station","lifts":[],"hazards":"ZERO GRAVITY / GIANT RECORDS / FLYING RECORDS","blurb":"Past Pluto the Alien DJ dumped a whole cloud of records, spinning in the dark like an asteroid field made of vinyl. Bounce off the giant discs and find the golden carrot at the Voyager probe, still carrying its Golden Record out of the solar system.","gold":"At the Voyager Probe","group":"Space"},{"id":"mothership","song":"hardtechno","grumps":9,"w":1000,"h":2200,"night":false,"glow":false,"ocean":false,"ship":false,"city":false,"theme":"mars","snow":false,"steep":false,"powder":false,"blackout":false,"cliff":false,"bowls":false,"float":false,"checks":0,"floats":0,"time":0,"rate":"double","name":"The Alien Mothership","region":"The Mothership","fuel":true,"bonus":false,"lodge":"Landing Pad","lifts":[],"hazards":"ALIEN HULL / DOMES AND VENTS / ALIEN DRONES","blurb":"The Alien DJ's mothership, big as a city. Jak lands on the hull and rolls between the domes, antennas and glowing vents while little saucer drones buzz around. Find the golden carrot at the docking bay. The nightclub is right behind it.","gold":"At the Docking Bay","group":"Space"},{"id":"boss_alien","boss":true,"name":"Alien DJ"}];
+const RATE={green:'Green circle',blue:'Blue square',black:'Black diamond',double:'Double black'};
+const SONG={disco:'Disco',techno:'Techno',dubstep:'Dubstep',electro:'Electro',peak:'Peak-time house',house:'House',trance:'Trance',garage:'UK garage',nudisco:'Nu-disco',breaks:'Breakbeat',dnb:'Drum and bass',liquid:'Liquid drum and bass'};
+const BOSSES=[{"id":"boss_mtut","name":"Grump King","where":"US-191, Montana / Wyoming Line","gate":"Montana / Wyoming Line","hp":120,"spd":"1.00","gap":"Normal","proj":"Candy canes","special":"Spin","quote":"\"GRRRR!\"","how":"The Grump King blocks US-191 where it crosses from Montana into Wyoming at the corner of Yellowstone. Tap to fire lasers, hit BASS to smash his canes, and dodge his spinning cane attack. Beat him to reach Wyoming.","tip":"Stay to the left, BASS the canes out of the air, and sidestep the spin. When DIZZY! flashes, pour on the lasers.","reward":"Unlocks Wyoming, plus Big Rig Ray and Wobble Wolf join the crew."},{"id":"boss_berthoud","name":"Snowman","where":"WY-789 at Baggs, WY / CO Line","gate":"Wyoming / Colorado Line","hp":150,"spd":"1.08","gap":"Normal","proj":"Lumps of coal","special":"Spin","quote":"\"BRRRR!\"","how":"A giant Snowman blocks WY-789 at Baggs, right on the Wyoming-Colorado line. It throws coal and spins its stick arms. The Polar Bear is waiting right behind it.","tip":"Keep BASS ready for the coal and step out of the stick-arm spin. He goes dizzy right after it.","reward":"Opens the road to Steamboat."},{"id":"boss_wyco","name":"Polar Bear","where":"CO-13, Wyoming / Colorado Line","gate":"Wyoming / Colorado Line","hp":165,"spd":"1.12","gap":"Normal","proj":"Snowballs","special":"Charge and swipe","quote":"\"CHAAARGE!\"","how":"The Polar Bear guards the Wyoming-Colorado line on CO-13. Up on his hind legs he hurls snowballs; down on all fours he charges in and swipes with his claws. Beat him to reach Colorado.","tip":"Move sideways, not backwards, when it charges, then unload while it is winded.","reward":"Unlocks Colorado, plus Breakbeat Betty and Riddim Raven join the crew."},{"id":"boss_cactus","name":"Giant Cactus","where":"US-285 at Poncha Pass, Colorado","gate":"Colorado","hp":200,"spd":"1.15","gap":"10% sooner","proj":"Prickly pears","special":"Spine storm","quote":"\"PRICKLY!\"","how":"A Giant Cactus wandered up out of the desert and planted itself on US-285 at Poncha Pass, where the road drops into the San Luis Valley. It lobs prickly pears and fires spine storms in every direction. Beat it to reach the Sand Dunes.","tip":"Find a gap in the spine storm or BASS through it, then hit it hard while it stands still.","reward":"Opens the road to Great Sand Dunes."},{"id":"boss_teton","name":"Yeti","where":"US-491, Colorado / Utah Line","gate":"Colorado / Utah Line","hp":175,"spd":"1.15","gap":"Normal","proj":"Giant snowballs","special":"Snowball roll","quote":"\"ROLL OUT!\"","how":"The Yeti came down out of the La Sal Mountains to guard the Colorado-Utah line on US-491. He hurls giant snowballs and curls into a rolling snowball to flatten you. Beat him to reach Utah.","tip":"Give the giant snowballs extra room. BASS is the safest answer, and the roll leaves him dizzy.","reward":"Unlocks Utah, plus Nitro Nell and Solstice join the crew."},{"id":"boss_utwy","name":"Grump Queen","where":"I-15 at Malad, Utah / Idaho Line","gate":"Utah / Idaho Line","hp":190,"spd":"1.20","gap":"10% sooner","proj":"Snowballs","special":"Spin","quote":"\"OFF WITH YOUR BASS!\"","how":"The Grump Queen holds I-15 at Malad, right on the Utah-Idaho line. She lobs snowballs and does a royal spin. Beat her to reach Idaho.","tip":"Same plan as the King, but her snowballs fly faster and the royal spin comes sooner. Start moving early.","reward":"Opens the road to Idaho, starting with Sun Valley."},{"id":"boss_idwa","name":"Sasquatch","where":"I-90, Idaho / Washington Line","gate":"Idaho / Washington Line","hp":200,"spd":"1.18","gap":"10% sooner","proj":"Boulders","special":"Bigfoot charge","quote":"\"BIGFOOT!\"","how":"Sasquatch stepped out of the woods onto I-90 at the Idaho-Washington line. He hurls boulders and charges with his big feet. Beat him to reach Washington.","tip":"His boulders are big and slow, so BASS them out of the air. When he drops his head to charge, step sideways, then pour on the lasers while he is DIZZY.","reward":"Opens the road to Washington, starting with Mission Ridge."},{"id":"boss_waor","name":"Giant Beaver","where":"I-5 Bridge, Washington / Oregon Line","gate":"Washington / Oregon Line","hp":210,"spd":"1.18","gap":"12% sooner","proj":"Logs","special":"Wood chip storm","quote":"\"TIMBER!\"","how":"A Giant Beaver dammed the I-5 bridge over the Columbia River, right on the Washington-Oregon line. It throws logs and spins up a storm of wood chips. Beat it to reach Oregon.","tip":"When WOOD CHIP STORM! flashes, find a gap in the ring or BASS straight through it, then unload while the beaver catches its breath.","reward":"Opens the road to Oregon, starting with Timberline."},{"id":"boss_final","name":"Giant Pine","where":"I-5 at Siskiyou Summit, Oregon / California Line","gate":"Oregon / California Line","hp":210,"spd":"1.20","gap":"12% sooner","proj":"Pine cones","special":"Needle burst","quote":"\"NEEDLES!\"","how":"A Giant Pine guards I-5 at Siskiyou Summit, right on the Oregon-California line. It fires pinecones and needle storms in every direction. Beat it to reach California.","tip":"Find a gap in the needle ring or BASS through it, then pour lasers into the trunk while it is open.","reward":"Unlocks California, plus Acid Annie and Deep Danny join the crew."},{"id":"boss_octo","name":"Giant Octopus","where":"The Deep Pacific, on the Way to Hawaii","gate":"Pacific / Hawaii","hp":250,"spd":"1.18","gap":"15% sooner","proj":"Ink blobs","special":"Ink cloud and tentacle slap","quote":"\"INK ATTACK!\"","how":"A Giant Octopus guards the deep Pacific on the way to Hawaii. It squirts ink clouds in every direction and slaps with its tentacles when you get close. Beat it to reach Hawaii.","tip":"Stay out of tentacle reach and keep moving through the ink. BASS clears the ink blobs it throws.","reward":"Unlocks Hawaii."},{"id":"boss_lava","name":"Lava Monster","where":"The Road Up Mauna Kea, Hawaii","gate":"Hawaii","hp":240,"spd":"1.12","gap":"15% sooner","proj":"Molten rocks","special":"Eruption (red rings)","quote":"\"ERUPTION!\"","how":"A Lava Monster crawled out of Kilauea and blocks the road up Mauna Kea to the launch pad. It hurls molten rocks and erupts, raining lava bombs wherever a red ring shows up. Beat it, and Jak gets strapped to a rocket.","tip":"Watch the ground: get out of every red ring before the lava bomb lands. Carrot Juice makes you immune for a few seconds.","reward":"Opens the road to Low Earth Orbit."},{"id":"boss_roadster","name":"Orbital Roadhog","where":"Deep Space, Just Past the Moon","gate":"Deep Space","hp":230,"spd":"1.20","gap":"15% sooner","proj":"Hubcaps","special":"Joyride","quote":"\"JOYRIDE!\"","how":"Somebody left a cherry-red convertible drifting past the Moon, and its spacesuited driver does not want company. The Orbital Roadhog throws hubcaps and floors it at you on a joyride. Beat it to reach Mars.","tip":"Dodge the joyride across the road, then hit the car while it spins out.","reward":"Opens the road to Mars."},{"id":"boss_alien","name":"Alien DJ","where":"The nightclub inside the mothership","gate":"The Mothership","hp":240,"spd":"1.20","gap":"15% sooner","proj":"Records","special":"Record storm, then a tractor beam in the encore","quote":"\"DROP THE BEAT!\"","how":"The final boss. Deep inside the mothership is a spaceship nightclub, and the Alien DJ is behind the decks with every stolen record. He slings vinyl like throwing stars and sweeps the dance floor with his tractor beam. Beat him and get BK Love and Zootech's records back!","tip":"Two rounds back to back, 240 HP each. Round one: BASS the record storm. The encore is faster and sweeps a tractor beam across the floor, so stay out of the light and keep the lasers going.","reward":"Wins back every stolen record and plays the ending."}];
+const DRIVERS=[{"id":"unk","name":"Unk","role":"Snowcat Pilot","perk":"Radio: more Ski Patrol","s":[4,4,3,3],"unl":"Starter"},{"id":"gus","name":"Groomer Gus","role":"Night Groomer","perk":"Powder and steeps barely slow him","s":[2,5,4,3],"unl":"Starter"},{"id":"dot","name":"Diesel Dot","role":"Fuel Saver","perk":"Gas lasts way longer","s":[3,3,3,5],"unl":"Starter"},{"id":"nell","name":"Nitro Nell","role":"Speed Demon","perk":"Fastest, but thirsty and slidey","s":[5,2,2,2],"unl":"Beat the Yeti (Utah)"},{"id":"ray","name":"Big Rig Ray","role":"Tough Guy","perk":"Grumps knock loose only 1 crew","s":[3,3,5,3],"unl":"Beat the Grump King (Wyoming)"},{"id":"jester","name":"2 Faced Jester","role":"Public Lands","perk":"Grumps stop to laugh","s":[3,4,3,4],"unl":"Starter"}];
+const DJS=[{"id":"ritz","name":"Ritz Bitz","role":"Husky Pup DJ","perk":"Puppy power: Grumps melt faster","s":[5,3,4,2],"unl":"Starter"},{"id":"bk","name":"BK Love","role":"House DJ","perk":"The longest dance parties","s":[3,5,3,2],"unl":"Starter"},{"id":"zoo","name":"Zootech","role":"Techno + VJ","perk":"VJ visuals: strongest lasers","s":[3,3,2,5],"unl":"Starter"},{"id":"sol","name":"Solstice","role":"Trance","perk":"Carrots fill joy faster","s":[4,4,2,3],"unl":"Beat the Yeti (Utah)"},{"id":"betty","name":"Breakbeat Betty","role":"Breaks","perk":"Pulls skiers from far away","s":[5,3,3,2],"unl":"Beat the Polar Bear (Colorado)"},{"id":"wolf","name":"Wobble Wolf","role":"Dubstep","perk":"Bass converts Grumps from farther","s":[2,3,5,3],"unl":"Beat the Grump King (Wyoming)"},{"id":"annie","name":"Acid Annie","role":"Acid House","perk":"+2 Workshop carrots every party","s":[4,3,3,2],"unl":"Beat the Giant Pine (California)"},{"id":"raven","name":"Riddim Raven","role":"Drum and bass","perk":"Jak drives faster in parties","s":[3,2,3,3],"unl":"Beat the Polar Bear (Colorado)"},{"id":"danny","name":"Deep Danny","role":"Deep House","perk":"Mellow: Grumps chase slower","s":[3,4,4,1],"unl":"Beat the Giant Pine (California)"},{"id":"party","name":"Party Robbins","role":"Country Disco","perk":"Parties add 2 line dancers","s":[3,4,3,2],"unl":"Starter"}];
+const SHOP=[
+ ['Tracks','Jak drives 10% faster per level.',[32,64,112]],
+ ['Subwoofers','The music pulls skiers from 14 px farther per level.',[32,64,112]],
+ ['Fuel Tank','The generator burns gas slower each level.',[40,80,128]],
+ ['Roll Cage','One more heart per level.',[80,160]],
+ ['Lasers','Opens after the Grump King. Unlocks the laser, then charges it faster; the top level hits bosses harder.',[48,96,144]],
+ ['Flaming Antlers','Opens after the Polar Bear. Tap FLAME (or F): Grumps that touch Jak get scorched and run, snowballs melt, bosses take burn damage up close.',[72,144]],
+ ['Fogger','Opens after the Yeti. Tap FOG (or G) to roll out a fog bank: Grumps inside lose sight of Jak, and bosses throw wild.',[90,170]],
+ ['Pocket Bacon','Restores one heart when you use it. Carry up to 3.',[6],'each'],
+ ['Carrot Juice','10 seconds of invincibility. Carry up to 2.',[10],'each'],
+ ['Gas','Fills the generator on gas-can stops.',[2],'each']];
+const SLOTS=[
+ ['Gold Gold Gold','10x','All three boosts (Jackpot)',6],
+ ['Carrot Carrot Carrot','3x','Carrot Rain',30],
+ ['Disco Disco Disco','5x','None',14],
+ ['Jak Jak Jak','4x','One random boost',16],
+ ['Grump Grump Grump','1x','No Grumps',18],
+ ['Snow Snow Snow','1x','Turbo Tracks',16]];
+const SCREENS=[
+ ['screen_games','Mini games menu','Unlocked by the developer code: all six mini games in one list. NEW'],
+ ['screen_heist','The heist','The Alien DJ runs off with the records and stashes one at every stop. NEW'],
+ ['screen_crate','Record crate','Every record you win back, ready to spin. NEW'],
+ ['screen_titanic','Inside the Titanic','The boiler rooms, with Scuba Grumps on patrol.'],
+ ['screen_jellyfish','Jellyfish Grumps','A bioluminescent night dive: the glowing jellyfish are the Grumps.'],
+ ['screen_parade','Parade day','Downtown Missoula, with a float rolling up the pink parade route.'],
+ ['screen_title','Title screen','The opening title over a starry ski hill.'],
+ ['screen_players','Who\'s playing?','Every player on the device gets their own save.'],
+ ['screen_crew','Crew select','Pick a driver and a DJ for each mountain.'],
+ ['screen_intro','Level opening card','The goals for the mountain. Waits for you to press Start.'],
+ ['screen_game','On the mountain','Jak at the base with the Info booth and the lodge shop.'],
+ ['scene_party','Dance party','The crowd, the lasers and the light show.'],
+ ['screen_slots','Disco Slots','The lounge between levels.'],
+ ['closeup_jak','Jak close up','The pixel portrait drawn from the real Thiokol.']];
+const SPRITES=[
+ ['jak','Jak','The snowcat jackalope. Hauls the crew and the sound system.'],
+ ['grump','Grump','Hates loud music. Chases Jak and knocks crew off.'],
+ ['yeti','Yeti','Throws snowballs that freeze Jak for a moment.'],
+ ['polarbear','Polar bear','Gives a short warning, then charges across the slope.'],
+ ['patrol','Ski Patrol','Skis by now and then and gives back a heart.'],
+ ['skier','Skier','Hops on when the music reaches them.'],
+ ['boarder','Snowboarder','Same as skiers, just cooler about it.'],
+ ['dancer','Dancer','Fills the dance floor at every party.'],
+ ['operator','Lift operator','Works the lift huts around the mountain.'],
+ ['booth','Info booth','At the base. A new tip every visit.'],
+ ['carrot','Disco carrot','+100 points, +20 joy, +1 Workshop carrot.'],
+ ['gold','Golden carrot','Shows up after three parties. Clears the mountain.'],
+ ['gascan','Gas can','+60 fuel for the party generator.']];
+
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// tour list
+const GROUP_NAME={Pacific:'Pacific and the deep',Space:'Outer space'};
+const NEWIDS=new Set(["sunvalley", "bogus", "brundage", "schweitzer", "missionridge", "stevens", "baker", "crystal", "timberline", "bachelor", "ashland", "jupiter", "saturn", "uranus", "neptune", "pluto", "records", "mothership"]);
+function stopSub(t){if(t.city)return `Parade: ${t.checks} checkpoints, ${t.floats} floats, ${t.time} s on the clock`;const L=t.lifts.length,lab=t.ocean?'current':'lift';
+  return `${t.grumps} ${t.glow?'jellyfish':'Grumps'} to start`+(L?`, ${L} ${lab}${L>1?'s':''}`:'')+(t.bonus?', bonus night':'');}
+(function(){let h='',st='',n=0;for(const t of TOUR){
+  if(!t.boss&&t.group!==st){st=t.group;h+=`<li class="state"><span></span><span class="nm">${GROUP_NAME[st]||st}</span><span></span></li>`;}
+  if(t.boss){const b=BOSSES.find(x=>x.id===t.id);h+=`<li class="boss"><span class="n">VS</span><span><span class="nm">${esc(b.name)}</span><br><span class="st">${esc(b.where)}</span></span><a class="st" href="#b-${b.id}">Fight</a></li>`;}
+  else{n++;h+=`<li><span class="n">${String(n).padStart(2,'0')}</span><span><span class="nm">${esc(t.name)}</span>${NEWIDS.has(t.id)?'<span class="new">NEW</span>':''}<br><span class="st">${esc(stopSub(t))}</span></span><a class="st" href="#m-${t.id}">Map</a></li>`;}}
+  $('#stops').innerHTML=h;})();
+
+// mountains
+function badges(t){const b=[];if(t.city)b.push(['parade','Parade']);if(t.ship)b.push(['ship','Inside the Titanic']);else if(t.ocean)b.push(['ocean','Underwater']);if(t.float)b.push(['water','On the water']);if(t.theme==='surf'&&!t.float)b.push(['water','Surf']);
+  if(t.glow)b.push(['glow','Glowing sea']);if(t.bonus)b.push(['bonus','Bonus night']);if(t.theme==='sand')b.push(['sand','Desert']);if(t.theme==='mars')b.push(['sand','Red planet']);if(t.theme==='lava')b.push(['lava','Volcano']);
+  if(t.theme==='space'||t.theme==='asteroid')b.push(['space','Zero gravity']);if(t.theme==='moon')b.push(['space','Low gravity']);
+  if(t.night&&!t.glow)b.push(['night','Night']);if(t.blackout)b.push(['blackout','Lights out']);if(t.snow)b.push(['snow','Snowfall']);if(t.steep)b.push(['steep','Steep']);if(t.powder)b.push(['powder','Powder']);if(t.fuel)b.push(['fuel','Gas cans']);if(t.cliff)b.push(['cliff','Cliffs']);if(t.bowls&&!t.theme&&!t.ocean&&!t.city)b.push(['bowls','Open bowls']);
+  return b.map(([c,l])=>`<span class="badge b-${c}">${l}</span>`).join('');}
+(function(){let h='',n=0;for(const t of TOUR){if(t.boss)continue;n++;const par=Math.round(120+t.w*t.h/12000);
+  h+=`<article class="mtn" id="m-${t.id}" data-group="${t.group}" data-night="${t.night||t.glow}" data-bonus="${t.bonus}" data-snow="${t.snow}" data-fuel="${t.fuel}">
+   <button class="open zoom" data-src="img/scene_${t.id}.png" data-title="${esc(t.name)}" data-sub="Opening screen" aria-label="Open the ${esc(t.name)} opening screen"><img class="px" src="img/scene_${t.id}.png" alt="${esc(t.name)} opening screen" width="768" height="672" loading="lazy"><span class="num">${String(n).padStart(2,'0')}</span></button>
+   <div class="body">
+    <button class="thumb zoom" data-src="img/world_${t.id}.webp" data-title="${esc(t.name)} trail map" data-sub="${t.w} by ${t.h} px. The golden carrot: ${esc(t.gold)}." data-map="1" aria-label="Open the ${esc(t.name)} map"><img src="img/world_${t.id}_thumb.webp" alt="" loading="lazy"></button>
+    <div style="min-width:0"><div class="st">${esc(t.region)}</div><h3>${esc(t.name)}${NEWIDS.has(t.id)?'<span class="new">NEW</span>':''}</h3><div class="hz">${esc(t.hazards)}</div><div class="badges">${badges(t)}</div>
+     <p class="blurb">${esc(t.blurb)}</p>
+     <dl class="facts">${t.city?`<dt>Route</dt><dd>${t.checks} checkpoints, ${t.time} s on the clock</dd><dt>Floats</dt><dd>${t.floats}</dd>`:`<dt>${t.glow?'Jellyfish':'Grumps'}</dt><dd>${t.grumps} to start</dd>`}<dt>Shop</dt><dd>${esc(t.lodge)}</dd>${t.lifts.length?`<dt>${t.ocean?'Currents':'Lifts'}</dt><dd>${t.lifts.map(x=>esc(x.toLowerCase().replace(/(^|[ -])\S/g,c=>c.toUpperCase()))).join(', ')}</dd>`:''}<dt>Golden carrot</dt><dd>${esc(t.gold)}</dd><dt>First song</dt><dd>${SONG[t.song]||t.song}</dd><dt>Rating</dt><dd>${RATE[t.rate]||t.rate}</dd><dt>Size</dt><dd>${t.w} by ${t.h} px</dd><dt>Par</dt><dd>${par} s</dd></dl>
+     <button class="mapbtn zoom" data-src="img/world_${t.id}.webp" data-title="${esc(t.name)} map" data-sub="${t.w} by ${t.h} px. The golden carrot: ${esc(t.gold)}." data-map="1">Full map</button></div>
+   </div></article>`;}
+  $('#mtns').innerHTML=h;})();
+document.querySelectorAll('.filters button').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filters button').forEach(x=>x.setAttribute('aria-pressed',x===b));const f=b.dataset.f;
+  document.querySelectorAll('.mtn').forEach(m=>{m.hidden=!(f==='all'||(f.startsWith('g:')&&m.dataset.group===f.slice(2))||m.dataset[f]==='true');});}));
+
+// screens
+$('#screens-grid').innerHTML=SCREENS.map(([f,t,d])=>{const nw=/ NEW$/.test(d);d=d.replace(/ NEW$/,'');return `<figure class="shot"><button class="zoom" data-src="img/${f}.png" data-title="${esc(t)}"><div class="bezel"><img class="px" src="img/${f}.png" alt="${esc(t)}" width="768" height="672" loading="lazy"></div></button><figcaption><b>${esc(t)}${nw?'<span class="new">NEW</span>':''}</b><span>${esc(d)}</span></figcaption></figure>`;}).join('');
+
+// crew
+function bars(lbl,v){let s=`<div class="stat"><span>${lbl}</span>`;for(let i=1;i<=5;i++)s+=`<i class="${i<=v?'on':''}"></i>`;return s+'</div>';}
+function crewHTML(list,labels,cls){return list.map(c=>`<div class="cm ${cls}"><img src="img/crew_${c.id}.png" alt="${esc(c.name)} portrait" loading="lazy"><div style="min-width:0"><h3>${esc(c.name)}</h3><div class="role">${esc(c.role)}</div><div class="perk">${esc(c.perk)}</div>${c.s.map((v,i)=>bars(labels[i],v)).join('')}</div><div class="unl">${c.unl==='Starter'?'Available from the start':'Joins when you '+esc(c.unl.replace(/^Beat/,'beat'))}</div></div>`).join('');}
+$('#drivers').innerHTML=crewHTML(DRIVERS,['SPEED','POWDER','GRIP','FUEL'],'dr');
+$('#djs').innerHTML=crewHTML(DJS,['PULL','PARTY','CALM','LIGHTS'],'dj');
+
+// shop
+$('#shop').innerHTML=SHOP.map(([n,d,c,e])=>`<tr><td><b>${n}</b></td><td>${d}</td>${[0,1,2].map(i=>`<td class="num">${c[i]!=null?`<span class="cost">${c[i]}</span>`:'<span style="color:var(--muted)">n/a</span>'}</td>`).join('')}<td class="num">${e?c[0]+' each':c.reduce((a,b)=>a+b,0)}</td></tr>`).join('');
+
+// slots
+$('#slotpay').innerHTML=SLOTS.map(([s,p,b,w])=>{const pr=Math.pow(w/100,3);return `<tr><td><span class="sym">${s.toUpperCase()}</span></td><td class="num">${p}</td><td>${b}</td><td class="num">1 in ${Math.round(1/pr).toLocaleString()}</td></tr>`;}).join('')+
+ `<tr><td><span class="sym">ANY PAIR</span></td><td class="num">1.5x</td><td>None</td><td class="num">1 in 2</td></tr>`;
+
+// bosses
+const maxHp=250;
+$('#bosslist').innerHTML=BOSSES.map((b,i)=>`<article class="boss" id="b-${b.id}">
+ <div class="strip">${['fight','intro','special'].map(k=>`<button class="zoom" data-src="img/boss_${b.id}_${k}.png" data-title="${esc(b.name)}" data-sub="${k==='intro'?'Intro card':k==='fight'?'The fight':'Special move'}"><img class="px" src="img/boss_${b.id}_${k}.png" alt="${esc(b.name)} ${k}" width="768" height="672" loading="lazy"></button>`).join('')}</div>
+ <div style="min-width:0"><div class="eyebrow">Boss ${i+1} of ${BOSSES.length}</div><h3>${esc(b.name)}</h3><div class="where">${esc(b.where)} &middot; ${esc(b.gate)}</div>
+  <div class="quote">${esc(b.quote)}</div>
+  <div class="hp"><span>HP ${b.hp}</span><div class="bar"><span style="width:${b.hp/maxHp*100}%"></span></div></div>
+  <div class="bstats"><div><b>${Math.ceil(b.hp/2)}</b><span>laser hits to win</span></div><div><b>${Math.ceil(b.hp/9)}</b><span>BASS hits to win</span></div><div><b>${b.spd}x</b><span>speed</span></div></div>
+  <dl class="facts" style="margin-bottom:12px"><dt>Throws</dt><dd>${esc(b.proj)}</dd><dt>Special</dt><dd>${esc(b.special)}</dd><dt>Special timing</dt><dd>${esc(b.gap)}</dd></dl>
+  <p>${esc(b.how)}</p><p><b>Tip:</b> ${esc(b.tip)}</p><p class="reward">Win: +30 Workshop carrots. ${esc(b.reward)}</p></div></article>`).join('');
+
+// sprites
+$('#sprites').innerHTML=SPRITES.map(([f,n,d])=>`<div class="sp"><div class="pic"><img src="img/sprite_${f}.png" alt="${esc(n)}" loading="lazy"></div><b>${esc(n)}</b><span>${esc(d)}</span></div>`).join('');
+
+// lightbox
+const lb=$('#lb'),lbImg=$('#lbImg');let lastFocus=null;
+function openLB(el){lastFocus=el;$('#lbTitle').textContent=el.dataset.title||'';$('#lbSub').textContent=el.dataset.sub||'';
+  const isMap=el.dataset.map==='1'||el.dataset.src.includes('tourmap');lb.classList.toggle('fit',!isMap);lb.classList.remove('real');
+  $('#lbSize').textContent='Actual size';lbImg.src=el.dataset.src;lbImg.alt=el.dataset.title||'';lb.hidden=false;document.body.style.overflow='hidden';$('#lbStage').scrollTop=0;$('#lbClose').focus();}
+function closeLB(){lb.hidden=true;lbImg.removeAttribute('src');document.body.style.overflow='';if(lastFocus)lastFocus.focus({preventScroll:true});}
+document.addEventListener('click',e=>{const z=e.target.closest('.zoom');if(z){e.preventDefault();openLB(z);}});
+$('#lbClose').addEventListener('click',closeLB);
+$('#lbSize').addEventListener('click',()=>{const r=lb.classList.toggle('real');if(r)lb.classList.remove('fit');$('#lbSize').textContent=r?'Fit to screen':'Actual size';});
+lb.addEventListener('click',e=>{if(e.target===lb||e.target.id==='lbStage')closeLB();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!lb.hidden)closeLB();});
+</script>
+</body>
+</html>
