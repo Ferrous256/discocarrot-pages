@@ -5917,7 +5917,7 @@ muteBtn.addEventListener('click',()=>{AudioK.init();const m=AudioK.toggle();mute
 
 // update check: the website build stamps GAME_VERSION and ships version.json beside the game.
 // If a newer build is live while someone has the game open, offer a one-tap reload (saves live in this browser, so nothing is lost).
-const GAME_VERSION='20261026173757';
+const GAME_VERSION='20261026174359';
 function checkUpdate(){if(GAME_VERSION==='dev'||!window.fetch||location.protocol.indexOf('http')!==0)return;
   fetch('version.json?t='+Date.now(),{cache:'no-store'}).then(r=>r.ok?r.json():null).then(v=>{if(v&&v.version&&v.version!==GAME_VERSION)$('updBar').hidden=false;}).catch(()=>{});}
 $('updBar').addEventListener('click',e=>{e.stopPropagation();if(mode==='game'&&G&&!G.won)saveP();location.reload();});
@@ -5963,7 +5963,8 @@ const MINI=[
   blurb:'Jak takes the tow calls. Rig the line, anchor up, and pull stuck Jeeps, snowmobiles and more back onto the road.'}
 ];
 // the field guide lives on discocarrot.com next to the game, open to anyone with the link (no Claude account needed)
-const FIELD_GUIDE_URL=/(^|\.)discocarrot\.com$|\.netlify\.app$/.test(location.hostname)?'/games/legend-of-jak/guide/':'https://www.discocarrot.com/games/legend-of-jak/guide/';
+// the field guide opens inside the game, in the same full-screen frame as the mini games (it ships in guide/ beside the game)
+const FIELD_GUIDE_URL='guide/index.html';
 const GM={sel:0,ret:null};
 function gamesReturn(){const m=mode;if(m==='splash'||m==='players'||!PL.cur)return openPlayers;if(m==='hqshop')return openHQShop;const s=M.sel;return ()=>openMap(typeof s==='number'?s:-1);}
 function openGames(ret){if(!DEV.on)return;if(ret)GM.ret=ret;else if(!GM.ret)GM.ret=gamesReturn();
@@ -5977,8 +5978,8 @@ function gamesInfo(focusId){whoEl.textContent='MINI GAMES / DEV MODE';dtext.inne
   const list=mk('div','shop');
   MINI.forEach((g,i)=>{const row=mk('div','shop-row mgrow'),nm=mk('div','nm');nm.appendChild(mk('b','',`${i+1}. ${g.name}`));nm.appendChild(document.createTextNode(g.blurb));
     const b=btn('PLAY','chip'+(i===GM.sel?' on':''),()=>playMini(i));b.id='mg-'+i;b.setAttribute('aria-label','Play '+g.name.toLowerCase());b.addEventListener('focus',()=>{GM.sel=i;});row.append(nm,b);list.appendChild(row);});
-  {const row=mk('div','shop-row mgrow'),nm=mk('div','nm');nm.appendChild(mk('b','','FIELD GUIDE'));nm.appendChild(document.createTextNode('The developer field guide: every level, boss, number and mini game. Opens in a new tab; anyone with the link can read it.'));
-    const a=document.createElement('a');a.className='chip mglink';a.href=FIELD_GUIDE_URL;a.target='_blank';a.rel='noopener';a.textContent='OPEN';a.id='mg-guide';a.addEventListener('click',e=>e.stopPropagation());row.append(nm,a);list.appendChild(row);}
+  {const row=mk('div','shop-row mgrow'),nm=mk('div','nm');nm.appendChild(mk('b','','FIELD GUIDE'));nm.appendChild(document.createTextNode('The developer field guide: every level, boss, number and mini game. Opens right here, full screen.'));
+    const a=btn('OPEN','chip',openGuide);a.id='mg-guide';a.setAttribute('aria-label','Open the field guide');row.append(nm,a);list.appendChild(row);}
   dtext.appendChild(list);
   const r=mk('div','maprow'),back=btn('BACK','start',leaveGames);back.id='mg-back';r.appendChild(back);dtext.appendChild(r);
   const f=focusId&&document.getElementById(focusId);if(f)f.focus({preventScroll:true});}
@@ -5993,9 +5994,11 @@ function drawGames(now){sky('#0b0626','#3a1a5e');stars(now,50);mountains(H-26,56
     txt(g.name,38,y+3,on?PAL.Y:'#ffffff',8,'left');txt(g.tag,38,y+13,on?'#ffffff':'#a596c4',6,'left',null);});
   if(Math.floor(now/500)%2)txt(coarse?'TAP A GAME TO PLAY':'ENTER TO PLAY / ESC TO GO BACK',128,H-14,'#ffffff',6,'center');}
 const mgWrap=$('mgWrap'),mgFrame=$('mgFrame'),gamesBtn=$('gamesBtn');
-function playMini(i){const g=MINI[i];if(!g||!DEV.on)return;GM.sel=i;if(mode!=='games'&&!GM.ret)GM.ret=gamesReturn();
+function playMini(i){const g=MINI[i];if(!g||!DEV.on)return;GM.sel=i;openFrame(g.file,g.name);}
+function openGuide(){if(!DEV.on)return;openFrame(FIELD_GUIDE_URL,'FIELD GUIDE');}
+function openFrame(src,name){if(mode!=='games'&&!GM.ret)GM.ret=gamesReturn();
   AudioK.sfx.honk();AudioK.setSong(null);mode='minigame';devPanel.hidden=true;
-  $('mgTitle').textContent=g.name;const fr=document.createElement('iframe');fr.src=g.file;fr.title=g.name;fr.setAttribute('allow','autoplay; fullscreen');fr.setAttribute('allowfullscreen','');
+  $('mgTitle').textContent=name;const fr=document.createElement('iframe');fr.src=src;fr.title=name;fr.setAttribute('allow','autoplay; fullscreen');fr.setAttribute('allowfullscreen','');
   mgFrame.replaceChildren(fr);mgWrap.hidden=false;document.body.classList.add('mg');setTimeout(()=>{try{fr.focus();}catch(_){}},60);}
 function closeMini(quiet){if(mode!=='minigame')return;mgFrame.replaceChildren();mgWrap.hidden=true;document.body.classList.remove('mg');
   try{if(document.fullscreenElement&&document.fullscreenElement!==document.documentElement)document.exitFullscreen();}catch(_){}
