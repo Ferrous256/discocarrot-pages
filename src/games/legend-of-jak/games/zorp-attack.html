@@ -1,0 +1,232 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Zorp Attack</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="theme-color" content="#0d0718">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap">
+<style>
+/* Layout: same arcade cabinet as The Legend of Jak. 16-bit screen on top, touch buttons under it on phones. Single dark arcade look by design. */
+:root{
+  --bg:#0d0718;--panel:#1b1030;--edge:#3b2a63;--ink:#fff4e6;--dim:#a596c4;
+  --carrot:#ff5c00;--pink:#ff4fd8;--cyan:#5fe8ff;--gold:#ffd23f;--lime:#5aff8a;
+  --font-pixel:'Press Start 2P','Courier New',monospace;
+  color-scheme:dark;
+}
+html,body{height:100%;overscroll-behavior:none}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-pixel);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;-webkit-tap-highlight-color:transparent;-webkit-text-size-adjust:100%;overflow:hidden}
+button{touch-action:manipulation}
+#app{box-sizing:border-box;height:100%;display:flex;flex-direction:column;align-items:center;gap:8px;padding-block:8px 10px;padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px))}
+.top{width:100%;max-width:640px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.brand{font-size:10px;letter-spacing:.08em;color:var(--lime);text-shadow:2px 2px 0 #0a3a1a}
+.brand small{display:block;color:var(--dim);font-size:7px;margin-top:5px;letter-spacing:.12em}
+.btns{display:flex;gap:8px}
+.chip{font:8px var(--font-pixel);letter-spacing:.06em;background:var(--panel);color:var(--ink);border:2px solid var(--edge);padding:9px 10px;cursor:pointer;box-shadow:0 3px 0 #000}
+.chip:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.chip:focus-visible,.pad button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+#screen{flex:1 1 auto;min-height:0;width:100%;display:flex;align-items:center;justify-content:center}
+canvas{display:block;image-rendering:pixelated;image-rendering:crisp-edges;background:#000;border:4px solid var(--edge);box-shadow:0 0 0 4px #000,0 0 40px rgba(90,255,138,.22);max-width:100%;touch-action:none;cursor:pointer}
+.pad{width:100%;max-width:640px;display:flex;gap:10px}
+.pad button{flex:1;font:12px var(--font-pixel);padding:18px 0;background:var(--panel);color:var(--ink);border:3px solid var(--edge);box-shadow:0 4px 0 #000;touch-action:none;cursor:pointer}
+.pad .fire{flex:1.5;background:var(--carrot);border-color:#fff;color:#fff}
+.pad button.on{transform:translateY(3px);box-shadow:0 1px 0 #000}
+@media (hover:hover) and (pointer:fine){.pad{display:none}}
+</style>
+
+<div id="app">
+  <div class="top">
+    <div class="brand">ZORP ATTACK<small>THE MOON ARCADE</small></div>
+    <div class="btns">
+      <button class="chip" id="muteBtn" type="button">SOUND: ON</button>
+      <button class="chip" id="backBtn" type="button" hidden>BACK TO JAK</button>
+    </div>
+  </div>
+  <div id="screen"><canvas id="cv" width="256" height="224" aria-label="Zorp Attack: move the disco carrot cannon and laser the alien waves"></canvas></div>
+  <div class="pad" id="pad">
+    <button type="button" id="padL" aria-label="Move left">&#9664;</button>
+    <button type="button" class="fire" id="padF" aria-label="Fire the laser">FIRE</button>
+    <button type="button" id="padR" aria-label="Move right">&#9654;</button>
+  </div>
+</div>
+
+<script>
+(()=>{
+'use strict';
+const W=256,H=224,cv=document.getElementById('cv'),ctx=cv.getContext('2d');ctx.imageSmoothingEnabled=false;
+const $=id=>document.getElementById(id);
+const params=new URLSearchParams(location.search),EMBED=params.get('embed')==='1';
+const ls={get(k){try{return localStorage.getItem(k);}catch(e){return null;}},set(k,v){try{localStorage.setItem(k,v);}catch(e){}}};
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const K='#05040c';
+function R(x,y,w,h,c){ctx.fillStyle=c;ctx.fillRect(Math.round(x),Math.round(y),Math.round(w),Math.round(h));}
+function txt(s,x,y,c,size=8,align='left',sh='#000'){ctx.font=`${size}px 'Press Start 2P', monospace`;ctx.textAlign=align;ctx.textBaseline='top';if(sh){ctx.fillStyle=sh;ctx.fillText(s,x+1,y+1);}ctx.fillStyle=c;ctx.fillText(s,x,y);}
+const rnd=(a,b)=>a+Math.random()*(b-a);
+
+// ---------- screen fitting ----------
+function fit(){const sc=$('screen'),bw=sc.clientWidth-8,bh=sc.clientHeight-8;const s=Math.max(1,Math.min(bw/W,bh/H));cv.style.width=Math.floor(W*s)+'px';cv.style.height=Math.floor(H*s)+'px';}
+addEventListener('resize',fit);if(window.visualViewport)visualViewport.addEventListener('resize',fit);
+
+// ---------- sound: all synthesized, starts on the first tap or key ----------
+let ac=null,master=null,muted=ls.get('zorp-muted')==='1';
+$('muteBtn').textContent=muted?'SOUND: OFF':'SOUND: ON';
+function audio(){if(ac){if(ac.state!=='running')try{ac.resume();}catch(e){}return;}const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return;
+  ac=new AC();master=ac.createGain();master.gain.value=muted?0:0.18;master.connect(ac.destination);}
+function tone(f,t,d,type='square',v=0.3,to){if(!ac)return;const o=ac.createOscillator(),g=ac.createGain();o.type=type;o.frequency.setValueAtTime(f,t);if(to)o.frequency.exponentialRampToValueAtTime(to,t+d);
+  g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);o.connect(g);g.connect(master);o.start(t);o.stop(t+d+0.03);}
+let nb=null;function noise(t,d,v,hp=800){if(!ac)return;if(!nb){nb=ac.createBuffer(1,ac.sampleRate*0.6,ac.sampleRate);const a=nb.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;}
+  const s=ac.createBufferSource(),f=ac.createBiquadFilter(),g=ac.createGain();s.buffer=nb;f.type='highpass';f.frequency.value=hp;g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(0.001,t+d);s.connect(f);f.connect(g);g.connect(master);s.start(t);s.stop(t+d+0.02);}
+const now=()=>ac?ac.currentTime:0;
+const sfx={
+  laser(){const t=now();tone(1400,t,0.12,'square',0.12,260);},
+  pop(){const t=now();noise(t,0.18,0.4,900);tone(300,t,0.1,'square',0.12,90);},
+  boom(){const t=now();noise(t,0.7,0.6,120);tone(120,t,0.6,'sawtooth',0.25,30);},
+  saucer(){const t=now();[0,0.08,0.16].forEach((d,k)=>tone(900+k*220,t+d,0.08,'triangle',0.15));},
+  bonus(){const t=now();[72,76,79,84].forEach((m,k)=>tone(440*Math.pow(2,(m-69)/12),t+k*0.08,0.14,'square',0.18));},
+  thud(){const t=now();tone(150,t,0.16,'sine',0.7,45);},
+  hat(){noise(now(),0.03,0.12,7000);},
+  shield(){noise(now(),0.06,0.2,2500);}
+};
+$('muteBtn').addEventListener('click',()=>{audio();muted=!muted;ls.set('zorp-muted',muted?'1':'0');if(master)master.gain.value=muted?0:0.18;$('muteBtn').textContent=muted?'SOUND: OFF':'SOUND: ON';});
+document.addEventListener('visibilitychange',()=>{if(document.hidden){if(ac)try{ac.suspend();}catch(e){}if(S.mode==='play')S.paused=true;}});
+
+// ---------- sprites (each drawn at its top-left) ----------
+// the Alien DJ's crew: a DJ head with pink headphones, a grumpy alien, and a robot vacuum. Two frames each.
+function sprDJ(x,y,f){const G1='#5ae05a',G2='#2f9a2f';R(x+3,y-2,6,3,'#ff4fd8');R(x+3,y,6,1,'#ffd23f');R(x+1,y+1,10,1,'#c0209a');R(x+5+(f?0:1),y-3,1,1,'#5fe8ff');
+  R(x+2,y+2,8,6,G1);R(x+3,y+2,6,1,'#9af09a');R(x+3,y+4,2,2,K);R(x+7,y+4,2,2,K);R(x+3,y+4,1,1,'#fff');R(x+7,y+4,1,1,'#fff');
+  R(x,y+3,2,4,'#ff4fd8');R(x+10,y+3,2,4,'#ff4fd8');R(x+5,y+7,2,1,G2);
+  R(x+3,y+8,6,1,'#7a3cff');if(f){R(x+1,y+8,2,1,G1);R(x+9,y+8,2,1,G1);}else{R(x,y+7,2,1,G1);R(x+10,y+7,2,1,G1);}}
+function sprGrump(x,y,f){const G1='#8ae84a',G2='#3a8a2a';R(x+3,y,1,2,G2);R(x+8,y,1,2,G2);R(x+2,y-1,2,1,'#ff3b3b');R(x+8,y-1,2,1,'#ff3b3b');
+  R(x+2,y+2,8,6,G1);R(x+2,y+3,3,1,G2);R(x+7,y+3,3,1,G2);R(x+3,y+4,2,2,K);R(x+7,y+4,2,2,K);R(x+3,y+4,1,1,'#ff3b3b');R(x+8,y+4,1,1,'#ff3b3b');R(x+5,y+7,2,1,'#5a1010');
+  R(x+3,y+8,6,1,'#5a4a8a');if(f){R(x,y+5,2,3,'#5a4a8a');R(x+10,y+2,2,3,'#5a4a8a');R(x+10,y+1,2,1,G1);}else{R(x,y+2,2,3,'#5a4a8a');R(x,y+1,2,1,G1);R(x+10,y+5,2,3,'#5a4a8a');}}
+function sprVac(x,y,f){R(x,y+3,12,4,K);R(x+1,y+4,10,2,'#8a90a0');R(x+1,y+1,10,3,K);R(x+2,y+1,8,2,'#e8ecf4');R(x+4,y+1,4,1,'#ffffff');R(x+5,y+2,2,1,'#5fe8ff');
+  R(x+(f?1:9),y+1,2,1,'#5aff8a');const bx=f?-1:12;R(x+bx,y+6,1,1,'#ffd23f');R(x+bx+(f?1:-1),y+7,1,1,'#ffd23f');}
+// the Alien DJ's saucer, the bonus target that zips across the top
+function sprSaucer(x,y,t){R(x+5,y,8,1,K);R(x+4,y+1,10,3,'#bfefff');R(x+7,y+1,4,2,'#5ae05a');R(x+8,y+1,1,1,K);R(x+10,y+1,1,1,K);
+  R(x,y+4,18,1,K);R(x+1,y+4,16,3,'#c8ccd8');R(x+1,y+6,16,1,'#8a90a0');for(let k=0;k<4;k++)R(x+2+k*4,y+5,2,1,(Math.floor(t/120)+k)%2?'#ff4fd8':'#ffd23f');}
+// the player: a disco carrot cannon on a little mirror-ball base
+function sprCannon(x,y,t,flash){const o=flash?'#ffffff':'#ff7a1a';R(x+5,y,1,2,'#fff6c8');R(x+4,y+2,3,2,o);R(x+3,y+4,5,4,o);R(x+4,y+4,1,4,'#ffb070');R(x+3,y+5,5,1,'#c84a00');
+  R(x+2,y-3,2,2,'#3ad06a');R(x+7,y-3,2,2,'#3ad06a');R(x+5,y-4,1,3,'#3ad06a');
+  R(x,y+8,11,4,'#8a90a0');for(let k=0;k<5;k++)R(x+1+k*2,y+9+(k%2),1,1,(Math.floor(t/150)+k)%3?'#e8eef8':'#ff4fd8');R(x-1,y+12,13,1,'#5a6070');}
+function vinyl(x,y,t){R(x-2,y-2,5,5,'#141418');R(x-1,y-1,3,3,'#2a2a34');R(x,y,1,1,Math.floor(t/80)%2?'#ff4fd8':'#ffd23f');}
+
+// ---------- the speaker stacks you hide behind (destructible, 2x2 pixel cells) ----------
+const SPK_SHAPE=['..XXXXXXX..','.XXXXXXXXX.','XXXXXXXXXXX','XXXXXXXXXXX','XXXXXXXXXXX','XXX.....XXX','XX.......XX'];
+function makeSpeakers(){const out=[];for(let k=0;k<4;k++){const x0=26+k*58,y0=170,cells=[];SPK_SHAPE.forEach((row,r)=>{for(let c=0;c<row.length;c++)if(row[c]==='X')cells.push({x:x0+c*2,y:y0+r*2,on:true,r});});out.push({x0,y0,w:22,h:14,cells});}return out;}
+function hitSpeaker(x,y,big){for(const s of S.spk){if(x<s.x0-1||x>s.x0+s.w+1||y<s.y0-1||y>s.y0+s.h+1)continue;
+    for(const c of s.cells)if(c.on&&x>=c.x-1&&x<=c.x+2&&y>=c.y-1&&y<=c.y+2){for(const d of s.cells)if(d.on&&Math.abs(d.x-c.x)<=(big?4:2)&&Math.abs(d.y-c.y)<=(big?4:2)&&Math.random()<0.8)d.on=false;c.on=false;sfx.shield();return true;}}return false;}
+
+// ---------- game state ----------
+const COLS=9,ROWS=5,SX=18,SY=14,EW=12,EH=9;
+const S={mode:'title',paused:false,score:0,best:+(ls.get('zorp-best')||0),lives:3,wave:1,t:0,parts:[],floats:[],al:[],spk:[],pshots:[],eshots:[]};
+const keys={};const touch={l:false,r:false,f:false};
+function newWave(){const y0=36+Math.min(S.wave-1,5)*6;S.al=[];for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++)S.al.push({c,r,x:47+c*SX,y:y0+r*SY,kind:r===0?'dj':r<3?'grump':'vac',alive:true});
+  S.dir=1;S.stepT=0;S.frame=0;S.eshots=[];S.pshots=[];S.saucer=null;S.saucerT=rnd(14,22);S.fireT=1.6;S.bannerT=2;S.banner='WAVE '+S.wave;}
+function startGame(){audio();S.mode='play';S.paused=false;S.score=0;S.lives=3;S.wave=1;S.extra=false;S.px=122;S.dead=0;S.inv=1.2;S.cool=0;S.parts=[];S.floats=[];S.spk=makeSpeakers();newWave();}
+const pts={dj:30,grump:20,vac:10};
+function aliveN(){let n=0;for(const a of S.al)if(a.alive)n++;return n;}
+function burst(x,y,n,cols){for(let i=0;i<n;i++){const a=Math.random()*Math.PI*2,sp=rnd(20,80);S.parts.push({x,y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,l:rnd(0.3,0.7),c:cols[i%cols.length]});}}
+function floatText(x,y,s,c){S.floats.push({x,y,s,c,l:1});}
+function addScore(n){S.score+=n;if(!S.extra&&S.score>=1500){S.extra=true;S.lives++;floatText(S.px+5,180,'EXTRA LIFE!','#5aff8a');sfx.bonus();}}
+
+function update(dt){
+  S.t+=dt;
+  for(const p of S.parts){p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=60*dt;p.l-=dt;}S.parts=S.parts.filter(p=>p.l>0);
+  for(const f of S.floats){f.y-=14*dt;f.l-=dt;}S.floats=S.floats.filter(f=>f.l>0);
+  if(S.mode!=='play'||S.paused)return;
+  if(S.bannerT>0)S.bannerT-=dt;
+  // the cannon
+  const L=keys.ArrowLeft||keys.a||keys.A||touch.l,Rt=keys.ArrowRight||keys.d||keys.D||touch.r,F=keys[' ']||keys.ArrowUp||keys.w||keys.W||touch.f;
+  if(S.dead>0){S.dead-=dt;if(S.dead<=0){if(S.lives<=0)return gameOver();S.px=122;S.inv=1.6;}}
+  else{if(L)S.px-=96*dt;if(Rt)S.px+=96*dt;S.px=Math.max(4,Math.min(W-15,S.px));
+    S.cool-=dt;if(F&&S.cool<=0&&S.pshots.length<2){S.pshots.push({x:S.px+5,y:186});S.cool=0.3;sfx.laser();}}
+  if(S.inv>0)S.inv-=dt;
+  // lasers going up
+  for(const s of S.pshots){s.y-=250*dt;
+    if(hitSpeaker(s.x,s.y,false)){s.dead=true;continue;}
+    for(const a of S.al){if(!a.alive)continue;if(s.x>=a.x-1&&s.x<=a.x+EW+1&&s.y>=a.y-1&&s.y<=a.y+EH){a.alive=false;s.dead=true;addScore(pts[a.kind]);burst(a.x+6,a.y+4,10,a.kind==='vac'?['#e8ecf4','#5fe8ff']:['#5ae05a','#ff4fd8','#fff']);sfx.pop();break;}}
+    if(!s.dead&&S.saucer&&s.x>=S.saucer.x&&s.x<=S.saucer.x+18&&s.y>=S.saucer.y&&s.y<=S.saucer.y+7){const b=[50,100,150,300][Math.floor(Math.random()*4)];addScore(b);floatText(S.saucer.x+9,S.saucer.y,'+'+b,'#ffd23f');burst(S.saucer.x+9,S.saucer.y+4,18,['#ffd23f','#ff4fd8','#fff']);sfx.bonus();S.saucer=null;s.dead=true;}
+    if(s.y<18)s.dead=true;}
+  S.pshots=S.pshots.filter(s=>!s.dead);
+  // the march: faster as the crowd thins out and on later waves
+  const n=aliveN();if(n===0){S.wave++;addScore(100);floatText(128,110,'WAVE CLEAR +100','#5aff8a');sfx.bonus();newWave();return;}
+  const step=Math.max(0.03,(0.05+0.55*n/(ROWS*COLS))/(1+(S.wave-1)*0.12));S.stepT+=dt;
+  if(S.stepT>=step){S.stepT=0;S.frame^=1;let minX=999,maxX=-1,maxY=0;for(const a of S.al)if(a.alive){minX=Math.min(minX,a.x);maxX=Math.max(maxX,a.x);maxY=Math.max(maxY,a.y);}
+    if((S.dir>0&&maxX+EW+3>=W-4)||(S.dir<0&&minX-3<=4)){S.dir*=-1;for(const a of S.al)a.y+=6;}else for(const a of S.al)a.x+=S.dir*3;
+    if(S.frame)sfx.thud();else sfx.hat();
+    // they plow through the speaker stacks if they get that low
+    for(const a of S.al)if(a.alive)for(const s of S.spk)for(const c of s.cells)if(c.on&&c.x>=a.x-1&&c.x<=a.x+EW&&c.y>=a.y&&c.y<=a.y+EH)c.on=false;
+    if(maxY+EH>=186){S.lives=0;S.dead=1.2;burst(S.px+5,190,30,['#ff7a1a','#ffd23f','#fff']);sfx.boom();floatText(128,100,'THEY LANDED!','#ff4fd8');}}
+  // records flying down
+  S.fireT-=dt;if(S.fireT<=0&&S.eshots.length<3+Math.min(3,S.wave)){S.fireT=rnd(0.4,1.2)/(1+(S.wave-1)*0.15);
+    const cols={};for(const a of S.al)if(a.alive&&(!cols[a.c]||a.y>cols[a.c].y))cols[a.c]=a;const ks=Object.keys(cols);
+    // aim at the cannon half the time
+    let pick=cols[ks[Math.floor(Math.random()*ks.length)]];if(Math.random()<0.5){let best=1e9;for(const k of ks){const d=Math.abs(cols[k].x+6-(S.px+5));if(d<best){best=d;pick=cols[k];}}}
+    if(pick)S.eshots.push({x:pick.x+6,y:pick.y+EH+2,vy:62+S.wave*6});}
+  for(const e of S.eshots){e.y+=e.vy*dt;if(hitSpeaker(e.x,e.y,true)){e.dead=true;continue;}
+    if(S.dead<=0&&S.inv<=0&&e.x>=S.px-1&&e.x<=S.px+12&&e.y>=188&&e.y<=202){e.dead=true;S.lives--;S.dead=1.4;burst(S.px+5,192,26,['#ff7a1a','#ffd23f','#fff','#ff4fd8']);sfx.boom();}
+    if(e.y>212)e.dead=true;}
+  S.eshots=S.eshots.filter(e=>!e.dead);
+  // the saucer
+  if(!S.saucer){S.saucerT-=dt;if(S.saucerT<=0){const d=Math.random()<0.5?1:-1;S.saucer={x:d>0?-20:W+2,y:22,d};sfx.saucer();}}
+  else{S.saucer.x+=S.saucer.d*48*dt;if(S.saucer.x<-24||S.saucer.x>W+24){S.saucer=null;S.saucerT=rnd(16,26);}}
+}
+function gameOver(){S.mode='over';S.newBest=S.score>S.best;if(S.newBest){S.best=S.score;ls.set('zorp-best',String(S.best));}
+  const result={type:'zorp:result',score:S.score,wave:S.wave,best:S.best};try{if(window.parent&&window.parent!==window)window.parent.postMessage(result,'*');}catch(e){}}
+
+// ---------- drawing ----------
+const STARS=Array.from({length:70},(_,i)=>({x:(i*97+31)%W,y:(i*53+11)%170,b:i%5}));
+function drawBG(t){R(0,0,W,H,'#03020c');for(const s of STARS){const tw=reduceMotion?1:(Math.sin(t*2+s.x)+1)/2;if(tw>0.25)R(s.x,s.y,1,1,s.b?'#7a84c0':'#ffffff');}
+  // Earth hanging over the arcade, and the lunar ground under the cannon
+  ctx.fillStyle='#1d5fb0';ctx.beginPath();ctx.arc(222,58,14,0,Math.PI*2);ctx.fill();R(213,52,8,5,'#2f8f4f');R(224,60,6,6,'#2f8f4f');R(216,45,12,2,'#f4f8ff');
+  ctx.globalAlpha=0.3;ctx.fillStyle='#000';ctx.beginPath();ctx.arc(228,62,14,0,Math.PI*2);ctx.fill();ctx.globalAlpha=1;
+  R(0,204,W,20,'#8a8a96');R(0,204,W,1,'#c8c8d0');for(let i=0;i<20;i++)R((i*41)%W,207+(i*7)%14,4+(i%3)*2,2,'#6a6a74');}
+function drawSpeakers(){for(const s of S.spk){for(const c of s.cells)if(c.on)R(c.x,c.y,2,2,c.r<1?'#3a3a48':c.r===2?'#ff4fd8':'#1c1c24');
+    // woofer cones, while enough of the cabinet is left to hold them
+    const left=s.cells.filter(c=>c.on).length;if(left>40){R(s.x0+5,s.y0+5,3,3,'#5a6070');R(s.x0+14,s.y0+5,3,3,'#5a6070');}}}
+function draw(){const t=S.t;drawBG(t);
+  if(S.mode==='title'){txt('ZORP',128,34,'#5aff8a',24,'center','#0a3a1a');txt('ATTACK',128,62,'#ff4fd8',16,'center','#3a0a2a');
+    sprDJ(60,96,Math.floor(t*2)%2);txt('= 30',78,97,'#fff',8);sprGrump(60,112,Math.floor(t*2)%2);txt('= 20',78,113,'#fff',8);sprVac(60,129,Math.floor(t*2)%2);txt('= 10',78,128,'#fff',8);
+    sprSaucer(140,98,t*1000);txt('= ???',162,99,'#ffd23f',8);vinyl(150,122,t*1000);txt('DODGE',162,119,'#ff4fd8',8);
+    sprCannon(122,170,t*1000,false);
+    if(Math.floor(t*2)%2)txt(matchMedia('(pointer:coarse)').matches?'TAP FIRE TO START':'PRESS SPACE TO START',128,150,'#ffd23f',8,'center');
+    txt('HI '+String(S.best).padStart(5,'0'),128,190,'#c9b8ff',8,'center');return;}
+  drawSpeakers();
+  for(const a of S.al)if(a.alive){const f=S.frame;if(a.kind==='dj')sprDJ(a.x,a.y,f);else if(a.kind==='grump')sprGrump(a.x,a.y,f);else sprVac(a.x,a.y+1,f);}
+  if(S.saucer)sprSaucer(S.saucer.x,S.saucer.y,t*1000);
+  for(const s of S.pshots){R(s.x,s.y,1,6,'#ffffff');R(s.x-1,s.y+1,3,4,'rgba(255,79,216,0.5)');}
+  for(const e of S.eshots)vinyl(e.x,e.y,t*1000+e.x*10);
+  if(S.dead<=0&&!(S.inv>0&&Math.floor(t*10)%2))sprCannon(S.px,190,t*1000,false);
+  for(const p of S.parts)R(p.x,p.y,2,2,p.c);
+  for(const f of S.floats){ctx.globalAlpha=Math.min(1,f.l*1.5);txt(f.s,f.x,f.y,f.c,8,'center');ctx.globalAlpha=1;}
+  // HUD
+  R(0,0,W,16,K);R(0,16,W,1,'#5aff8a');txt('SCORE '+String(S.score).padStart(5,'0'),4,4,'#fff',8);txt('HI '+String(Math.max(S.best,S.score)).padStart(5,'0'),252,4,'#c9b8ff',8,'right');
+  for(let k=0;k<Math.max(0,S.lives-1);k++)sprCannon(4+k*14,210,0,false);
+  txt('WAVE '+S.wave,252,212,'#5aff8a',8,'right');
+  if(S.bannerT>0&&S.mode==='play')txt(S.banner,128,150,'#ffd23f',8,'center');
+  if(S.paused){ctx.globalAlpha=0.7;R(0,0,W,H,K);ctx.globalAlpha=1;txt('PAUSED',128,96,'#ffd23f',16,'center');txt('TAP OR PRESS P',128,124,'#fff',8,'center');}
+  if(S.mode==='over'){ctx.globalAlpha=0.75;R(0,60,W,100,K);ctx.globalAlpha=1;txt('GAME OVER',128,72,'#ff4fd8',16,'center');
+    txt('SCORE '+S.score+'  WAVE '+S.wave,128,100,'#fff',8,'center');if(S.newBest)txt('NEW HIGH SCORE!',128,116,'#5aff8a',8,'center');
+    if(Math.floor(t*2)%2)txt(matchMedia('(pointer:coarse)').matches?'TAP FIRE TO PLAY AGAIN':'SPACE TO PLAY AGAIN',128,138,'#ffd23f',8,'center');}}
+
+// ---------- input ----------
+function press(){audio();if(S.mode==='title'||S.mode==='over'){if(S.mode==='over'&&S.t-(S.overAt||0)<0.8)return;startGame();return true;}if(S.paused){S.paused=false;return true;}return false;}
+addEventListener('keydown',e=>{const k=e.key;if([' ','ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(k))e.preventDefault();
+  if(k==='p'||k==='P'||k==='Escape'){if(S.mode==='play')S.paused=!S.paused;return;}
+  if(k==='m'||k==='M'){$('muteBtn').click();return;}
+  if((k===' '||k==='Enter')&&!e.repeat&&press())return;keys[k]=true;});
+addEventListener('keyup',e=>{keys[e.key]=false;});
+cv.addEventListener('pointerdown',e=>{e.preventDefault();if(press())return;if(S.mode==='play'&&!S.paused){const r=cv.getBoundingClientRect();S.px=Math.max(4,Math.min(W-15,(e.clientX-r.left)/r.width*W-5));}});
+function hold(id,key){const b=$(id);const on=e=>{e.preventDefault();audio();if(key==='f'&&press())return;touch[key]=true;b.classList.add('on');try{b.setPointerCapture(e.pointerId);}catch(_){}};const off=()=>{touch[key]=false;b.classList.remove('on');};
+  b.addEventListener('pointerdown',on);b.addEventListener('pointerup',off);b.addEventListener('pointercancel',off);b.addEventListener('lostpointercapture',off);b.addEventListener('contextmenu',e=>e.preventDefault());}
+hold('padL','l');hold('padR','r');hold('padF','f');
+if(EMBED){const b=$('backBtn');b.hidden=false;b.addEventListener('click',()=>{try{window.parent.postMessage({type:'zorp:exit',score:S.score},'*');}catch(e){}});}
+
+// ---------- loop ----------
+let last=performance.now();
+function frame(t){const dt=Math.min(0.05,(t-last)/1000);last=t;const was=S.mode;update(dt);if(was==='play'&&S.mode==='over')S.overAt=S.t;draw();requestAnimationFrame(frame);}
+fit();if(document.fonts&&document.fonts.load){document.fonts.load("8px 'Press Start 2P'").then(()=>{},()=>{});}requestAnimationFrame(frame);
+window.__zorp=S;
+})();
+</script>
+
+</body></html>

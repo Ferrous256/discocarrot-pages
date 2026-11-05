@@ -61,6 +61,9 @@ body[data-stick="right"] .controls #trickBtn{grid-column:1;justify-self:start}
 .pad::before{top:6px;border-bottom-color:#fff}.pad::after{bottom:6px;border-top-color:#fff}
 .knob{position:absolute;left:50%;top:50%;width:46px;height:46px;margin:-23px 0 0 -23px;border-radius:50%;background:var(--carrot);border:4px solid #fff;box-shadow:0 4px 0 #000;box-sizing:border-box}
 @media (prefers-reduced-motion: reduce){.start,#trickBtn.ready{animation:none}}
+#fartBtn{position:absolute;right:14px;top:30%;z-index:6;width:58px;height:58px;border-radius:50%;padding:0;font:inherit;font-size:10px;font-weight:bold;letter-spacing:1px;color:#140b22;background:#9ad03a;border:3px solid #140b22;box-shadow:0 3px 0 #140b22,0 0 14px rgba(154,208,58,.6);touch-action:none;cursor:pointer;opacity:.94}
+#fartBtn:active{transform:translateY(2px)}
+#fartBtn[hidden]{display:none}
 </style>
 </head><body>
 <div id="app">
@@ -72,6 +75,7 @@ body[data-stick="right"] .controls #trickBtn{grid-column:1;justify-self:start}
     </div>
   </div>
   <div class="screen" id="screen">
+    <button id="fartBtn" type="button" hidden aria-label="Fart thruster">FART</button>
     <canvas id="cv" width="256" height="448" aria-label="Surf Sesh, a 16-bit surfing mini game at Huntington Beach"></canvas>
     <div class="panel" id="menu">
       <div class="lbl">DRIVERS</div>
@@ -772,6 +776,7 @@ function tone(f,t,dur,type='square',vol=0.2,slide){if(!A.ac)return;const o=A.ac.
 function noise(t,dur,vol,type='lowpass',f=900){if(!A.ac)return;const s=A.ac.createBufferSource();s.buffer=A.nb;const fl=A.ac.createBiquadFilter();fl.type=type;fl.frequency.value=f;
   const g=A.ac.createGain();g.gain.setValueAtTime(0.0001,t);g.gain.linearRampToValueAtTime(vol,t+Math.min(0.06,dur/4));g.gain.exponentialRampToValueAtTime(0.001,t+dur);s.connect(fl);fl.connect(g);g.connect(A.master);s.start(t);s.stop(t+dur+0.02);}
 const sfx={
+  fart(){const t=anow();for(let k=0;k<7;k++)tone(95-k*6+Math.random()*12,t+k*0.04,0.06,'sawtooth',0.22,55);tone(70,t,0.34,'square',0.12,38);noise(t,0.3,0.2,'lowpass',260);},
   carrot(){const t=anow();tone(880,t,0.06,'square',0.1);tone(1320,t+0.05,0.08,'square',0.1);},
   gold(){const t=anow();[0,4,7,12].forEach((m,k)=>tone(660*Math.pow(2,m/12),t+k*0.06,0.12,'square',0.12));},
   join(){const t=anow();tone(520,t,0.08,'triangle',0.2);tone(780,t+0.08,0.1,'triangle',0.2);},
@@ -797,7 +802,7 @@ function renderMenu(){
   CREW.forEach(c=>(c.kind==='driver'?dr:dj).appendChild(mkBtn('chip'+(c.id===sel.crew?' on':''),c.name,()=>{sel.crew=c.id;ls.set('surf-crew',c.id);sfx.tick();renderMenu();})));
   SPOTS.forEach(s=>sp.appendChild(mkBtn('chip'+(s.id===sel.spot?' on':''),s.name,()=>{sel.spot=s.id;ls.set('surf-spot',s.id);sfx.tick();renderMenu();})));
   const c=CREW_BY[sel.crew],s=SPOT_BY[sel.spot],b=bests()[s.id+':'+c.id];
-  $('menuStatus').innerHTML=`<b>${c.name}</b> ${modsFor(c.id).perk.toLowerCase()}.<br><b>${s.tag}</b> ${s.blurb}${b?` Best: <b>${b}</b>`:''}`;
+  $('menuStatus').innerHTML=`<b>${c.name}</b> ${modsFor(c.id).perk.toLowerCase()}.<br><b>${s.tag}</b> ${s.blurb}${b?` Best: <b>${b}</b>`:''}${beansLine()}`;
 }
 $('goBtn').addEventListener('click',()=>startSession());
 const muteBtn=$('muteBtn');muteBtn.textContent=A.muted?'SOUND: OFF':'SOUND: ON';
@@ -807,6 +812,37 @@ let mode='menu';
 function setUI(){$('menu').hidden=mode!=='menu';$('results').hidden=mode!=='results';$('controls').hidden=mode!=='game';$('pad').hidden=!coarse;stickUp({pointerId:joy.id});$('quitBtn').hidden=mode!=='game'||EMBED;if(mode==='menu')renderMenu();fitScreen();}
 
 // ---------- random numbers ----------
+// ---------- the secret can of beans: find it and you get a fart thruster for the rest of the run ----------
+// which games have given up their beans lives in localStorage, shared by all the Jak mini games
+const BEAN_GAMES=['ski','sky','mtb','surf'];
+function beansFound(){try{return JSON.parse(ls.get('jak-beans')||'{}')||{};}catch(e){return{};}}
+function markBeans(id){const b=beansFound();b[id]=1;ls.set('jak-beans',JSON.stringify(b));return BEAN_GAMES.filter(k=>b[k]).length;}
+function beansCount(){const b=beansFound();return BEAN_GAMES.filter(k=>b[k]).length;}
+const FART_WORDS=['BRRRAP!','PFFFT!','TOOT!','BRAAAP!','THPPPT!'];
+// the can: (x,y) is the bottom center, 10 x 13 with its outline
+function drawBeanCan(x,y,t,glint){
+  x=Math.round(x-5);y=Math.round(y-13);
+  R(x,y+1,10,11,'#140b22');R(x+1,y,8,13,'#140b22');
+  R(x+1,y+1,8,2,'#c8ccd8');R(x+2,y+1,4,1,'#ffffff');R(x+6,y+2,2,1,'#8a8ea0');
+  R(x+1,y+3,8,7,'#d8402a');R(x+1,y+5,8,3,'#fbf0d0');
+  R(x+2,y+6,2,1,'#8a4a1a');R(x+5,y+6,3,1,'#8a4a1a');R(x+3,y+5,2,1,'#b8682a');
+  R(x+1,y+10,8,2,'#a8acb8');R(x+1,y+3,1,7,'#ff7a5a');
+  if(glint&&Math.floor(t/130)%8===0){R(x+8,y-3,1,3,'#ffffff');R(x+7,y-2,3,1,'#ffffff');}
+}
+// green clouds: list entries are {x,y,vx,vy,r,life}
+function fartBurst(list,x,y,dx,dy,n){n=n||9;for(let i=0;i<n;i++){const s=30+Math.random()*60;
+  list.push({x:x+(Math.random()-0.5)*4,y:y+(Math.random()-0.5)*4,vx:dx*s+(Math.random()-0.5)*36,vy:dy*s+(Math.random()-0.5)*36,r:1.5+Math.random()*2,life:0.7+Math.random()*0.7});}}
+function beanStink(list,x,y){if(Math.random()<0.06)list.push({x:x+(Math.random()-0.5)*6,y:y-14,vx:(Math.random()-0.5)*6,vy:-12,r:1,life:1.1,stink:1});}
+function updFarts(list,dt){for(let i=list.length-1;i>=0;i--){const f=list[i];f.life-=dt;if(f.life<=0){list.splice(i,1);continue;}
+  const k=Math.pow(0.12,dt);f.x+=f.vx*dt;f.y+=f.vy*dt;f.vx*=k;f.vy*=k;f.vy-=5*dt;f.r=Math.min(f.stink?2.5:7,f.r+dt*4.5);}}
+function bCirc(cx,cy,r,c){for(let dy=-r;dy<=r;dy++){const w=Math.round(Math.sqrt(r*r-dy*dy));R(cx-w,cy+dy,w*2+1,1,c);}}
+function drawFarts(list,ox,oy){for(const f of list){const a=Math.min(1,f.life/0.5);ctx.globalAlpha=a*(f.stink?0.55:0.8);
+  const cx=Math.round(f.x-ox),cy=Math.round(f.y-oy),r=Math.round(f.r);bCirc(cx,cy,r,'#7aa82a');if(r>1)bCirc(cx-1,cy-1,Math.max(1,r-2),'#b8e05a');}ctx.globalAlpha=1;}
+// the gas gauge in the top bar: a little can and one pip per toot left
+function drawGasHUD(x,n){drawBeanCan(x+5,14,0,false);for(let i=0;i<4;i++)R(x+12+i*5,5,4,5,i<n?'#9ad03a':'#3a3a4a');}
+const fartBtn=document.getElementById('fartBtn');let fartShown=false;
+function syncFart(on){on=!!on;if(on!==fartShown){fartShown=on;fartBtn.hidden=!on;}}
+function beansLine(){const n=beansCount();return n?` Secret beans found in <b>${n} of 4</b> mini games.`:'';}
 function rng(seed){let a=seed>>>0;return()=>{a=(a+0x6D2B79F5)>>>0;let t=a;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296;};}
 
 // ---------- the session ----------
@@ -817,7 +853,7 @@ function startSession(opts={}){
   sel.crew=crew;sel.spot=spot.id;
   const seed=opts.seed!=null?opts.seed:Math.floor(Math.random()*1e9);
   G={crew,spot,m,seed,rnd:rng(seed),wave:0,hearts:3+m.hearts,maxH:3+m.hearts,score:0,carrots:0,tricks:0,bestTrick:'',barrel:0,maxCrew:0,grumpsWon:0,piers:0,kicks:0,
-     joy:0,party:0,followers:[],lost:[],parts:[],floats:[],banner:null,shake:0,result:null,waveScores:[],board:BOARD_COLS[CREW.findIndex(c=>c.id===crew)%BOARD_COLS.length]};
+     joy:0,party:0,followers:[],lost:[],parts:[],floats:[],banner:null,shake:0,result:null,waveScores:[],gas:0,beans:false,fartT:0,farts:[],beanWave:1+Math.floor(rng(seed^0x0bea75)()*WAVES_PER_SET),board:BOARD_COLS[CREW.findIndex(c=>c.id===crew)%BOARD_COLS.length]};
   mode='game';setUI();
   if(A.eng){A.eng.setSong(spot.song,anow(),0,true);A.eng.setHype(false,anow());}
   nextWave();
@@ -840,6 +876,8 @@ function nextWave(){
     x+=70+Math.floor(r()*80);
   }
   const gx=Math.round(L*(0.3+r()*0.4));if(clear(gx))Wd.objs.push({k:'c',x:gx,h:0.96,gold:true,gone:false});
+  // the secret beans hang in the air over the lip on one wave of the set: you need a big air to grab them
+  if(g.wave===g.beanWave&&!g.beans){let bx=Math.round(L*(0.4+r()*0.35));if(!clear(bx))bx=Math.round(L*0.25);Wd.objs.push({k:'b',x:bx,h:1.24,gone:false});}
   setBanner(`WAVE ${g.wave} OF ${WAVES_PER_SET}`,g.wave===1?'SET WAVE! DROP IN':'HERE COMES ANOTHER ONE','#ffd23f',1.8);
 }
 function setBanner(text,sub,col,dur){G.banner={text,sub,col,t:dur,d:dur};}
@@ -862,6 +900,19 @@ function wipeout(why,closeout){
   if(!g.m.keepLine){const n=Math.ceil(g.followers.length/2);for(let i=0;i<n;i++){const f=g.followers.pop();g.lost.push({...f,x:g.x-30-i*12,h:0.2,life:1.2});}}
   g.party=0;if(A.eng)A.eng.setHype(false,anow());
 }
+function gotBeans(o){const g=G;g.gas=4;g.beans=true;const n=markBeans('surf');sfx.gold();sfx.fart();g.shake=0.25;addPts(250,o.x,o.h+0.1,'',null);
+  setBanner('SECRET BEANS!',coarse?'TAP FART FOR A BOOST':'PRESS F TO FART BOOST','#9ad03a',2.6);fartBurst(g.farts,o.x,screenY(o.x,o.h)-8,0,-1,16);floatText(o.x,Math.min(1.4,o.h),'+250','#9ad03a');
+  if(n>1)floatText(o.x,1.4,`BEANS ${n} OF 4`,'#ffffff');}
+function doFart(){const g=G;
+  if(mode!=='game'||!g||!g.gas||g.phase!=='ride')return;
+  g.gas--;g.fartT=1.2;sfx.fart();g.shake=Math.max(g.shake,0.15);
+  if(!g.air){g.air=true;g.vh=2.7*g.m.air;g.tricksThisAir=0;floatText(g.x,1.3,'FART LAUNCH!','#9ad03a');}
+  else{g.vh=Math.max(g.vh,0)+2.0;floatText(g.x,Math.min(1.4,g.h+0.3),FART_WORDS[g.gas%FART_WORDS.length],'#9ad03a');}
+  g.vx+=g.spot.peel*0.5;
+  fartBurst(g.farts,g.x-8,screenY(g.x,g.h)-8,-1,0.4,12);
+  for(const o of g.W.objs)if(o.k==='g'&&!o.won&&Math.abs(o.x-g.x)<90&&!o.pew){o.pew=1;o.yell=1.6;}
+  if(!g.gas)setBanner('OUT OF GAS','','#9ad03a',1.0);}
+fartBtn.addEventListener('pointerdown',e=>{e.preventDefault();e.stopPropagation();doFart();});
 function endWave(kicked){
   const g=G;g.phase='between';g.phaseT=0;
   if(kicked){g.kicks++;addPts(200,g.x,g.h+0.3,'KICK OUT','#5fe8ff');const cp=g.followers.length*50;if(cp)addPts(cp,g.x,g.h+0.5,`${g.followers.length} CREW`,'#3ad06a');}
@@ -872,12 +923,12 @@ function finishSession(quit){
   const score=Math.round(g.score),rank=quit?'PADDLED IN EARLY':score<3000?'KOOK':score<6000?'GROM':score<10000?'LOCAL':score<15000?'PIER RAT':'LEGEND OF HB';
   const bk=g.spot.id+':'+g.crew,b=bests(),isBest=!quit&&(!b[bk]||score>b[bk]);if(isBest&&score>0){b[bk]=score;ls.set('surf-best',JSON.stringify(b));}
   const result={type:'surf:result',crew:g.crew,spot:g.spot.id,score,rank,waves:g.waveScores.length,carrots:g.carrots,tricks:g.tricks,barrelSecs:+g.barrel.toFixed(1),
-    maxCrew:g.maxCrew,grumpsWon:g.grumpsWon,piersShot:g.piers,shopPoints:Math.round(score/100)};
+    maxCrew:g.maxCrew,grumpsWon:g.grumpsWon,piersShot:g.piers,shopPoints:Math.round(score/100),beans:g.beans};
   g.result=result;mode='results';setUI();
   if(A.eng)A.eng.setHype(false,anow());
   const row=(k,v,cls='')=>`<div class="k ${cls}">${k}</div><div class="v ${cls}">${v}</div>`;
   $('tally').innerHTML=row('Waves ridden',g.waveScores.length+' of '+WAVES_PER_SET)+row('Disco carrots',g.carrots)+row('Tricks landed',g.tricks)+row('Barrel time',g.barrel.toFixed(1)+'s')+
-    row('Biggest SUP conga',g.maxCrew)+row('Grumps won over',g.grumpsWon)+(g.spot.pier?row('Shot the pier',g.piers):'')+row('Rank',rank)+row(`SCORE${isBest?' NEW BEST':''}`,score,'tot');
+    row('Biggest SUP conga',g.maxCrew)+row('Grumps won over',g.grumpsWon)+(g.spot.pier?row('Shot the pier',g.piers):'')+(g.beans?row('Secret beans',`FOUND (${beansCount()} OF 4)`):'')+row('Rank',rank)+row(`SCORE${isBest?' NEW BEST':''}`,score,'tot');
   const rb=$('resBtns');rb.innerHTML='';
   if(EMBED)rb.appendChild(mkBtn('start','BACK TO JAK',()=>{try{if(typeof SurfSesh.onExit==='function')SurfSesh.onExit(result);}catch(e){}try{if(window.parent!==window)window.parent.postMessage({type:'surf:exit',result},'*');}catch(e){}}));
   else{rb.appendChild(mkBtn('start','PADDLE OUT AGAIN',()=>startSession()));rb.appendChild(mkBtn('start quiet','CHANGE CREW',()=>{mode='menu';setUI();}));}
@@ -905,7 +956,8 @@ addEventListener('keydown',e=>{const k=e.key.length===1?e.key.toLowerCase():e.ke
   if(mode==='game'&&['ArrowUp','ArrowDown',' '].includes(e.key))e.preventDefault();
   if(e.repeat)return;
   if(mode==='menu'&&k==='Enter'&&document.activeElement===document.body){startSession();return;}
-  if(mode==='game'&&(k===' '||k==='x'||k==='j'))pressTrick();});
+  if(mode==='game'&&(k===' '||k==='x'||k==='j'))pressTrick();
+  if(mode==='game'&&(k==='f'||k==='b'))doFart();});
 addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;keys[k]=false;});
 addEventListener('blur',()=>{for(const k in keys)keys[k]=false;touch=null;});
 const TRICKS=[['SPIN 360',150,'spin'],['SUPERMAN',180,'super'],['KICKFLIP',220,'flip'],['ALLEY OOP',260,'spin']];
@@ -930,6 +982,8 @@ function update(dt){
   g.floats=g.floats.filter(f=>(f.t-=dt)>0);
   g.parts=g.parts.filter(p=>(p.life-=dt)>0);g.parts.forEach(p=>{p.x+=p.vx*dt;p.y+=p.vy*dt;p.vy+=160*dt;});
   g.lost=g.lost.filter(f=>(f.life-=dt)>0);g.lost.forEach(f=>{f.x-=60*dt;});
+  updFarts(g.farts,dt);
+  if(g.fartT>0){g.fartT-=dt;if(g.phase==='ride'&&Math.random()<dt*28)fartBurst(g.farts,g.x-8,screenY(g.x,g.h)-8,-1,0.3,1);}
   if(g.shake>0)g.shake-=dt;
   if(g.phase==='between'){if(g.phaseT>2.2){if(g.wave>=WAVES_PER_SET||g.hearts<=0)finishSession(false);else nextWave();}return;}
   // the wave peels at its own speed
@@ -956,7 +1010,7 @@ function update(dt){
     const c=g.x-Wd.curl,pocket=clamp(1-Math.abs(g.h-0.6)/0.6,0,1),near=clamp(1-c/360,0.3,1);
     const push=s.peel*(0.72+0.42*pocket*near)*m.speed*(g.h<0.06?0.75:1);
     g.vx+=(g.vh<0?-g.vh*120*m.pump:-g.vh*75*m.climb)*dt+(push-g.vx)*0.7*dt;
-    g.vx=clamp(g.vx,s.peel*0.45,s.peel*2);
+    g.vx=clamp(g.vx,s.peel*0.45,s.peel*(g.fartT>0?2.6:2));
     if(g.h<0){g.h=0;g.vh=Math.max(0,g.vh);}
     if(g.h>=1){
       if(g.vh>0.7&&g.vx>s.peel*0.6){g.air=true;g.vh=Math.min(3.2,g.vh*1.25*m.air);g.tricksThisAir=0;floatText(g.x,1.3,'AIR!','#5fe8ff');}
@@ -990,6 +1044,7 @@ function update(dt){
     if(Math.abs(o.x-g.x)>60)continue;
     const oy=screenY(o.x,o.h),dx=o.x-g.x,dy=oy-ry;
     if(o.k==='c'){if(Math.abs(dx)<11&&Math.abs(dy)<14){o.gone=true;g.carrots+=o.gold?5:1;addPts(o.gold?250:10,o.x,o.h+0.15,o.gold?'GOLD CARROT':'',o.gold?'#ffd23f':'#ff9a4d');addJoy(o.gold?30:7);o.gold?sfx.gold():sfx.carrot();}}
+    else if(o.k==='b'){if(Math.abs(dx)<12&&Math.abs(dy+6)<16){o.gone=true;gotBeans(o);}}
     else if(o.k==='s'){const pr=16*m.pull;if(Math.abs(dx)<pr&&Math.abs(dy)<pr){o.gone=true;g.followers.push({col:o.col,hair:o.hair});g.maxCrew=Math.max(g.maxCrew,g.followers.length);addPts(40,o.x,o.h+0.2,'SUP JOINS','#3ad06a');addJoy(6);sfx.join();}}
     else if(o.k==='g'&&!o.won){
       if(dx>0&&dx<90&&!o.yelled){o.yelled=true;o.yell=1.6;sfx.yell();}
@@ -1158,9 +1213,10 @@ function drawObjs(camX){
   for(const o of g.W.objs){if(o.gone)continue;const sx=o.x-camX;if(sx<-24||sx>W+24)continue;const y=screenY(o.x,o.h);
     if(o.k==='c'){drawCarrot(Math.round(sx-5),Math.round(y-12),T,o.gold);if(o.gold)glowAt(sx,y-6,'#ffd23f',14,0.5);}
     else if(o.k==='s'){drawSUP(Math.round(sx-5),Math.round(y-16),T,o.col,o.hair,-1,false);}
+    else if(o.k==='b'){const by=Math.round(y+Math.sin(T/400)*2);drawBeanCan(sx,by,T,true);if(Math.random()<0.06)beanStink(g.farts,o.x,by+2);}
     else if(o.k==='g'){drawFloatyGrump(Math.round(sx-6),Math.round(y-20),T,o.yell>0&&!o.won,-1);
       if(o.won){note(Math.round(sx+6),Math.round(y-30+Math.sin(T/200)*2),'#ff4fd8');R(sx-3,y-16,6,1,'#111');}
-      else if(o.yell>0)bubble(sx,y-22,[['NO SURFING!','MY WAVE!','GET LOST, KOOK!','TOO LOUD!'][Math.floor(o.ph*10)%4]]);}}
+      else if(o.yell>0)bubble(sx,y-22,[o.pew?'PEE-YEW!':['NO SURFING!','MY WAVE!','GET LOST, KOOK!','TOO LOUD!'][Math.floor(o.ph*10)%4]]);}}
 }
 function drawFollowers(camX){
   const g=G,n=g.followers.length;
@@ -1188,6 +1244,7 @@ function drawHUD(){
   let x=6+g.maxH*9;R(x+2,3,1,3,PAL.N);R(x+4,2,1,4,PAL.N);for(let r=0;r<6;r++)R(x+3-Math.floor((6-r)/2.5),6+r,Math.max(1,Math.round((6-r)/1.4)),1,PAL.O);
   txt(String(g.carrots),x+9,4,'#ff9a4d',8);x+=14+String(g.carrots).length*8;
   R(x,9,8,2,'#f4f6fb');R(x+3,3,2,6,'#3ad06a');txt(String(g.followers.length),x+11,4,'#3ad06a',8);
+  if(g.beans)drawGasHUD(x+15+String(g.followers.length).length*8,g.gas);
   txt(String(Math.round(g.score)),W-4,4,PAL.Y,8,'right');
   // wave progress and joy
   R(0,15,W,12,'rgba(13,7,24,0.55)');txt(`WAVE ${g.wave}/${WAVES_PER_SET}`,4,17,'#ffffff',8);
@@ -1213,6 +1270,7 @@ function drawGame(){
   // the lip throws over you inside the barrel
   if(g.inBarrel>0&&g.phase==='ride'){const curlS=g.W.curl-camX;ctx.globalAlpha=0.55;for(let k=0;k<16;k++){const u=k/16,x=curlS+44-u*40,y=screenY(g.W.curl+44,1)-Math.sin(u*Math.PI)*16;R(x,y,4,5,'#e8fbff');}ctx.globalAlpha=1;}
   g.parts.forEach(p=>R(p.x-camX,p.y,2,2,p.col));
+  drawFarts(g.farts,camX,0);
   if(g.party>0){ctx.save();ctx.globalCompositeOperation='lighter';for(let i=0;i<3;i++)glowAt(((T*0.1+i*90)%(W+80))-40,tr-30,['#ff4fd8','#5fe8ff','#ffd23f'][i],40,0.25);ctx.restore();}
   ctx.restore();
   g.floats.forEach(f=>txt(f.text,f.x-camX,screenY(f.x,Math.min(1.4,f.h))-(1.2-f.t)*22,f.col,8,'center'));
@@ -1249,6 +1307,7 @@ function frame(now){
     if(mode==='game'){update(dt);if(G)drawGame();}
     else if(mode==='results'&&G)drawGame();
     else drawMenu();
+    syncFart(mode==='game'&&G&&G.gas>0&&G.phase==='ride');
   }catch(e){console.error(e);window.__err=(window.__err||0)+1;window.__lastErr=String(e&&e.stack||e);}
   requestAnimationFrame(frame);
 }
